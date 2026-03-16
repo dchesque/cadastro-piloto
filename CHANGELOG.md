@@ -2,6 +2,19 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
+## [1.9.0] - 2026-03-16
+### Added
+- **Gestão de Usuários**: Nova página "Minha Conta" para criar usuários e gerenciar senhas.
+- **Menu do Usuário**: Drop-up na Sidebar com informações do perfil logado e atalhos rápidos.
+- **API de Administração**: Endpoints seguros para criação de usuários e alteração de credenciais.
+
+## [1.8.0] - 2026-03-16
+### Added
+- **Autenticação Segura**: Implementação de login com Usuário/Senha (NextAuth.js + Prisma).
+- **Seed de Produção**: Script de seed seguro via variáveis de ambiente para deploy (Easypanel).
+- **Exclusão de Itens**: Adicionado botão de exclusão nas páginas de detalhes de Peças e Tecidos.
+- **Middleware**: Proteção de todas as rotas internas, redirecionando para login se não autenticado.
+
 ## [1.7.5] - 2026-03-16
 
 ### Changed

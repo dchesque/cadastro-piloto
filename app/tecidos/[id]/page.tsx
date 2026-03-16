@@ -3,8 +3,17 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/components/ui/toast'
-import { ArrowLeft, Printer, Save } from 'lucide-react'
+import { ArrowLeft, Printer, Save, Trash2 } from 'lucide-react'
 import Link from 'next/link'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import { Field } from '@/components/ui/field'
 
 interface CorteTecido {
@@ -41,6 +50,8 @@ export default function TecidoDetailPage({ params }: { params: Promise<{ id: str
     observacoes: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     if (id) {
@@ -124,6 +135,39 @@ export default function TecidoDetailPage({ params }: { params: Promise<{ id: str
       })
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    try {
+      const response = await fetch(`/api/tecidos/${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        showToast({
+          title: 'Sucesso',
+          description: 'Tecido excluído com sucesso',
+        })
+        router.push('/tecidos')
+      } else {
+        showToast({
+          title: 'Erro',
+          description: 'Erro ao excluir tecido',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Erro ao excluir tecido:', error)
+      showToast({
+        title: 'Erro',
+        description: 'Erro ao excluir tecido',
+        variant: 'destructive',
+      })
+    } finally {
+      setDeleting(false)
+      setDeleteDialogOpen(false)
     }
   }
 
@@ -286,6 +330,17 @@ export default function TecidoDetailPage({ params }: { params: Promise<{ id: str
         </div>
 
         <div className="bg-[--color-bg-subtle]/50 border-t border-[--color-border-light] p-6 flex flex-col sm:flex-row justify-end gap-3">
+          <div className="flex-1 flex justify-start">
+            <button 
+              type="button" 
+              onClick={() => setDeleteDialogOpen(true)}
+              disabled={deleting}
+              className="text-[14px] font-medium text-destructive hover:bg-destructive/5 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+            >
+              <Trash2 size={16} />
+              Excluir
+            </button>
+          </div>
           <button 
             type="button" 
             onClick={() => router.back()}
@@ -312,6 +367,25 @@ export default function TecidoDetailPage({ params }: { params: Promise<{ id: str
           </button>
         </div>
       </form>
+
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirmar exclusão</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir este tecido? Esta ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+              {deleting ? 'Excluindo...' : 'Excluir'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

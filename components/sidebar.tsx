@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Shirt, Scissors } from 'lucide-react'
+import { Home, Shirt, Scissors, LogOut, User, ChevronUp, Settings } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
+import { useState, useRef, useEffect } from 'react'
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: Home },
@@ -18,6 +20,20 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname()
+  const { data: session } = useSession()
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   return (
     <>
@@ -85,13 +101,59 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             })}
           </nav>
 
-          <div className="mt-auto p-6">
-            <div className="rounded-[12px] bg-white/[0.05] border border-white/[0.08] p-4">
-              <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.2em] mb-1">System Status</p>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                <p className="text-[12px] text-white/60 font-medium tracking-wide">Versão 1.4.3</p>
+          <div className="mt-auto p-4 space-y-4">
+            {/* User Drop-up Menu */}
+            <div className="relative" ref={userMenuRef}>
+              <div className={cn(
+                "absolute bottom-full left-0 w-full mb-2 bg-[#1A1917] border border-white/10 rounded-[16px] overflow-hidden shadow-2xl transition-all duration-200 origin-bottom",
+                isUserMenuOpen ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-2 pointer-events-none"
+              )}>
+                <Link
+                  href="/minha-conta"
+                  onClick={() => { setIsUserMenuOpen(false); onClose?.(); }}
+                  className="flex items-center gap-3 px-4 py-3 text-[14px] font-medium text-sidebar-text-muted hover:bg-white/5 hover:text-sidebar-text transition-colors"
+                >
+                  <Settings size={18} />
+                  Minha Conta
+                </Link>
+                <div className="h-[1px] bg-white/5" />
+                <button
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-[14px] font-medium text-sidebar-text-muted hover:bg-red-500/10 hover:text-red-400 transition-colors"
+                >
+                  <LogOut size={18} />
+                  Sair do Sistema
+                </button>
               </div>
+
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className={cn(
+                  "w-full flex items-center gap-3 rounded-[16px] px-4 py-3 bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] transition-all duration-200 group",
+                  isUserMenuOpen && "bg-white/[0.08] border-white/10"
+                )}
+              >
+                <div className="w-8 h-8 rounded-full bg-accent-tecido/20 flex items-center justify-center text-accent-tecido text-xs font-bold">
+                  {session?.user?.name?.[0]?.toUpperCase() || 'U'}
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-[13px] font-semibold text-sidebar-text leading-none mb-1 truncate">
+                    {session?.user?.name || 'Usuário'}
+                  </p>
+                  <p className="text-[11px] text-sidebar-text-muted leading-none">Minha Conta</p>
+                </div>
+                <ChevronUp 
+                  size={16} 
+                  className={cn("text-sidebar-text-muted transition-transform duration-200", isUserMenuOpen && "rotate-180")} 
+                />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 px-4 py-2 opacity-30 hover:opacity-100 transition-opacity whitespace-nowrap">
+              <div className="w-1 h-1 rounded-full bg-green-500" />
+              <p className="text-[9px] text-white font-bold uppercase tracking-widest">
+                System Status <span className="mx-1 opacity-20">/</span> v{process.env.NEXT_PUBLIC_APP_VERSION || '1.9.0'}
+              </p>
             </div>
           </div>
         </div>

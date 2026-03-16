@@ -21,6 +21,8 @@ export const metadata: Metadata = {
   description: 'Sistema de cadastro de peças piloto e cortes de tecido',
 }
 
+import { AuthProvider } from '@/components/auth-provider'
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,10 +31,12 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${dmSans.variable} ${dmMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased text-[--color-text-primary] bg-[--color-bg-page]">
-        <AppShell>
-          {children}
-        </AppShell>
-        <Toaster />
+        <AuthProvider>
+          <AppShell>
+            {children}
+          </AppShell>
+          <Toaster />
+        </AuthProvider>
       </body>
     </html>
   )
