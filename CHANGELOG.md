@@ -2,6 +2,12 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
+## [1.4.1] - 2026-03-16
+
+### Fixed
+- Erro de build: corrigida tipagem de campos opcionais nas etiquetas de impressão.
+- Resiliência: funções de formatação agora lidam com valores `null` ou `undefined`.
+
 ## [1.4.0] - 2026-03-16
 
 ### Added

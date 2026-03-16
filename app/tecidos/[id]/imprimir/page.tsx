@@ -63,7 +63,7 @@ export default async function ImprimirTecidoPage({ params }: { params: Promise<{
 
         {/* Nome e Referência */}
         <div className="border-b px-4 py-3">
-          <p className="text-base font-bold leading-tight">{tecido.nome}</p>
+          <p className="text-base font-bold leading-tight">{tecido.nome || 'Sem nome'}</p>
           <p className="mt-1 font-mono text-xs text-gray-500">#{tecido.referencia}</p>
         </div>
 
@@ -71,11 +71,11 @@ export default async function ImprimirTecidoPage({ params }: { params: Promise<{
         <div className="grid grid-cols-2 border-b px-4 py-2 text-xs">
           <div>
             <p className="font-semibold text-gray-600">Fornecedor</p>
-            <p>{tecido.fornecedor}</p>
+            <p>{tecido.fornecedor || '-'}</p>
           </div>
           <div>
             <p className="font-semibold text-gray-600">Composição</p>
-            <p>{tecido.composicao}</p>
+            <p>{tecido.composicao || '-'}</p>
           </div>
         </div>
 
@@ -102,7 +102,7 @@ export default async function ImprimirTecidoPage({ params }: { params: Promise<{
           <div className="grid grid-cols-2">
             <div>
               <p className="font-semibold text-gray-600">Cor</p>
-              <p>{tecido.cor}</p>
+              <p>{tecido.cor || '-'}</p>
             </div>
             {tecido.refCor && (
               <div>

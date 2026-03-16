@@ -22,7 +22,8 @@ export default async function ImprimirPecaPage({ params }: { params: Promise<{ i
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://seudominio.com'
   const qrUrl = `${baseUrl}/pecas/${peca.id}`
 
-  const formatPrice = (value: number) => {
+  const formatPrice = (value: number | null | undefined) => {
+    if (value === null || value === undefined) return '-'
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL',
@@ -70,7 +71,7 @@ export default async function ImprimirPecaPage({ params }: { params: Promise<{ i
 
         {/* Nome e Referência */}
         <div className="border-b px-4 py-3">
-          <p className="text-base font-bold leading-tight">{peca.nome}</p>
+          <p className="text-base font-bold leading-tight">{peca.nome || 'Sem nome'}</p>
           <p className="mt-1 font-mono text-xs text-gray-500">#{peca.referencia}</p>
         </div>
 
@@ -78,11 +79,11 @@ export default async function ImprimirPecaPage({ params }: { params: Promise<{ i
         <div className="grid grid-cols-2 border-b px-4 py-2 text-xs">
           <div>
             <p className="font-semibold text-gray-600">Coleção</p>
-            <p>{peca.colecao}</p>
+            <p>{peca.colecao || '-'}</p>
           </div>
           <div>
             <p className="font-semibold text-gray-600">Modelista</p>
-            <p>{peca.modelista}</p>
+            <p>{peca.modelista || '-'}</p>
           </div>
         </div>
 
@@ -91,11 +92,11 @@ export default async function ImprimirPecaPage({ params }: { params: Promise<{ i
           <div className="grid grid-cols-2">
             <div>
               <p className="font-semibold text-gray-600">Fornecedor</p>
-              <p>{peca.fornecedor}</p>
+              <p>{peca.fornecedor || '-'}</p>
             </div>
             <div>
               <p className="font-semibold text-gray-600">Tecido</p>
-              <p>{peca.tecido}</p>
+              <p>{peca.tecido || '-'}</p>
             </div>
           </div>
         </div>
@@ -105,7 +106,7 @@ export default async function ImprimirPecaPage({ params }: { params: Promise<{ i
           <div className="grid grid-cols-2">
             <div>
               <p className="font-semibold text-gray-600">Composição</p>
-              <p>{peca.composicao}</p>
+              <p>{peca.composicao || '-'}</p>
             </div>
             <div>
               <p className="font-semibold text-gray-600">Preço tecido</p>
@@ -117,7 +118,7 @@ export default async function ImprimirPecaPage({ params }: { params: Promise<{ i
         {/* Tamanhos */}
         <div className="border-b px-4 py-2 text-xs">
           <p className="font-semibold text-gray-600">Tamanhos</p>
-          <p className="mt-0.5">{peca.tamanhos.split(',').join(' · ')}</p>
+          <p className="mt-0.5">{peca.tamanhos ? peca.tamanhos.split(',').join(' · ') : '-'}</p>
         </div>
 
         {/* Observações */}
