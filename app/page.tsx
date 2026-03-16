@@ -29,7 +29,7 @@ export default async function DashboardPage() {
             Dashboard
           </h1>
           <p className="text-sm sm:text-base text-[--color-text-secondary] font-medium">
-            Gestão e acompanhamento da produção <span className="text-accent-tecido">JC Studio</span>
+            Gestão e acompanhamento da produção <span className="text-accent-tecido uppercase font-bold">JC PLUS SIZE</span>
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">

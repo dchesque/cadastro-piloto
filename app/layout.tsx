@@ -17,7 +17,7 @@ const dmMono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'JC Studio',
+  title: 'JC PLUS SIZE',
   description: 'Sistema de cadastro de peças piloto e cortes de tecido',
 }
 
@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className={`${dmSans.variable} ${dmMono.variable}`}>
+    <html lang="pt-BR" className={`${dmSans.variable} ${dmMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased text-[--color-text-primary] bg-[--color-bg-page]">
         <AppShell>
           {children}

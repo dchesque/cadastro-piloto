@@ -46,7 +46,7 @@ export default async function ImprimirTecidoPage({ params }: { params: Promise<{
       {/* Etiqueta - Tamanho real 100mm x 150mm */}
       <div
         id="print-area"
-        className="flex h-[567px] w-[378px] flex-col overflow-hidden rounded-[4px] border border-[--color-border-light] bg-white shadow-2xl animate-in zoom-in-95 duration-500"
+        className="flex h-[567px] w-[378px] flex-col overflow-hidden rounded-[4px] border border-[--color-border-light] bg-white shadow-2xl animate-in zoom-in-95 duration-500 print:border-none print:shadow-none print:rounded-none"
         style={{
           width: '100mm',
           height: '150mm',
@@ -54,60 +54,62 @@ export default async function ImprimirTecidoPage({ params }: { params: Promise<{
         }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b px-4 py-2">
-          <span className="text-sm font-bold">Cadastro Piloto JC</span>
-          <span className="rounded bg-accent-tecido-light px-2 py-0.5 text-xs font-semibold text-accent-tecido">
-            CORTE TECIDO
-          </span>
+        <div className="flex items-center justify-between border-b-2 border-black px-4 py-4">
+          <span className="text-2xl font-black tracking-tighter text-black uppercase">JC PLUS SIZE</span>
+          <div className="flex flex-col items-end text-black">
+            <span className="rounded-sm border-2 border-black px-2 py-1 text-xs font-black uppercase tracking-tight">
+              CORTE TECIDO
+            </span>
+          </div>
         </div>
 
         {/* Nome e Referência */}
-        <div className="border-b px-4 py-3">
-          <p className="text-base font-bold leading-tight">{tecido.nome || 'Sem nome'}</p>
-          <p className="mt-1 font-mono text-xs text-gray-500">#{tecido.referencia}</p>
+        <div className="border-b border-black px-4 py-4">
+          <p className="text-xl font-bold leading-tight text-black">{tecido.nome || 'Sem nome'}</p>
+          <p className="mt-1 font-mono text-sm text-black">#{tecido.referencia}</p>
         </div>
 
         {/* Fornecedor e Composição */}
-        <div className="grid grid-cols-2 border-b px-4 py-2 text-xs">
+        <div className="grid grid-cols-2 border-b border-black px-4 py-2 text-[13px]">
           <div>
-            <p className="font-semibold text-gray-600">Fornecedor</p>
-            <p>{tecido.fornecedor || '-'}</p>
+            <p className="font-bold text-black">Fornecedor</p>
+            <p className="text-[14px] text-black">{tecido.fornecedor || '-'}</p>
           </div>
-          <div>
-            <p className="font-semibold text-gray-600">Composição</p>
-            <p>{tecido.composicao || '-'}</p>
+          <div className="border-l border-black pl-4">
+            <p className="font-bold text-black">Composição</p>
+            <p className="text-[14px] text-black">{tecido.composicao || '-'}</p>
           </div>
         </div>
 
         {/* Metragem, Largura e Preço */}
-        <div className="border-b px-4 py-2 text-xs">
+        <div className="border-b border-black px-4 py-2 text-[13px]">
           <div className="grid grid-cols-3">
             <div>
-              <p className="font-semibold text-gray-600">Metragem</p>
-              <p>{formatNumber(tecido.metragem)} m</p>
+              <p className="font-bold text-black">Metragem</p>
+              <p className="text-[14px] font-bold text-black">{formatNumber(tecido.metragem)} m</p>
             </div>
-            <div>
-              <p className="font-semibold text-gray-600">Largura</p>
-              <p>{formatNumber(tecido.largura)} m</p>
+            <div className="border-l border-black pl-4">
+              <p className="font-bold text-black">Largura</p>
+              <p className="text-[14px] font-bold text-black">{formatNumber(tecido.largura)} m</p>
             </div>
-            <div>
-              <p className="font-semibold text-gray-600">Preço/m</p>
-              <p>{formatCurrency(tecido.preco)}</p>
+            <div className="border-l border-black pl-4">
+              <p className="font-bold text-black">Preço/m</p>
+              <p className="text-[14px] font-bold text-black">{formatCurrency(tecido.preco)}</p>
             </div>
           </div>
         </div>
 
         {/* Cor e Ref. Cor */}
-        <div className="border-b px-4 py-2 text-xs">
+        <div className="border-b border-black px-4 py-2 text-[13px]">
           <div className="grid grid-cols-2">
             <div>
-              <p className="font-semibold text-gray-600">Cor</p>
-              <p>{tecido.cor || '-'}</p>
+              <p className="font-bold text-black">Cor</p>
+              <p className="text-[14px] font-bold text-black">{tecido.cor || '-'}</p>
             </div>
             {tecido.refCor && (
-              <div>
-                <p className="font-semibold text-gray-600">Ref. cor</p>
-                <p>{tecido.refCor}</p>
+              <div className="border-l border-black pl-4">
+                <p className="font-bold text-black">Ref. cor</p>
+                <p className="text-[14px] font-bold text-black">{tecido.refCor}</p>
               </div>
             )}
           </div>
@@ -115,18 +117,18 @@ export default async function ImprimirTecidoPage({ params }: { params: Promise<{
 
         {/* Observações */}
         {tecido.observacoes && (
-          <div className="flex-1 border-b px-4 py-2">
-            <div className="rounded bg-gray-100 p-2 text-xs">
-              <p className="font-semibold text-gray-600">Obs:</p>
-              <p className="mt-0.5">{tecido.observacoes}</p>
+          <div className="flex-1 border-b border-black px-4 py-2">
+            <div className="pt-1">
+              <p className="text-[12px] font-bold text-black uppercase tracking-wider">Obs:</p>
+              <p className="mt-0.5 text-[12px] leading-tight text-black">{tecido.observacoes}</p>
             </div>
           </div>
         )}
 
         {/* Footer com Data e QR Code */}
-        <div className="flex items-center justify-between border-t px-4 py-2">
-          <span className="text-xs text-gray-500">{formatDate(tecido.createdAt)}</span>
-          <QRCodeSVG value={qrUrl} size={48} />
+        <div className="flex items-center justify-between border-t-2 border-black px-4 py-2">
+          <span className="text-[13px] font-bold text-black">{formatDate(tecido.createdAt)}</span>
+          <QRCodeSVG value={qrUrl} size={60} />
         </div>
       </div>
     </div>

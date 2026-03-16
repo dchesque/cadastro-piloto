@@ -24,14 +24,14 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       {/* Backdrop for mobile */}
       <div 
         className={cn(
-          "fixed inset-0 z-40 bg-[--color-text-primary]/20 backdrop-blur-sm lg:hidden transition-opacity duration-300",
+          "fixed inset-0 z-40 bg-[--color-text-primary]/20 backdrop-blur-sm lg:hidden transition-opacity duration-300 print:hidden",
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         onClick={onClose}
       />
 
       <aside className={cn(
-        "fixed left-0 top-0 z-50 h-screen w-[260px] bg-sidebar-bg border-r border-white/5 shadow-2xl transition-transform duration-300 lg:translate-x-0",
+        "fixed left-0 top-0 z-50 h-screen w-[260px] bg-sidebar-bg border-r border-white/5 shadow-2xl transition-transform duration-300 lg:translate-x-0 print:hidden",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex h-full flex-col">
@@ -40,7 +40,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-2 h-2 rounded-full bg-accent-tecido" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-sidebar-text-muted block leading-none">
-                  JC Studio
+                JC PLUS SIZE
                 </span>
               </div>
               <span className="text-[18px] font-light text-sidebar-text tracking-tight">

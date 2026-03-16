@@ -163,7 +163,7 @@ export default function TecidoDetailPage({ params }: { params: Promise<{ id: str
           </button>
           <div>
             <h1 className="text-2xl sm:text-3xl font-light text-[--color-text-primary] tracking-tight">Editar Corte de Tecido</h1>
-            <p className="text-[14px] text-[--color-text-secondary] font-medium">Atualize as especificações no estoque JC Studio</p>
+            <p className="text-[14px] text-[--color-text-secondary] font-medium uppercase tracking-wider font-bold">JC PLUS SIZE</p>
           </div>
         </div>
         
