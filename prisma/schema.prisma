@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model PecaPiloto {
+  id          String   @id @default(cuid())
+  referencia  String   @unique
+  nome        String?
+  colecao     String?
+  modelista   String?
+  fornecedor  String?
+  tecido      String?
+  composicao  String?
+  precoTecido Float?
+  tamanhos    String?
+  observacoes String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CorteTecido {
+  id          String   @id @default(cuid())
+  referencia  String   @unique
+  nome        String?
+  fornecedor  String?
+  composicao  String?
+  metragem    Float?
+  largura     Float?
+  preco       Float?
+  cor         String?
+  refCor      String?
+  observacoes String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

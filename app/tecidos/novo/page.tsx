@@ -1,0 +1,251 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { showToast } from '@/components/ui/toast'
+import { ArrowLeft, Plus, Scissors } from 'lucide-react'
+import { Field } from '@/components/ui/field'
+
+export default function NovoTecidoPage() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [referencia, setReferencia] = useState('Gerando...')
+  const [formData, setFormData] = useState({
+    nome: '',
+    fornecedor: '',
+    composicao: '',
+    metragem: '',
+    largura: '',
+    preco: '',
+    cor: '',
+    refCor: '',
+    observacoes: '',
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    const fetchReferencia = async () => {
+      try {
+        const response = await fetch('/api/tecidos/referencia')
+        const result = await response.json()
+        setReferencia(result.data.referencia)
+      } catch (error) {
+        console.error('Erro ao gerar referência:', error)
+      }
+    }
+    fetchReferencia()
+  }, [])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+    setErrors((prev) => ({ ...prev, [name]: '' }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    setLoading(true)
+    try {
+      const response = await fetch('/api/tecidos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          metragem: formData.metragem ? parseFloat(formData.metragem) : null,
+          largura: formData.largura ? parseFloat(formData.largura) : null,
+          preco: formData.preco ? parseFloat(formData.preco) : null,
+          refCor: formData.refCor || null,
+        }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        showToast({
+          title: 'Sucesso',
+          description: 'Tecido cadastrado com sucesso',
+        })
+        router.push(`/tecidos/${result.data.id}/imprimir`)
+      } else {
+        showToast({
+          title: 'Erro',
+          description: result.message || 'Erro ao cadastrar tecido',
+          variant: 'destructive',
+        })
+      }
+    } catch (error) {
+      console.error('Erro ao cadastrar tecido:', error)
+      showToast({
+        title: 'Erro',
+        description: 'Erro ao cadastrar tecido',
+        variant: 'destructive',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const inputClass = "w-full h-11 px-4 bg-white border border-[--color-border-light] rounded-[16px] text-[15px] font-medium text-[--color-text-primary] placeholder:text-[--color-text-tertiary] focus:outline-none focus:border-[--color-accent-tecido] focus:ring-4 focus:ring-[--color-accent-tecido]/5 transition-all duration-200"
+  const monoClass = "font-mono text-[13px] tracking-tight"
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
+      <header className="space-y-4">
+        <button 
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[--color-text-tertiary] hover:text-[--color-accent-tecido] transition-all group px-3 py-1.5 rounded-full bg-[--color-bg-subtle]"
+        >
+          <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Voltar
+        </button>
+        <div>
+          <h1 className="text-3xl font-light text-[--color-text-primary] tracking-tight">Novo Corte de Tecido</h1>
+          <p className="text-[14px] text-[--color-text-secondary] font-medium">Cadastre um novo tecido no estoque JC Studio</p>
+        </div>
+      </header>
+
+      <form onSubmit={handleSubmit} className="bg-white border border-[--color-border-light] rounded-[32px] overflow-hidden shadow-card hover:shadow-hover transition-all duration-500">
+        <div className="p-6 space-y-5">
+          <Field label="Referência" hint="Gerada automaticamente pelo sistema">
+            <div className="relative">
+              <input value={referencia} readOnly className={`${inputClass} ${monoClass} bg-[--color-bg-subtle]/50 border-dashed opacity-80 cursor-default`} />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[--color-accent-tecido] animate-pulse" />
+            </div>
+          </Field>
+
+          <Field label="Nome do tecido" error={errors.nome}>
+            <input
+              name="nome"
+              value={formData.nome}
+              onChange={handleChange}
+              className={`${inputClass} ${errors.nome ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
+              placeholder="Ex: Brim Leve Khaki"
+            />
+          </Field>
+
+          <Field label="Fornecedor" error={errors.fornecedor}>
+            <input
+              name="fornecedor"
+              value={formData.fornecedor}
+              onChange={handleChange}
+              className={`${inputClass} ${errors.fornecedor ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
+              placeholder="Nome do fornecedor"
+            />
+          </Field>
+
+          <Field label="Composição" error={errors.composicao}>
+            <input
+              name="composicao"
+              value={formData.composicao}
+              onChange={handleChange}
+              className={`${inputClass} ${errors.composicao ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
+              placeholder="Ex: 98% Algodão, 2% Elastano"
+            />
+          </Field>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Field label="Metragem (m)" error={errors.metragem}>
+              <input
+                name="metragem"
+                type="number"
+                step="0.01"
+                value={formData.metragem}
+                onChange={handleChange}
+                className={`${inputClass} ${monoClass} ${errors.metragem ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
+                placeholder="0.00"
+              />
+            </Field>
+
+            <Field label="Largura (m)" error={errors.largura}>
+              <input
+                name="largura"
+                type="number"
+                step="0.01"
+                value={formData.largura}
+                onChange={handleChange}
+                className={`${inputClass} ${monoClass} ${errors.largura ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
+                placeholder="0.00"
+              />
+            </Field>
+
+            <Field label="Preço (R$/m)" error={errors.preco}>
+              <div className="relative">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[--color-text-tertiary] font-mono text-xs">R$</span>
+                <input
+                  name="preco"
+                  type="number"
+                  step="0.01"
+                  value={formData.preco}
+                  onChange={handleChange}
+                  className={`${inputClass} pl-10 ${monoClass} ${errors.preco ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
+                  placeholder="0.00"
+                />
+              </div>
+            </Field>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Cor" error={errors.cor}>
+              <input
+                name="cor"
+                value={formData.cor}
+                onChange={handleChange}
+                className={`${inputClass} ${errors.cor ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
+                placeholder="Ex: Azul Marinho"
+              />
+            </Field>
+
+            <Field label="Ref. da cor" hint="Opcional">
+              <input
+                name="refCor"
+                value={formData.refCor}
+                onChange={handleChange}
+                className={`${inputClass} ${monoClass}`}
+                placeholder="Ex: #P-004"
+              />
+            </Field>
+          </div>
+
+          <Field label="Observações">
+            <textarea
+              name="observacoes"
+              value={formData.observacoes}
+              onChange={handleChange}
+              rows={4}
+              className={`${inputClass} h-auto py-4 leading-relaxed resize-none`}
+              placeholder="Informações adicionais sobre o tecido..."
+            />
+          </Field>
+        </div>
+
+        <div className="bg-[--color-bg-subtle]/50 border-t border-[--color-border-light] p-6 flex flex-col sm:flex-row justify-end gap-3">
+          <button 
+            type="button" 
+            onClick={() => router.back()}
+            className="btn-premium btn-outline h-12 px-8 bg-white"
+          >
+            Cancelar
+          </button>
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="btn-premium btn-primary h-12 px-10 shadow-premium disabled:opacity-50"
+          >
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Salvando...
+              </div>
+            ) : (
+              <>
+                <Scissors size={18} />
+                Salvar tecido
+              </>
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}

@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+@theme {
+  /* Design Tokens - Colors (Enhanced Contrast) */
+  --color-bg-page: #F2F1ED;      /* Slightly darker background for better contrast with cards */
+  --color-bg-surface: #FFFFFF;
+  --color-bg-subtle: #EBEAE6;
+  --color-bg-muted: #E1DFDB;
+
+  --color-border-light: #DDDCD8;
+  --color-border-medium: #C0BEB8;
+  --color-border-strong: #8A8882;
+
+  --color-text-primary: #1A1917;
+  --color-text-secondary: #52504C; /* Increased contrast from #6B... */
+  --color-text-tertiary: #85837D;  /* Increased contrast from #9C... */
+  --color-text-inverse: #FFFFFF;
+
+  --color-success-bg: #EAF3DE;
+  --color-success-text: #27500A;
+  --color-danger-bg: #FCEBEB;
+  --color-danger-text: #9B1C1C;    /* Deeper red */
+  --color-warning-bg: #FAEEDA;
+  --color-warning-text: #723B10;
+
+  --color-accent: #1A1917;
+  --color-accent-hover: #33322F;
+
+  /* Semantic tokens / Shadcn compatibility */
+  --color-background: var(--color-bg-page);
+  --color-foreground: var(--color-text-primary);
+  --color-card: var(--color-bg-surface);
+  --color-card-foreground: var(--color-text-primary);
+  --color-popover: var(--color-bg-surface);
+  --color-popover-foreground: var(--color-text-primary);
+  --color-primary: var(--color-accent);
+  --color-primary-foreground: var(--color-text-inverse);
+  --color-secondary: var(--color-bg-subtle);
+  --color-secondary-foreground: var(--color-text-secondary);
+  --color-muted: var(--color-bg-muted);
+  --color-muted-foreground: var(--color-text-tertiary);
+  --color-destructive: var(--color-danger-text);
+  --color-destructive-foreground: var(--color-text-inverse);
+  --color-border: var(--color-border-light);
+  --color-input: var(--color-border-medium);
+  --color-ring: var(--color-border-strong);
+
+  /* Specialized accents */
+  --color-accent-peca: #1D4ED8;
+  --color-accent-peca-light: #E6F1FB;
+  --color-accent-tecido: #059669;
+  --color-accent-tecido-light: #EAF3DE;
+
+  /* UI Tokens */
+  --color-sidebar-bg: #111110;           /* Dark sidebar background */
+  --color-sidebar-text: #EBEAE6;
+  --color-sidebar-text-muted: #85837D;
+  --color-sidebar-hover: #1A1917;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-base: 8px;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(26, 25, 23, 0.08), 0 1px 2px rgba(26, 25, 23, 0.04);
+  --shadow-hover: 0 4px 6px rgba(26, 25, 23, 0.1), 0 2px 4px rgba(26, 25, 23, 0.06);
+  --shadow-premium: 0 10px 15px -3px rgba(26, 25, 23, 0.1), 0 4px 6px -2px rgba(26, 25, 23, 0.05);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border-light);
+  }
+  
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-bg-page);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Base utility for premium buttons */
+@layer components {
+  .btn-premium {
+    @apply relative inline-flex items-center justify-center gap-2 px-4 h-10 text-[14px] font-medium rounded-[8px] transition-all duration-200 active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none;
+  }
+  
+  .btn-primary {
+    @apply bg-accent text-white hover:bg-accent-hover shadow-[0_2px_4px_rgba(26,25,23,0.1)];
+  }
+  
+  .btn-outline {
+    @apply border border-input text-foreground hover:bg-secondary hover:border-ring;
+  }
+}
+
+@media print {
+  @page {
+    size: 100mm 150mm;
+    margin: 0;
+  }
+  
+  html, body {
+    width: 100mm !important;
+    height: 150mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: white !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  #print-area {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100mm !important;
+    height: 150mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    height: 150mm !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    transition: none !important;
+  }
+}
