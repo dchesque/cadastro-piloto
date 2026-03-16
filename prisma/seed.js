@@ -1,10 +1,20 @@
 const { PrismaClient } = require('@prisma/client');
-const bcrypt = require('bcryptjs');
+
+// Tenta encontrar bcryptjs em vários caminhos (standalone build)
+let bcrypt;
+const possiblePaths = [
+  'bcryptjs',
+  '/app/.next/standalone/node_modules/bcryptjs',
+  '/app/node_modules/bcryptjs',
+];
+for (const p of possiblePaths) {
+  try { bcrypt = require(p); break; } catch (_) {}
+}
+if (!bcrypt) throw new Error('bcryptjs não encontrado. Verifique a instalação.');
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Pega das variáveis de ambiente ou usa o padrão (Seguro para deploy)
   const username = process.env.INITIAL_USER_USERNAME || 'admin';
   const password = process.env.INITIAL_USER_PASSWORD;
 
@@ -17,9 +27,7 @@ async function main() {
 
   await prisma.user.upsert({
     where: { username },
-    update: {
-      password: hashedPassword,
-    },
+    update: { password: hashedPassword },
     create: {
       username,
       password: hashedPassword,
@@ -31,10 +39,5 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(async () => { await prisma.$disconnect(); });
