@@ -50,28 +50,28 @@ export default async function DashboardPage() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-[24px] p-8 shadow-card border border-[--color-border-light] hover:shadow-hover transition-all duration-300 group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[--color-accent-peca-light]/30 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500" />
-          <div className="flex items-center gap-6 relative z-10">
-            <div className="w-14 h-14 rounded-[18px] bg-[--color-accent-peca-light] text-[--color-accent-peca] flex items-center justify-center shadow-sm">
-              <Shirt size={28} />
+        <div className="bg-white rounded-[24px] p-6 sm:p-8 shadow-card border border-[--color-border-light] hover:shadow-hover transition-all duration-300 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-[--color-accent-peca-light]/30 rounded-bl-[80px] sm:rounded-bl-[100px] -mr-6 -mt-6 sm:-mr-8 sm:-mt-8 transition-transform group-hover:scale-110 duration-500" />
+          <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[16px] sm:rounded-[18px] bg-[--color-accent-peca-light] text-[--color-accent-peca] flex items-center justify-center shadow-sm">
+              <Shirt size={24} className="sm:w-7 sm:h-7" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.1em] text-[--color-text-tertiary] mb-1">Peças Piloto</p>
-              <h3 className="text-4xl font-bold text-[--color-text-primary] tracking-tight">{totalPecas}</h3>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] text-[--color-text-tertiary] mb-0.5 sm:mb-1">Peças Piloto</p>
+              <h3 className="text-3xl sm:text-4xl font-bold text-[--color-text-primary] tracking-tight">{totalPecas}</h3>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-[24px] p-8 shadow-card border border-[--color-border-light] hover:shadow-hover transition-all duration-300 group relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[--color-accent-tecido-light]/30 rounded-bl-[100px] -mr-8 -mt-8 transition-transform group-hover:scale-110 duration-500" />
-          <div className="flex items-center gap-6 relative z-10">
-            <div className="w-14 h-14 rounded-[18px] bg-[--color-accent-tecido-light] text-[--color-accent-tecido] flex items-center justify-center shadow-sm">
-              <Scissors size={28} />
+        <div className="bg-white rounded-[24px] p-6 sm:p-8 shadow-card border border-[--color-border-light] hover:shadow-hover transition-all duration-300 group relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-[--color-accent-tecido-light]/30 rounded-bl-[80px] sm:rounded-bl-[100px] -mr-6 -mt-6 sm:-mr-8 sm:-mt-8 transition-transform group-hover:scale-110 duration-500" />
+          <div className="flex items-center gap-4 sm:gap-6 relative z-10">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-[16px] sm:rounded-[18px] bg-[--color-accent-tecido-light] text-[--color-accent-tecido] flex items-center justify-center shadow-sm">
+              <Scissors size={24} className="sm:w-7 sm:h-7" />
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.1em] text-[--color-text-tertiary] mb-1">Cortes de Tecido</p>
-              <h3 className="text-4xl font-bold text-[--color-text-primary] tracking-tight">{totalTecidos}</h3>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.1em] text-[--color-text-tertiary] mb-0.5 sm:mb-1">Cortes de Tecido</p>
+              <h3 className="text-3xl sm:text-4xl font-bold text-[--color-text-primary] tracking-tight">{totalTecidos}</h3>
             </div>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default async function DashboardPage() {
                 <Link 
                   key={tecido.id} 
                   href={`/tecidos/${tecido.id}`}
-                  className="p-5 hover:bg-[--color-bg-page] transition-all duration-200 flex items-center justify-between group"
+                  className="p-4 sm:p-5 hover:bg-[--color-bg-page] transition-all duration-200 flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-[12px] bg-[--color-bg-subtle] flex items-center justify-center text-[--color-text-secondary] group-hover:scale-105 transition-transform">

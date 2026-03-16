@@ -144,7 +144,7 @@ export default function PecasPage() {
           {pecas.map((peca) => (
             <div key={peca.id} className="
               bg-white border border-[--color-border-light]
-              rounded-[24px] p-6
+              rounded-[20px] sm:rounded-[24px] p-5 sm:p-6
               hover:shadow-hover hover:border-[--color-border-medium]
               transition-all duration-300
               flex flex-col group relative overflow-hidden
@@ -153,12 +153,12 @@ export default function PecasPage() {
                 <TypeBadge tipo="peca" />
                 <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <Link href={`/pecas/${peca.id}/imprimir`}>
-                    <button title="Imprimir" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-[--color-accent-peca] hover:text-white transition-all">
+                    <button title="Imprimir" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
                       <Printer size={16} />
                     </button>
                   </Link>
                   <Link href={`/pecas/${peca.id}`}>
-                    <button title="Editar" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-[--color-accent] hover:text-white transition-all">
+                    <button title="Editar" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
                       <Pencil size={16} />
                     </button>
                   </Link>
@@ -168,7 +168,7 @@ export default function PecasPage() {
                       setPecaToDelete(peca.id)
                       setDeleteDialogOpen(true)
                     }}
-                    className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-[--color-destructive] hover:text-white transition-all"
+                    className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-red-50 hover:text-red-600 transition-all duration-200"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -176,8 +176,8 @@ export default function PecasPage() {
               </div>
 
               <div className="mb-4 relative z-10">
-                <p className="font-mono text-[11px] text-[--color-text-tertiary] uppercase tracking-wider mb-1">Ref: {peca.referencia}</p>
-                <h3 className="text-[17px] font-bold text-[--color-text-primary] leading-tight group-hover:text-[--color-accent-peca] transition-colors">{peca.nome}</h3>
+                <p className="font-mono text-[10px] text-[--color-text-tertiary] uppercase tracking-wider mb-1">Ref: {peca.referencia}</p>
+                <h3 className="text-[16px] sm:text-[17px] font-bold text-[--color-text-primary] leading-tight group-hover:text-[--color-accent-peca] transition-colors line-clamp-2">{peca.nome}</h3>
               </div>
               
               <div className="mt-auto pt-4 border-t border-[--color-border-light] grid grid-cols-2 gap-2 relative z-10">

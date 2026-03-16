@@ -33,12 +33,12 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-
-    const referencia = await gerarReferenciaTecido()
+    const { referencia: manualReferencia, ...otherData } = body;
+    const referencia = manualReferencia || await gerarReferenciaTecido()
 
     const tecido = await prisma.corteTecido.create({
       data: {
-        ...body,
+        ...otherData,
         referencia,
       },
     })

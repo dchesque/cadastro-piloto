@@ -2,6 +2,23 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
+## [1.5.1] - 2026-03-16
+
+### Added
+- **Referências Editáveis**: Agora é possível editar manualmente o campo "Referência" tanto no cadastro quanto na edição de Peças e Tecidos. O sistema continua gerando códigos automáticos por padrão.
+
+## [1.5.0] - 2026-03-16
+- **Full Responsiveness**: Auditoria e refinamento de todas as páginas do app (Dashboard, Listas, Detalhes e Formulários) para garantir uma UX premium em dispositivos móveis e tablets.
+- **Micro-ajustes Estéticos**: Adaptação de paddings, arredondamentos e tipografia baseada no tamanho da tela.
+
+## [1.4.4] - 2026-03-16
+
+## [1.4.3] - 2026-03-16
+
+### Changed
+- Melhoria estética nos botões de ação dos cards: hover agora utiliza cores suaves e temáticas em vez de alto contraste.
+- Sincronização de estilos de hover entre as páginas de Peças e Tecidos.
+
 ## [1.4.1] - 2026-03-16
 
 ### Fixed

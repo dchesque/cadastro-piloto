@@ -29,6 +29,7 @@ export default function PecaDetailPage({ params }: { params: Promise<{ id: strin
   const [saving, setSaving] = useState(false)
   const [peca, setPeca] = useState<PecaPiloto | null>(null)
   const [formData, setFormData] = useState({
+    referencia: '',
     nome: '',
     colecao: '',
     modelista: '',
@@ -57,6 +58,7 @@ export default function PecaDetailPage({ params }: { params: Promise<{ id: strin
         const pecaData = result.data
         setPeca(pecaData)
         setFormData({
+          referencia: pecaData.referencia,
           nome: pecaData.nome,
           colecao: pecaData.colecao,
           modelista: pecaData.modelista,
@@ -175,7 +177,7 @@ export default function PecaDetailPage({ params }: { params: Promise<{ id: strin
             Voltar
           </button>
           <div>
-            <h1 className="text-3xl font-light text-[--color-text-primary] tracking-tight">Editar Peça Piloto</h1>
+            <h1 className="text-2xl sm:text-3xl font-light text-[--color-text-primary] tracking-tight">Editar Peça Piloto</h1>
             <p className="text-[14px] text-[--color-text-secondary] font-medium">Atualize as informações do modelo JC Studio</p>
           </div>
         </div>
@@ -188,11 +190,16 @@ export default function PecaDetailPage({ params }: { params: Promise<{ id: strin
         </Link>
       </header>
 
-      <form onSubmit={handleSubmit} className="bg-white border border-[--color-border-light] rounded-[32px] overflow-hidden shadow-card hover:shadow-hover transition-all duration-500">
+      <form onSubmit={handleSubmit} className="bg-white border border-[--color-border-light] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-card hover:shadow-hover transition-all duration-500">
         <div className="p-6 space-y-5">
-          <Field label="Referência" hint="Identificador único não editável">
+          <Field label="Referência" hint="Você pode editar o código se necessário">
             <div className="relative">
-              <input value={peca.referencia} readOnly className={`${inputClass} ${monoClass} bg-[--color-bg-subtle]/50 border-dashed opacity-80 cursor-not-allowed`} />
+              <input 
+                name="referencia"
+                value={formData.referencia} 
+                onChange={handleChange}
+                className={`${inputClass} ${monoClass}`} 
+              />
               <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[--color-accent-peca] opacity-50" />
             </div>
           </Field>
