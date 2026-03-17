@@ -25,6 +25,7 @@ interface Material {
   cor: string
   codFornecedor: string
   composicao: string
+  largura: string
   consumo: string
 }
 
@@ -134,7 +135,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
   }
 
   const addMaterial = () => {
-    setMateriais([...materiais, { descricao: '', nome: '', cor: '', codFornecedor: '', composicao: '', consumo: '' }])
+    setMateriais([...materiais, { descricao: '', nome: '', cor: '', codFornecedor: '', composicao: '', largura: '', consumo: '' }])
   }
 
   const removeMaterial = (index: number) => {
@@ -290,6 +291,9 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                     </Field>
                     <Field label="Composição">
                       <input value={mat.composicao} onChange={e => updateMaterial(idx, 'composicao', e.target.value)} className="input-premium bg-white" />
+                    </Field>
+                    <Field label="Largura">
+                      <input value={mat.largura} onChange={e => updateMaterial(idx, 'largura', e.target.value)} className="input-premium bg-white" placeholder="Ex: 1,50m" />
                     </Field>
                     <Field label="Consumo p/ Peça">
                       <input value={mat.consumo} onChange={e => updateMaterial(idx, 'consumo', e.target.value)} className="input-premium bg-white" />

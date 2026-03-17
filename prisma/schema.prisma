@@ -52,6 +52,7 @@ model PecaTecido {
   cor           String?
   codFornecedor String?
   composicao    String?
+  largura       String?
   consumo       String?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt

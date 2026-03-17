@@ -224,8 +224,8 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
               <tr className="bg-gray-100/80 border-b-2 border-black">
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Descrição</th>
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Material / Composição</th>
+                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-24 text-center">Largura</th>
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Fornecedor / Ref</th>
                 <th className="p-1.5 text-[9px] font-black uppercase text-center w-24">Consumo</th>
               </tr>
             </thead>
@@ -235,8 +235,8 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                   <tr key={i} className="border-b border-gray-200">
                     <td className="p-1.5 border-r border-gray-200 font-bold uppercase">{mat.descricao}</td>
                     <td className="p-1.5 border-r border-gray-200">{mat.nome} <span className="text-gray-400">/</span> {mat.composicao}</td>
+                    <td className="p-1.5 border-r border-gray-200 text-center font-bold">{mat.largura || '—'}</td>
                     <td className="p-1.5 border-r border-gray-200 truncate">{mat.cor}</td>
-                    <td className="p-1.5 border-r border-gray-200 truncate">{mat.codFornecedor}</td>
                     <td className="p-1.5 font-black text-center bg-gray-50">{mat.consumo}</td>
                   </tr>
                 ))
