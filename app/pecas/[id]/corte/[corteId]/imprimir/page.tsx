@@ -76,11 +76,12 @@ export default function ImprimirCortePage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* FICHA A4 */}
-      <div 
-        id="print-area"
-        className="w-[210mm] min-h-[297mm] bg-white text-black overflow-hidden relative border border-gray-200 print:border-none print:shadow-none print:w-full print:m-0"
-        style={{ padding: '1cm' }}
-      >
+      <div className="w-full overflow-x-auto no-scrollbar pb-8 flex justify-center print:p-0 print:overflow-visible">
+        <div 
+          id="print-area"
+          className="w-[210mm] min-h-[297mm] bg-white text-black overflow-hidden relative border border-gray-200 print:border-none print:shadow-none print:w-full print:m-0 shrink-0"
+          style={{ padding: '1cm' }}
+        >
         {/* Cabeçalho */}
         <div className="grid grid-cols-4 border-2 border-black mb-3">
            <div className="col-span-1 p-2 border-r-2 border-black flex flex-col justify-center items-center bg-black text-white">
@@ -252,6 +253,7 @@ export default function ImprimirCortePage({ params }: { params: Promise<{ id: st
         <div className="absolute bottom-6 left-10 right-10 flex justify-between items-center text-[8px] font-black text-gray-300 uppercase print:relative print:bottom-0 print:mt-10">
            <span>JC STUDIO - Ficha de Corte Gerencial Estrita</span>
            <span>Emissão: {new Date().toLocaleString('pt-BR')}</span>
+        </div>
         </div>
       </div>
 

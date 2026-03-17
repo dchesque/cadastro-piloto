@@ -302,36 +302,36 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 print:hidden">
         <button 
           onClick={() => router.push('/pecas')}
-          className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[--color-text-tertiary] hover:text-[--color-accent-peca] transition-all group px-4 py-2 rounded-full bg-white border border-[--color-border-light] w-fit shadow-sm"
+          className="flex items-center gap-2 text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[--color-text-tertiary] hover:text-[--color-accent-peca] transition-all group px-4 py-2.5 rounded-full bg-white border border-[--color-border-light] w-full sm:w-auto justify-center sm:justify-start shadow-sm"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
           Voltar
         </button>
 
         <div className="flex flex-wrap items-center gap-2">
-          <Link href={`/pecas/${id}/ficha`}>
-            <button className="btn-premium h-9 px-4 flex items-center gap-2 bg-black text-white text-[12px] font-bold hover:bg-gray-800 transition-all shadow-lg shadow-black/10">
+          <Link href={`/pecas/${id}/ficha`} className="flex-1 sm:flex-none">
+            <button className="btn-premium h-10 px-4 flex items-center justify-center gap-2 bg-black text-white text-[11px] sm:text-[12px] font-bold hover:bg-gray-800 transition-all shadow-lg shadow-black/10 w-full sm:w-auto">
               <Pencil size={15} />
               Editar Ficha
             </button>
           </Link>
-          <div className="w-[1px] h-4 bg-[--color-border-light] mx-1" />
+          <div className="hidden sm:block w-[1px] h-4 bg-[--color-border-light] mx-1" />
           <button 
             onClick={handlePrint}
-            className="btn-premium h-9 px-4 flex items-center gap-2 bg-white border border-[--color-border-light] text-[12px] font-bold text-[--color-text-secondary] hover:bg-gray-50 transition-all"
+            className="flex-1 sm:flex-none btn-premium h-10 px-4 flex items-center justify-center gap-2 bg-white border border-[--color-border-light] text-[11px] sm:text-[12px] font-bold text-[--color-text-secondary] hover:bg-gray-50 transition-all w-full sm:w-auto"
           >
             <Printer size={15} />
-            Imprimir Ficha A4
+            Imprimir Ficha
           </button>
-          <Link href={`/pecas/${id}/imprimir`}>
-            <button className="btn-premium h-9 px-4 flex items-center gap-2 bg-white border border-[--color-border-light] text-[12px] font-bold text-[--color-text-secondary] hover:bg-gray-50 transition-all">
+          <Link href={`/pecas/${id}/imprimir`} className="flex-1 sm:flex-none">
+            <button className="btn-premium h-10 px-4 flex items-center justify-center gap-2 bg-white border border-[--color-border-light] text-[11px] sm:text-[12px] font-bold text-[--color-text-secondary] hover:bg-gray-50 transition-all w-full sm:w-auto">
               <Tag size={15} />
-              Imprimir Etiqueta
+              Etiqueta
             </button>
           </Link>
           <button 
             onClick={() => setDeleteDialogOpen(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all"
+            className="w-10 h-10 flex flex-none items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all"
             title="Excluir peça"
           >
             <Trash2 size={16} />
@@ -340,22 +340,22 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
       </header>
 
       {/* Navegação por Abas */}
-      <nav className="flex gap-2 p-1 bg-gray-100/50 rounded-2xl border border-gray-100 mb-6 print:hidden">
+      <nav className="flex gap-1.5 p-1 bg-gray-100/50 rounded-2xl border border-gray-100 mb-6 print:hidden overflow-x-auto no-scrollbar">
         <button 
           onClick={() => setActiveTab('ficha')}
-          className={`flex-1 flex items-center justify-center gap-2 h-10 text-[12px] font-bold rounded-xl transition-all ${activeTab === 'ficha' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 h-10 text-[11px] sm:text-[12px] font-bold rounded-xl transition-all ${activeTab === 'ficha' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
         >
           <FileText size={16} /> Ficha Técnica
         </button>
         <button 
           onClick={() => setActiveTab('corte')}
-          className={`flex-1 flex items-center justify-center gap-2 h-10 text-[12px] font-bold rounded-xl transition-all ${activeTab === 'corte' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 h-10 text-[11px] sm:text-[12px] font-bold rounded-xl transition-all ${activeTab === 'corte' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
         >
           <CheckCircle2 size={16} /> Ficha de Corte
         </button>
         <button 
           onClick={() => setActiveTab('modelagem')}
-          className={`flex-1 flex items-center justify-center gap-2 h-10 text-[12px] font-bold rounded-xl transition-all ${activeTab === 'modelagem' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 h-10 text-[11px] sm:text-[12px] font-bold rounded-xl transition-all ${activeTab === 'modelagem' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
         >
           <Scissors size={16} /> Modelagem
         </button>
@@ -365,8 +365,8 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
       <div className="relative">
         
         {/* ABA FICHA TÉCNICA */}
-        <div className={`${activeTab === 'ficha' ? 'block' : 'hidden print:block'}`}>
-          <div className="bg-white overflow-hidden relative shadow-sm print:shadow-none">
+        <div className={`${activeTab === 'ficha' ? 'block' : 'hidden print:block'} overflow-x-auto sm:overflow-visible no-scrollbar pb-4 sm:pb-0`}>
+          <div className="bg-white overflow-hidden relative shadow-sm print:shadow-none min-w-[210mm] sm:min-w-0">
             
             {/* CONTAINER PÁGINA 1: CABEÇALHO ATÉ AVIAMENTOS */}
             <div className="print-section">

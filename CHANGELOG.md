@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.12.1] - 2026-03-17
+### Fixed
+- **Responsividade Mobile**: Adicionado scroll horizontal inteligente (`overflow-x-auto`) para visualizações A4 e abas técnicas, garantindo navegabilidade em iOS e Android.
+- **Layout de Detalhes**: Ajuste de botões de ação e headers para melhor empilhamento em telas pequenas.
+- **Sintaxe**: Corrigido fechamento de tags JSX na página de impressão de ficha de corte.
+
 ## [1.12.0] - 2026-03-17
 ### Added
 - **Navegação Inteligente**: Reordenada a ordem das abas para (Ficha Técnica > Ficha de Corte > Modelagem) visando agilidade produtiva.
