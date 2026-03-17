@@ -43,6 +43,7 @@ interface PecaPiloto {
   modelista: string | null
   pilotista: string | null
   responsavelCorte: string | null
+  oficina: string | null // Added 'oficina' field
   tamanhoPiloto: string | null
   gradeCorte: string | null
   fotoFrente: string | null
@@ -200,34 +201,34 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
 
         {/* BLOCO DE EQUIPE E MODELAGEM (UNIFICADO) */}
         <div className="border-b-2 border-black bg-gray-50/50 p-4">
-          <div className="grid grid-cols-4 sm:grid-cols-6 gap-6">
+          <div className="grid grid-cols-3 gap-y-4 gap-x-8">
             <TechnicalItemSmall label="Estilista" value={peca.estilista} />
             <TechnicalItemSmall label="Modelista" value={peca.modelista} />
             <TechnicalItemSmall label="Pilotista" value={peca.pilotista} />
+            
             <TechnicalItemSmall label="Resp. Corte" value={peca.responsavelCorte} />
+            <TechnicalItemSmall label="Oficina" value={peca.oficina} />
             <TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} />
             
-            {/* GRADE EM FORMATO DE TABELA PARA CORTE */}
-            <div className="col-span-4 sm:col-span-6 mt-4">
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Grade / Quantidades (Corte)</p>
-              <div className="overflow-x-auto">
-                <table className="border-collapse border-2 border-black w-full text-center">
-                  <thead>
-                    <tr className="bg-gray-50 uppercase text-[10px] font-black">
-                      {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((size, i) => (
-                        <th key={i} className="border-2 border-black p-2 min-w-[50px]">{size.trim()}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
-                        <td key={i} className="border-2 border-black h-10"></td>
-                      ))}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+            {/* GRADE COMPACTA EM TABLE - OCUPANDO A TERCEIRA LINHA OU INTEGRADA */}
+            <div className="flex flex-col col-span-3 pt-2">
+              <p className="text-[7px] font-black uppercase text-gray-400 mb-0.5">Grade / Quantidades (Corte)</p>
+              <table className="border-collapse border border-black w-full text-center">
+                <thead>
+                  <tr className="bg-gray-50 uppercase text-[8px] font-black">
+                    {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((size, i) => (
+                      <th key={i} className="border border-black px-1 py-0.5">{size.trim()}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="h-5">
+                  <tr>
+                    {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
+                      <td key={i} className="border border-black"></td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

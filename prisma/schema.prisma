@@ -16,6 +16,7 @@ model PecaPiloto {
   modelista           String?
   pilotista           String?
   responsavelCorte    String?
+  oficina             String?
   tamanhoPiloto       String?
   gradeCorte          String?
   fotoFrente          String?

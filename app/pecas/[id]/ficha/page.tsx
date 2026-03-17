@@ -65,6 +65,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
     modelista: '',
     pilotista: '',
     responsavelCorte: '',
+    oficina: '',
     tamanhoPiloto: '',
     gradeCorte: '',
     fotoFrente: '',
@@ -129,6 +130,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
             modelista: data.modelista || '',
             pilotista: data.pilotista || '',
             responsavelCorte: data.responsavelCorte || '',
+            oficina: data.oficina || '',
             tamanhoPiloto: data.tamanhoPiloto || '',
             gradeCorte: data.gradeCorte || '',
             fotoFrente: data.fotoFrente || '',
@@ -312,16 +314,6 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
         {/* ABA MODELAGEM */}
         {activeTab === 'modelagem' && (
           <div className="space-y-10 animate-in fade-in duration-500">
-            <SectionHeader title="Modelagem Técnica" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Field label="Grade de Tamanhos (Corte)">
-                <input placeholder="Ex: P, M, G, GG" value={formData.gradeCorte} onChange={e => setFormData({...formData, gradeCorte: e.target.value})} className={inputClass} />
-              </Field>
-              <Field label="Tamanho da Peça Piloto">
-                <input placeholder="Ex: M" value={formData.tamanhoPiloto} onChange={e => setFormData({...formData, tamanhoPiloto: e.target.value})} className={inputClass} />
-              </Field>
-            </div>
-
             <SectionHeader title="Referências Visuais" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Field label="Frente (ou Desenho Técnico)" hint="Clique abaixo para fazer upload">
