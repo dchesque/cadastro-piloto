@@ -205,8 +205,8 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             <tbody>
               <tr>
                 {/* COLUNA 1: DADOS (70%) */}
-                <td className="w-[70%] p-4 align-top">
-                  <table className="w-full border-separate border-spacing-y-6 border-spacing-x-8">
+                <td className="w-[70%] p-2 align-top">
+                  <table className="w-full border-separate border-spacing-y-2 border-spacing-x-8">
                     <tbody>
                       <tr>
                         <td className="w-1/3 align-top"><TechnicalItemSmall label="Estilista" value={peca.estilista} /></td>
@@ -222,7 +222,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                   </table>
                 </td>
                 {/* COLUNA 2: GRADE (30%) */}
-                <td className="w-[30%] p-4 align-top border-l-2 border-dashed border-gray-300 min-w-[180px]">
+                <td className="w-[30%] p-2 align-top border-l-2 border-dashed border-gray-300 min-w-[180px]">
                   <p className="text-[9px] font-black uppercase text-gray-500 mb-2">Grade / Qtd. (Corte)</p>
                   <table className="border-collapse border-2 border-black w-full text-center bg-white">
                     <thead>
@@ -232,7 +232,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                         ))}
                       </tr>
                     </thead>
-                    <tbody className="h-10">
+                    <tbody className="h-8">
                       <tr>
                         {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
                           <td key={i} className="border-2 border-black"></td>
@@ -247,9 +247,9 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         </div>
 
         {/* REGISTRO FOTOGRÁFICO (LARGURA TOTAL) */}
-        <div className="border-b-2 border-black min-h-[450px] p-4 space-y-4">
+        <div className="border-b-2 border-black min-h-[350px] p-2 space-y-2">
           <SectionLabel icon={<ImageIcon size={14} />} label="Frente / Verso" />
-          <div className="grid grid-cols-2 gap-4 h-[400px]">
+          <div className="grid grid-cols-2 gap-4 h-[300px]">
              <PhotoContainerClean label="Frente" src={peca.fotoFrente} />
              <PhotoContainerClean label="Verso" src={peca.fotoVerso} />
           </div>
@@ -261,24 +261,24 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-100/80 border-b-2 border-black">
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-16">REF</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Nome</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Composição</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-16 text-center">Larg</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
-                <th className="p-1.5 text-[9px] font-black uppercase text-center w-20">Consumo</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300 w-16">REF</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Nome</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Composição</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300 w-16 text-center">Larg</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
+                <th className="p-1 text-[9px] font-black uppercase text-center w-20">Consumo</th>
               </tr>
             </thead>
             <tbody className="text-[11px]">
               {peca.materiais && peca.materiais.length > 0 ? (
                 peca.materiais.map((mat, i) => (
                   <tr key={i} className="border-b border-gray-200">
-                    <td className="p-1.5 border-r border-gray-200 font-bold">{mat.referencia || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 font-bold uppercase">{mat.nome || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 text-[10px] leading-tight">{mat.composicao || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 text-center font-bold">{mat.largura || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 truncate">{mat.cor || '—'}</td>
-                    <td className="p-1.5 font-black text-center bg-gray-50">{mat.consumo || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 font-bold">{mat.referencia || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 font-bold uppercase">{mat.nome || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 text-[10px] leading-tight">{mat.composicao || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 text-center font-bold">{mat.largura || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 truncate">{mat.cor || '—'}</td>
+                    <td className="p-1 font-black text-center bg-gray-50">{mat.consumo || '—'}</td>
                   </tr>
                 ))
               ) : (
@@ -305,11 +305,11 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
               {peca.aviamentos && peca.aviamentos.length > 0 ? (
                 peca.aviamentos.map((av, i) => (
                   <tr key={i} className="border-b border-gray-200">
-                    <td className="p-1.5 border-r border-gray-200 font-bold">{av.referencia || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 font-bold uppercase">{av.nome || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 text-center">{av.medida || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 truncate">{av.cor || '—'}</td>
-                    <td className="p-1.5 font-black text-center bg-gray-50">{av.consumo || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 font-bold">{av.referencia || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 font-bold uppercase">{av.nome || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 text-center">{av.medida || '—'}</td>
+                    <td className="p-1 border-r border-gray-200 truncate">{av.cor || '—'}</td>
+                    <td className="p-1 font-black text-center bg-gray-50">{av.consumo || '—'}</td>
                   </tr>
                 ))
               ) : (
@@ -321,7 +321,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
 
         {/* OBSERVAÇÕES E COSTURA (HÍBRIDO) */}
         <div className="grid grid-cols-3 border-b-2 border-black">
-          <div className="col-span-2 p-3 border-r-2 border-black space-y-2">
+          <div className="col-span-2 p-2 border-r-2 border-black space-y-1">
              <SectionLabel icon={<AlertCircle size={14} />} label="Observações Técnicas" />
              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-0.5">
@@ -334,9 +334,9 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                 </div>
              </div>
           </div>
-          <div className="col-span-1 p-3 bg-gray-50/50 flex flex-col justify-start overflow-hidden">
-             <p className="text-[9px] font-black text-gray-400 text-center uppercase tracking-widest mb-3 border-b border-black/5 pb-1">Equipamentos</p>
-             <div className="space-y-3 overflow-y-auto max-h-[120px] pr-1 scrollbar-thin">
+          <div className="col-span-1 p-2 bg-gray-50/50 flex flex-col justify-start overflow-hidden">
+             <p className="text-[9px] font-black text-gray-400 text-center uppercase tracking-widest mb-1 border-b border-black/5 pb-0.5">Equipamentos</p>
+             <div className="space-y-1.5 overflow-y-auto max-h-[100px] pr-1 scrollbar-thin">
                 {peca.equipamentos && peca.equipamentos.length > 0 ? (
                   peca.equipamentos.map((eq, i) => (
                     <div key={i} className="flex gap-2 items-center border-b border-black/5 pb-2 last:border-0">
@@ -361,14 +361,14 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
 
         {/* OBSERVAÇÕES GERAIS (ESTILO NOTAS) */}
         {peca.observacoesGerais && (
-          <div className="p-4 bg-yellow-50/20 border-b-2 border-black min-h-[80px]">
+          <div className="p-2 bg-yellow-50/20 border-b-2 border-black min-h-[50px]">
              <div className="flex items-start gap-3">
-                <div className="mt-1 p-1.5 bg-yellow-100 rounded-lg text-yellow-700 print:hidden">
-                   <ClipboardList size={14} />
+                <div className="mt-0.5 p-1 bg-yellow-100 rounded-lg text-yellow-700 print:hidden">
+                   <ClipboardList size={12} />
                 </div>
                 <div className="flex-1">
-                   <p className="text-[9px] font-black uppercase tracking-widest text-yellow-800/50 mb-1">Notas e Observações Gerais</p>
-                   <p className="text-[11px] leading-relaxed text-gray-700 whitespace-pre-wrap">{peca.observacoesGerais}</p>
+                   <p className="text-[9px] font-black uppercase tracking-widest text-yellow-800/50 mb-0.5">Notas e Observações Gerais</p>
+                   <p className="text-[10px] leading-tight text-gray-700 whitespace-pre-wrap">{peca.observacoesGerais}</p>
                 </div>
              </div>
           </div>
