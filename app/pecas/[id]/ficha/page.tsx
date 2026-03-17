@@ -20,6 +20,7 @@ import { Field } from '@/components/ui/field'
 
 interface Material {
   id?: string
+  referencia: string
   descricao: string
   nome: string
   cor: string
@@ -31,6 +32,7 @@ interface Material {
 
 interface Aviamento {
   id?: string
+  referencia: string
   descricao: string
   nome: string
   medida: string
@@ -180,7 +182,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
   }
 
   const addMaterial = () => {
-    setMateriais([...materiais, { descricao: '', nome: '', cor: '', codFornecedor: '', composicao: '', largura: '', consumo: '' }])
+    setMateriais([...materiais, { referencia: '', descricao: '', nome: '', cor: '', codFornecedor: '', composicao: '', largura: '', consumo: '' }])
   }
 
   const removeMaterial = (index: number) => {
@@ -194,7 +196,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
   }
 
   const addAviamento = () => {
-    setAviamentos([...aviamentos, { descricao: '', nome: '', medida: '', cor: '', codFornecedor: '', composicao: '', consumo: '' }])
+    setAviamentos([...aviamentos, { referencia: '', descricao: '', nome: '', medida: '', cor: '', codFornecedor: '', composicao: '', consumo: '' }])
   }
 
   const removeAviamento = (index: number) => {
@@ -407,23 +409,28 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               {materiais.map((mat, idx) => (
-                <div key={idx} className="p-6 bg-gray-50 border border-gray-100 rounded-[24px] relative group overflow-hidden">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="sm:col-span-2">
-                      <input placeholder="Descrição do Material" value={mat.descricao} onChange={e => updateMaterial(idx, 'descricao', e.target.value)} className="w-full bg-transparent text-[16px] font-bold focus:outline-none mb-4" />
+                <div key={idx} className="p-8 bg-white border border-gray-100 rounded-[32px] shadow-sm relative group animate-in slide-in-from-right-4 duration-500">
+                  <button type="button" onClick={() => removeMaterial(idx)} className="absolute top-8 right-8 text-red-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><Trash2 size={20} /></button>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6">
+                    <div className="md:col-span-1">
+                      <Field label="REF">
+                        <input value={mat.referencia} onChange={e => updateMaterial(idx, 'referencia', e.target.value)} className={inputClass} placeholder="Ex: TEC-001" />
+                      </Field>
                     </div>
-                    <div className="flex justify-end">
-                      <button type="button" onClick={() => removeMaterial(idx)} className="p-2 text-red-400 hover:text-red-600 transition-colors">
-                        <Trash2 size={18} />
-                      </button>
+                    <div className="md:col-span-3">
+                      <Field label="Descrição do Material">
+                        <input value={mat.descricao} onChange={e => updateMaterial(idx, 'descricao', e.target.value)} className={inputClass} placeholder="Ex: Forro para corpo" />
+                      </Field>
                     </div>
+
                     <Field label="Nome/Tipo">
-                      <input value={mat.nome} onChange={e => updateMaterial(idx, 'nome', e.target.value)} className={inputClass} />
+                      <input value={mat.nome} onChange={e => updateMaterial(idx, 'nome', e.target.value)} className={inputClass} placeholder="Ex: Fluity" />
                     </Field>
                     <Field label="Cor">
-                      <input value={mat.cor} onChange={e => updateMaterial(idx, 'cor', e.target.value)} className={inputClass} />
+                      <input value={mat.cor} onChange={e => updateMaterial(idx, 'cor', e.target.value)} className={inputClass} placeholder="Ex: Azul Marinho" />
                     </Field>
                     <Field label="Cod. Fornecedor">
                       <input value={mat.codFornecedor} onChange={e => updateMaterial(idx, 'codFornecedor', e.target.value)} className={inputClass} />
@@ -432,7 +439,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                       <input value={mat.composicao} onChange={e => updateMaterial(idx, 'composicao', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Largura">
-                      <input value={mat.largura} onChange={e => updateMaterial(idx, 'largura', e.target.value)} className={inputClass} placeholder="Ex: 1,50m" />
+                      <input value={mat.largura} onChange={e => updateMaterial(idx, 'largura', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Consumo p/ Peça">
                       <input value={mat.consumo} onChange={e => updateMaterial(idx, 'consumo', e.target.value)} className={inputClass} />
@@ -455,20 +462,24 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
               {aviamentos.map((av, idx) => (
-                <div key={idx} className="p-6 bg-gray-50 border border-gray-100 rounded-[24px] relative group overflow-hidden">
-                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                    <div className="sm:col-span-3">
-                      <input placeholder="Descrição do Aviamento (Ex: Botão banho ouro)" value={av.descricao} onChange={e => updateAviamento(idx, 'descricao', e.target.value)} className="w-full bg-transparent text-[16px] font-bold focus:outline-none mb-4" />
+                <div key={idx} className="p-8 bg-white border border-gray-100 rounded-[32px] shadow-sm relative group animate-in slide-in-from-right-4 duration-500">
+                  <button type="button" onClick={() => removeAviamento(idx)} className="absolute top-8 right-8 text-red-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><Trash2 size={20} /></button>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6">
+                    <div className="md:col-span-1">
+                      <Field label="REF">
+                        <input value={av.referencia} onChange={e => updateAviamento(idx, 'referencia', e.target.value)} className={inputClass} placeholder="Ex: AVI-01" />
+                      </Field>
                     </div>
-                    <div className="flex justify-end">
-                      <button type="button" onClick={() => removeAviamento(idx)} className="p-2 text-red-400 hover:text-red-600 transition-colors">
-                        <Trash2 size={18} />
-                      </button>
+                    <div className="md:col-span-3">
+                      <Field label="Descrição / Uso">
+                        <input value={av.descricao} onChange={e => updateAviamento(idx, 'descricao', e.target.value)} className={inputClass} placeholder="Ex: Zíper invisível" />
+                      </Field>
                     </div>
-                    <Field label="Nome">
-                      <input value={av.nome} onChange={e => updateAviamento(idx, 'nome', e.target.value)} className={inputClass} />
+
+                    <Field label="Nome / Marca">
+                      <input value={av.nome} onChange={e => updateAviamento(idx, 'nome', e.target.value)} className={inputClass} placeholder="Ex: YKK" />
                     </Field>
                     <Field label="Medida">
                       <input value={av.medida} onChange={e => updateAviamento(idx, 'medida', e.target.value)} className={inputClass} />

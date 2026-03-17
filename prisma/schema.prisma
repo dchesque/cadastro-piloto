@@ -49,6 +49,7 @@ model PecaTecido {
   id            String     @id @default(cuid())
   pecaId        String
   peca          PecaPiloto @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  referencia    String?
   descricao     String?
   nome          String?
   cor           String?
@@ -64,6 +65,7 @@ model PecaAviamento {
   id            String     @id @default(cuid())
   pecaId        String
   peca          PecaPiloto @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  referencia    String?
   descricao     String?
   nome          String?
   medida        String?
