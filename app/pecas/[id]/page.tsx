@@ -170,159 +170,152 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         </div>
       </header>
 
-      {/* Ficha Técnica Profissional (Layout A4) */}
+      {/* Ficha Técnica Clean (Layout A4) */}
       <div className="bg-white border border-gray-200 shadow-sm print:border-none print:shadow-none min-h-[297mm]">
         
-        {/* CABEÇALHO INDUSTRIAL */}
+        {/* CABEÇALHO COMPACTO */}
         <div className="grid grid-cols-4 border-b-2 border-black">
-          <div className="col-span-1 p-6 border-r-2 border-black flex flex-col justify-center items-center gap-2">
-            <div className="w-12 h-12 bg-black text-white rounded-lg flex items-center justify-center font-bold text-xl">JC</div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-center">JC PLUS SIZE</p>
+          <div className="col-span-1 p-4 border-r-2 border-black flex flex-col justify-center items-center">
+            <div className="w-10 h-10 bg-black text-white rounded-md flex items-center justify-center font-bold text-lg mb-1">JC</div>
+            <p className="text-[8px] font-black uppercase tracking-widest">JC STUDIO</p>
           </div>
-          <div className="col-span-2 p-6 flex flex-col justify-center">
-            <h1 className="text-2xl font-black uppercase tracking-tight leading-none mb-1">Ficha Técnica de Vestuário</h1>
+          <div className="col-span-2 p-4 flex flex-col justify-center">
+            <h1 className="text-xl font-black uppercase tracking-tight leading-none mb-1 text-black">Ficha Técnica de Vestuário</h1>
             <p className="text-[12px] font-bold text-gray-500 uppercase tracking-widest">{peca.nome}</p>
           </div>
-          <div className="col-span-1 p-6 border-l-2 border-black space-y-2 bg-gray-50">
-             <InfoBox label="Referência" value={peca.referencia} highlight />
-             <InfoBox label="Coleção" value={peca.colecao} />
-          </div>
-        </div>
-
-        {/* SEÇÃO 1: FOTOS E EQUIPE */}
-        <div className="grid grid-cols-2 border-b-2 border-black min-h-[400px]">
-          {/* FOTOS */}
-          <div className="p-6 border-r-2 border-black space-y-6">
-             <SectionLabel icon={<FileText size={14} />} label="Registro Fotográfico" />
-             <div className="grid grid-cols-2 gap-4 h-[350px]">
-                <PhotoContainer label="Frente" src={peca.fotoFrente} />
-                <PhotoContainer label="Verso" src={peca.fotoVerso} />
+          <div className="col-span-1 p-4 border-l-2 border-black space-y-2 bg-gray-50">
+             <div className="flex flex-col gap-1">
+               <p className="text-[8px] font-black uppercase text-gray-400">Referência</p>
+               <p className="text-[14px] font-black text-black leading-none">{peca.referencia}</p>
              </div>
-          </div>
-          
-          {/* EQUIPE E MODELAGEM */}
-          <div className="p-0 flex flex-col">
-             <div className="p-6 border-b-2 border-black flex-1">
-                <SectionLabel icon={<User size={14} />} label="Equipe e Desenvolvimento" />
-                <div className="grid grid-cols-2 gap-y-4 gap-x-6 mt-4">
-                   <TechnicalItem label="Estilista" value={peca.estilista} />
-                   <TechnicalItem label="Modelista" value={peca.modelista} />
-                   <TechnicalItem label="Pilotista" value={peca.pilotista} />
-                   <TechnicalItem label="Responsável Corte" value={peca.responsavelCorte} />
-                </div>
-             </div>
-             <div className="p-6 bg-gray-50/50">
-                <SectionLabel icon={<Scissors size={14} />} label="Modelagem e Grade" />
-                <div className="grid grid-cols-2 gap-6 mt-4">
-                   <TechnicalItem label="Grade de Tamanhos" value={peca.gradeCorte} />
-                   <TechnicalItem label="Tamanho Piloto" value={peca.tamanhoPiloto} />
-                </div>
+             <div className="flex flex-col gap-1">
+               <p className="text-[8px] font-black uppercase text-gray-400">Coleção</p>
+               <p className="text-[12px] font-bold text-gray-600">{peca.colecao}</p>
              </div>
           </div>
         </div>
 
-        {/* SEÇÃO 2: MATÉRIA PRIMA (TECIDOS) */}
-        <div className="p-6 border-b-2 border-black space-y-4">
-          <SectionLabel icon={<Package size={14} />} label="Matéria Prima Principal (Tecidos)" />
+        {/* BLOCO DE EQUIPE E MODELAGEM (UNIFICADO) */}
+        <div className="border-b-2 border-black bg-gray-50/50 p-4">
+          <div className="grid grid-cols-4 sm:grid-cols-6 gap-6">
+            <TechnicalItemSmall label="Estilista" value={peca.estilista} />
+            <TechnicalItemSmall label="Modelista" value={peca.modelista} />
+            <TechnicalItemSmall label="Pilotista" value={peca.pilotista} />
+            <TechnicalItemSmall label="Resp. Corte" value={peca.responsavelCorte} />
+            <TechnicalItemSmall label="Grade" value={peca.gradeCorte} />
+            <TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} />
+          </div>
+        </div>
+
+        {/* REGISTRO FOTOGRÁFICO (LARGURA TOTAL) */}
+        <div className="border-b-2 border-black min-h-[450px] p-4 space-y-4">
+          <SectionLabel icon={<ImageIcon size={14} />} label="Registro Fotográfico" />
+          <div className="grid grid-cols-2 gap-4 h-[400px]">
+             <PhotoContainerClean label="Frente" src={peca.fotoFrente} />
+             <PhotoContainerClean label="Verso" src={peca.fotoVerso} />
+          </div>
+        </div>
+
+        {/* MATÉRIA PRIMA (TECIDOS) - COMPACTA */}
+        <div className="p-4 border-b-2 border-black space-y-4">
+          <SectionLabel icon={<Package size={14} />} label="Matéria Prima" />
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-100/80 border-b-2 border-black">
-                <th className="p-3 text-[10px] font-black uppercase border-r border-gray-300">Descrição / Finalidade</th>
-                <th className="p-3 text-[10px] font-black uppercase border-r border-gray-300">Material</th>
-                <th className="p-3 text-[10px] font-black uppercase border-r border-gray-300">Cor</th>
-                <th className="p-3 text-[10px] font-black uppercase border-r border-gray-300">Fornecedor / Ref</th>
-                <th className="p-3 text-[10px] font-black uppercase">Consumo/Peça</th>
+                <th className="p-2 text-[9px] font-black uppercase border-r border-gray-300">Descrição</th>
+                <th className="p-2 text-[9px] font-black uppercase border-r border-gray-300">Material / Composição</th>
+                <th className="p-2 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
+                <th className="p-2 text-[9px] font-black uppercase border-r border-gray-300">Fornecedor / Ref</th>
+                <th className="p-2 text-[9px] font-black uppercase text-center w-24">Consumo</th>
               </tr>
             </thead>
-            <tbody className="text-[12px]">
+            <tbody className="text-[11px]">
               {peca.materiais && peca.materiais.length > 0 ? (
                 peca.materiais.map((mat, i) => (
                   <tr key={i} className="border-b border-gray-200">
-                    <td className="p-3 border-r border-gray-200 font-medium">{mat.descricao}</td>
-                    <td className="p-3 border-r border-gray-200">{mat.nome} / {mat.composicao}</td>
-                    <td className="p-3 border-r border-gray-200">{mat.cor}</td>
-                    <td className="p-3 border-r border-gray-200">{mat.codFornecedor}</td>
-                    <td className="p-3 font-bold">{mat.consumo}</td>
+                    <td className="p-2 border-r border-gray-200 font-bold uppercase">{mat.descricao}</td>
+                    <td className="p-2 border-r border-gray-200">{mat.nome} <span className="text-gray-400">/</span> {mat.composicao}</td>
+                    <td className="p-2 border-r border-gray-200 truncate">{mat.cor}</td>
+                    <td className="p-2 border-r border-gray-200 truncate">{mat.codFornecedor}</td>
+                    <td className="p-2 font-black text-center bg-gray-50">{mat.consumo}</td>
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan={5} className="p-4 text-center text-gray-400 italic">Nenhum tecido cadastrado nesta ficha.</td></tr>
+                <tr><td colSpan={5} className="p-4 text-center text-gray-400 italic">Nenhum tecido cadastrado.</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        {/* SEÇÃO 3: AVIAMENTOS */}
-        <div className="p-6 border-b-2 border-black space-y-4">
-          <SectionLabel icon={<Settings size={14} />} label="Aviamentos e Componentes" />
+        {/* AVIAMENTOS - COMPACTA */}
+        <div className="p-4 border-b-2 border-black space-y-4">
+          <SectionLabel icon={<Settings size={14} />} label="Aviamentos" />
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-100/80 border-b-2 border-black">
-                <th className="p-3 text-[10px] font-black uppercase border-r border-gray-300">Descrição / Nome</th>
-                <th className="p-3 text-[10px] font-black uppercase border-r border-gray-300">Medida</th>
-                <th className="p-3 text-[10px] font-black uppercase border-r border-gray-300">Cor</th>
-                <th className="p-3 text-[10px] font-black uppercase border-r border-gray-300">Ref / Fornecedor</th>
-                <th className="p-3 text-[10px] font-black uppercase">Consumo/Peça</th>
+                <th className="p-2 text-[9px] font-black uppercase border-r border-gray-300">Descrição / Nome</th>
+                <th className="p-2 text-[9px] font-black uppercase border-r border-gray-300 w-24 text-center">Medida</th>
+                <th className="p-2 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
+                <th className="p-2 text-[9px] font-black uppercase border-r border-gray-300">Fornecedor</th>
+                <th className="p-2 text-[9px] font-black uppercase text-center w-24">Consumo</th>
               </tr>
             </thead>
-            <tbody className="text-[12px]">
+            <tbody className="text-[11px]">
               {peca.aviamentos && peca.aviamentos.length > 0 ? (
                 peca.aviamentos.map((av, i) => (
                   <tr key={i} className="border-b border-gray-200">
-                    <td className="p-3 border-r border-gray-200 font-medium">{av.descricao} / {av.nome}</td>
-                    <td className="p-3 border-r border-gray-200">{av.medida}</td>
-                    <td className="p-3 border-r border-gray-200">{av.cor}</td>
-                    <td className="p-3 border-r border-gray-200">{av.codFornecedor}</td>
-                    <td className="p-3 font-bold">{av.consumo}</td>
+                    <td className="p-2 border-r border-gray-200 font-bold uppercase">{av.descricao} <span className="text-gray-400 font-normal">/</span> {av.nome}</td>
+                    <td className="p-2 border-r border-gray-200 text-center">{av.medida}</td>
+                    <td className="p-2 border-r border-gray-200 truncate">{av.cor}</td>
+                    <td className="p-2 border-r border-gray-200 truncate">{av.codFornecedor}</td>
+                    <td className="p-2 font-black text-center bg-gray-50">{av.consumo}</td>
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan={5} className="p-4 text-center text-gray-400 italic">Nenhum aviamento cadastrado nesta ficha.</td></tr>
+                <tr><td colSpan={5} className="p-4 text-center text-gray-400 italic">Nenhum aviamento cadastrado.</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        {/* SEÇÃO 4: OBSERVAÇÕES DE COSTURA */}
-        <div className="grid grid-cols-2 border-b-2 border-black">
-          <div className="p-6 border-r-2 border-black space-y-4">
-            <SectionLabel icon={<AlertCircle size={14} />} label="Pontos Críticos de Execução" />
-            <div className="p-4 bg-red-50/50 border border-red-100 rounded-xl text-[13px] text-red-900 leading-relaxed min-h-[100px] whitespace-pre-wrap italic">
-               {peca.pontosCriticos || "Nenhuma observação crítica registrada."}
-            </div>
-          </div>
-          <div className="p-0 flex flex-col">
-             <div className="p-6 border-b border-black bg-gray-50/30">
-                <div className="flex justify-between items-center mb-4">
-                   <SectionLabel icon={<User size={14} />} label="Especificações Técnicas" />
-                   <div className="flex gap-4">
-                      <div className="text-center">
-                         <p className="text-[8px] font-bold uppercase mb-1">Máquina</p>
-                         <p className="text-[11px] font-bold px-3 py-1 bg-white border border-black rounded">{peca.maquina || '—'}</p>
-                      </div>
-                      <div className="text-center">
-                         <p className="text-[8px] font-bold uppercase mb-1">Agulha</p>
-                         <p className="text-[11px] font-bold px-3 py-1 bg-white border border-black rounded">{peca.agulha || '—'}</p>
-                      </div>
-                   </div>
+        {/* OBSERVAÇÕES E COSTURA (HÍBRIDO) */}
+        <div className="grid grid-cols-3 border-b-2 border-black">
+          <div className="col-span-2 p-4 border-r-2 border-black space-y-3">
+             <SectionLabel icon={<AlertCircle size={14} />} label="Observações Técnicas" />
+             <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1">
+                   <p className="text-[8px] font-black uppercase text-red-500">Pontos Críticos</p>
+                   <p className="text-[11px] leading-tight text-gray-600 italic whitespace-pre-wrap">{peca.pontosCriticos || "—"}</p>
                 </div>
-                <div className="text-[12px] leading-relaxed whitespace-pre-wrap min-h-[60px]">
-                   <span className="font-bold uppercase text-[9px] block mb-1">Características de Costura e Acabamento:</span>
-                   {peca.caracteristicasCostura || 'Não informado.'}
+                <div className="space-y-1">
+                   <p className="text-[8px] font-black uppercase text-blue-500">Acabamento</p>
+                   <p className="text-[11px] leading-tight text-gray-600 whitespace-pre-wrap">{peca.caracteristicasCostura || "—"}</p>
                 </div>
              </div>
           </div>
+          <div className="col-span-1 p-4 bg-gray-50/50 flex flex-col justify-center">
+             <div className="flex gap-4 mb-2">
+                <div className="flex-1 text-center border-b border-black/10 pb-2">
+                   <p className="text-[7px] font-black uppercase text-gray-400 mb-1">Máquina</p>
+                   <p className="text-[12px] font-black text-black">{peca.maquina || '—'}</p>
+                </div>
+                <div className="flex-1 text-center border-b border-black/10 pb-2">
+                   <p className="text-[7px] font-black uppercase text-gray-400 mb-1">Agulha</p>
+                   <p className="text-[12px] font-black text-black">{peca.agulha || '—'}</p>
+                </div>
+             </div>
+             <p className="text-[10px] font-medium text-gray-400 text-center">ESPECIFICAÇÕES</p>
+          </div>
         </div>
 
-        {/* RODAPÉ */}
-        <div className="p-10 flex justify-between items-end bg-gray-50/50">
-           <div className="space-y-1">
-              <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Documento Técnico Emitido em</p>
-              <p className="text-[11px] font-bold text-black">{new Date().toLocaleString('pt-BR')}</p>
+        {/* RODAPÉ MINIMALISTA */}
+        <div className="p-6 flex justify-between items-center bg-white">
+           <div className="flex gap-4">
+              <p className="text-[8px] font-black text-gray-300 uppercase underline">DOC-JC-PECA-{peca.id.slice(-6)}</p>
+              <p className="text-[8px] font-black text-gray-300 uppercase">{new Date().toLocaleDateString('pt-BR')}</p>
            </div>
-           <div className="text-center space-y-6">
-              <div className="w-64 h-[2px] bg-black/10" />
-              <p className="text-[10px] font-bold uppercase tracking-tighter">Assinatura Responsável / JC STUDIO</p>
+           <div className="w-1/3 border-t border-black pb-1">
+              <p className="text-[8px] font-black text-center uppercase tracking-widest mt-1">Assinatura Responsável</p>
            </div>
         </div>
 
@@ -363,46 +356,35 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
 
 function SectionLabel({ icon, label }: { icon: React.ReactNode, label: string }) {
   return (
-    <h2 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-black">
+    <h2 className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.15em] text-black">
       {icon} {label}
     </h2>
   )
 }
 
-function TechnicalItem({ label, value }: { label: string, value: string | null }) {
+function TechnicalItemSmall({ label, value }: { label: string, value: string | null }) {
   return (
-    <div className="space-y-1">
-      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">{label}</p>
-      <p className="text-[13px] font-bold text-black border-b border-gray-100 pb-1">{value || '—'}</p>
+    <div className="flex flex-col">
+      <p className="text-[7px] font-black uppercase text-gray-400 mb-0.5">{label}</p>
+      <p className="text-[11px] font-bold text-black border-b border-black/5 pb-0.5 truncate">{value || '—'}</p>
     </div>
   )
 }
 
-function InfoBox({ label, value, highlight = false }: { label: string, value: string | null, highlight?: boolean }) {
+function PhotoContainerClean({ label, src }: { label: string, src: string | null }) {
   return (
-    <div className="space-y-0.5">
-       <p className="text-[8px] font-black uppercase text-gray-400">{label}</p>
-       <p className={`text-[14px] font-black leading-none ${highlight ? 'text-black' : 'text-gray-600'}`}>
-         {value || '—'}
-       </p>
-    </div>
-  )
-}
-
-function PhotoContainer({ label, src }: { label: string, src: string | null }) {
-  return (
-    <div className="flex flex-col gap-2 h-full">
-       <div className="flex-1 border-2 border-dashed border-gray-200 rounded-2xl flex items-center justify-center overflow-hidden bg-gray-50 group hover:border-black/20 transition-all">
+    <div className="flex flex-col gap-1.5 h-full">
+       <div className="flex-1 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center overflow-hidden bg-white/50 group hover:border-black/20 transition-all">
           {src ? (
             <img src={src} className="w-full h-full object-contain" />
           ) : (
-            <div className="text-center p-4">
-              <ImageIcon size={32} className="mx-auto text-gray-200 mb-2" />
-              <p className="text-[10px] font-bold text-gray-300 uppercase tracking-tighter">Sem Foto {label}</p>
+            <div className="text-center p-2 opacity-20">
+              <ImageIcon size={24} className="mx-auto mb-1" />
+              <p className="text-[8px] font-black uppercase tracking-tighter">SEM FOTO {label}</p>
             </div>
           )}
        </div>
-       <p className="text-[9px] font-black uppercase text-center tracking-widest text-gray-400">{label}</p>
+       <p className="text-[8px] font-black uppercase text-center tracking-widest text-gray-300">{label}</p>
     </div>
   )
 }
