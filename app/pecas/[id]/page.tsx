@@ -205,8 +205,30 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             <TechnicalItemSmall label="Modelista" value={peca.modelista} />
             <TechnicalItemSmall label="Pilotista" value={peca.pilotista} />
             <TechnicalItemSmall label="Resp. Corte" value={peca.responsavelCorte} />
-            <TechnicalItemSmall label="Grade" value={peca.gradeCorte} />
             <TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} />
+            
+            {/* GRADE EM FORMATO DE TABELA PARA CORTE */}
+            <div className="col-span-4 sm:col-span-6 mt-4">
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Grade / Quantidades (Corte)</p>
+              <div className="overflow-x-auto">
+                <table className="border-collapse border-2 border-black w-full text-center">
+                  <thead>
+                    <tr className="bg-gray-50 uppercase text-[10px] font-black">
+                      {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((size, i) => (
+                        <th key={i} className="border-2 border-black p-2 min-w-[50px]">{size.trim()}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
+                        <td key={i} className="border-2 border-black h-10"></td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
 
