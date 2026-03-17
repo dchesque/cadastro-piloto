@@ -139,6 +139,35 @@ export default async function ImprimirPecaPage({ params }: { params: Promise<{ i
           <QRCodeSVG value={qrUrl} size={60} />
         </div>
       </div>
+
+      <style jsx global>{`
+        @media print {
+          @page {
+            size: 100mm 150mm;
+            margin: 0;
+          }
+          html, body {
+            width: 100mm !important;
+            height: 150mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            background: white !important;
+          }
+          #print-area {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100mm !important;
+            height: 150mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

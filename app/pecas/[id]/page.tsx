@@ -129,7 +129,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="max-w-[210mm] mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 print:pb-0 print:m-0">
+    <div className="max-w-[210mm] mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 print:pb-0 print:m-0 print:max-w-none print:w-full">
       {/* Ações e Navegação */}
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 print:hidden">
         <button 
@@ -199,41 +199,51 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           </div>
         </div>
 
-        {/* BLOCO DE EQUIPE E MODELAGEM (DUAS COLUNAS PRINCIPAIS - GRID 12) */}
-        <div className="border-b-2 border-black bg-gray-50/50 p-4">
-          <div className="grid grid-cols-12 gap-x-8 items-start">
-            {/* COLUNA 1: DADOS (COL-SPAN-8) */}
-            <div className="col-span-8 grid grid-cols-3 gap-y-5 gap-x-6">
-              <TechnicalItemSmall label="Estilista" value={peca.estilista} />
-              <TechnicalItemSmall label="Modelista" value={peca.modelista} />
-              <TechnicalItemSmall label="Pilotista" value={peca.pilotista} />
-              
-              <TechnicalItemSmall label="Resp. Corte" value={peca.responsavelCorte} />
-              <TechnicalItemSmall label="Oficina" value={peca.oficina} />
-              <TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} />
-            </div>
-
-            {/* COLUNA 2: GRADE (COL-SPAN-4) */}
-            <div className="col-span-4 flex flex-col border-l-2 border-dashed border-gray-300 pl-6 h-full">
-              <p className="text-[8px] font-black uppercase text-gray-400 mb-2">Grade / Qtd. (Corte)</p>
-              <table className="border-collapse border-2 border-black w-full text-center bg-white shadow-sm">
-                <thead>
-                  <tr className="bg-gray-50 uppercase text-[9px] font-black">
-                    {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((size, i) => (
-                      <th key={i} className="border-2 border-black px-1 py-1 min-w-[30px] leading-tight">{size.trim()}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="h-8">
-                  <tr>
-                    {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
-                      <td key={i} className="border-2 border-black"></td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+        {/* BLOCO DE EQUIPE E MODELAGEM (TABELA INDUSTRIAL PARA ESTABILIDADE TOTAL NO PRINT) */}
+        <div className="border-b-2 border-black bg-gray-50/50 print:bg-gray-50/50">
+          <table className="w-full border-collapse">
+            <tbody>
+              <tr>
+                {/* COLUNA 1: DADOS (70%) */}
+                <td className="w-[70%] p-4 align-top">
+                  <table className="w-full border-separate border-spacing-y-6 border-spacing-x-8">
+                    <tbody>
+                      <tr>
+                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Estilista" value={peca.estilista} /></td>
+                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Modelista" value={peca.modelista} /></td>
+                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Pilotista" value={peca.pilotista} /></td>
+                      </tr>
+                      <tr>
+                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Resp. Corte" value={peca.responsavelCorte} /></td>
+                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Oficina" value={peca.oficina} /></td>
+                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+                {/* COLUNA 2: GRADE (30%) */}
+                <td className="w-[30%] p-4 align-top border-l-2 border-dashed border-gray-300 min-w-[180px]">
+                  <p className="text-[9px] font-black uppercase text-gray-500 mb-2">Grade / Qtd. (Corte)</p>
+                  <table className="border-collapse border-2 border-black w-full text-center bg-white">
+                    <thead>
+                      <tr className="bg-gray-50 uppercase text-[10px] font-black">
+                        {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((size, i) => (
+                          <th key={i} className="border-2 border-black px-1 py-1 min-w-[35px] leading-none">{size.trim()}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="h-10">
+                      <tr>
+                        {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
+                          <td key={i} className="border-2 border-black"></td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         {/* REGISTRO FOTOGRÁFICO (LARGURA TOTAL) */}
@@ -400,7 +410,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         @media print {
           @page {
             size: A4;
-            margin: 0cm;
+            margin: 0.5cm;
           }
           body { 
             background: white !important; 
@@ -409,7 +419,15 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             print-color-adjust: exact !important;
           }
           .print\\:hidden { display: none !important; }
-          .max-w-\\[210mm\\] { width: 210mm !important; max-width: 210mm !important; margin: 0 !important; }
+          /* Forçar a Ficha a ocupar toda a largura da folha */
+          .max-w-\\[210mm\\] { 
+            width: 100% !important; 
+            max-width: none !important; 
+            margin: 0 !important; 
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+          }
         }
       `}</style>
     </div>
@@ -427,8 +445,8 @@ function SectionLabel({ icon, label }: { icon: React.ReactNode, label: string })
 function TechnicalItemSmall({ label, value }: { label: string, value: string | null }) {
   return (
     <div className="flex flex-col">
-      <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5">{label}</p>
-      <p className="text-[12px] font-bold text-black border-b border-black/5 pb-0.5">{value || '—'}</p>
+      <p className="text-[9px] font-black uppercase text-gray-500 mb-0.5">{label}</p>
+      <p className="text-[14px] font-bold text-black border-b border-black/10 pb-1">{value || '—'}</p>
     </div>
   )
 }
