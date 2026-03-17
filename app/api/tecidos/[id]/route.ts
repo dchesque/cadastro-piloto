@@ -13,7 +13,7 @@ export async function GET(
 
     if (!tecido) {
       return NextResponse.json(
-        { error: 'Tecido não encontrado', message: 'Tecido não encontrado' },
+        { error: 'Tecido não encontrada', message: 'Tecido não encontrada' },
         { status: 404 }
       )
     }
@@ -35,13 +35,21 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
+    
+    // Extrair campos que não devem ser passados no "data" do update
+    const { 
+      id: bodyId, 
+      createdAt, 
+      updatedAt, 
+      ...tecidoData 
+    } = body
 
-    const tecido = await prisma.corteTecido.update({
+    const result = await prisma.corteTecido.update({
       where: { id },
-      data: body,
+      data: tecidoData,
     })
 
-    return NextResponse.json({ data: tecido })
+    return NextResponse.json({ data: result })
   } catch (error) {
     console.error('Erro ao atualizar tecido:', error)
     return NextResponse.json(

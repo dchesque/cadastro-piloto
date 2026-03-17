@@ -20,7 +20,12 @@ import {
   Settings,
   AlertCircle,
   Image as ImageIcon,
-  Check
+  Check,
+  Download,
+  MoreVertical,
+  Type,
+  Eye,
+  Layers
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -32,7 +37,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { formatDate } from '@/lib/utils'
+
+interface PecaModelagem {
+  id?: string
+  nome: string
+  url: string
+  createdAt?: string
+}
 
 interface PecaPiloto {
   id: string
@@ -43,7 +56,7 @@ interface PecaPiloto {
   modelista: string | null
   pilotista: string | null
   responsavelCorte: string | null
-  oficina: string | null // Added 'oficina' field
+  oficina: string | null
   tamanhoPiloto: string | null
   gradeCorte: string | null
   fotoFrente: string | null
@@ -58,6 +71,7 @@ interface PecaPiloto {
   materiais: any[]
   aviamentos: any[]
   equipamentos: any[]
+  modelagens: PecaModelagem[]
 }
 
 export default function PecaViewPage({ params }: { params: Promise<{ id: string }> }) {
@@ -68,6 +82,19 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
   const [peca, setPeca] = useState<PecaPiloto | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [activeTab, setActiveTab] = useState('ficha')
+  const [uploadingModelagem, setUploadingModelagem] = useState(false)
+  const [cortes, setCortes] = useState<any[]>([])
+  const [loadingCortes, setLoadingCortes] = useState(false)
+
+  // Estados para Gestão de Modelagem
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false)
+  const [editingModeling, setEditingModeling] = useState<PecaModelagem | null>(null)
+  const [newName, setNewName] = useState('')
+  
+  const [doubleConfirmOpen, setDoubleConfirmOpen] = useState(false)
+  const [modelingToDelete, setModelingToDelete] = useState<PecaModelagem | null>(null)
+  const [confirmStep, setConfirmStep] = useState(1)
 
   const fetchPeca = async () => {
     setLoading(true)
@@ -85,8 +112,26 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
   }
 
   useEffect(() => {
-    if (id) fetchPeca()
+    if (id) {
+      fetchPeca()
+      fetchCortes()
+    }
   }, [id])
+
+  const fetchCortes = async () => {
+    setLoadingCortes(true)
+    try {
+      const response = await fetch(`/api/pecas/${id}/corte`)
+      const result = await response.json()
+      if (response.ok) {
+        setCortes(result.data)
+      }
+    } catch (error) {
+      console.error('Erro ao buscar cortes:', error)
+    } finally {
+      setLoadingCortes(false)
+    }
+  }
 
   const handleDelete = async () => {
     setDeleting(true)
@@ -101,6 +146,101 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
     } finally {
       setDeleting(false)
       setDeleteDialogOpen(false)
+    }
+  }
+
+  const handleModelagemUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploadingModelagem(true)
+    try {
+      const newModelagens = [...(peca?.modelagens || [])]
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        const result = await response.json()
+
+        if (response.ok) {
+          newModelagens.push({
+            nome: file.name,
+            url: result.url,
+            createdAt: new Date().toISOString()
+          })
+        }
+      }
+
+      const updateRes = await fetch(`/api/pecas/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ modelagens: newModelagens }),
+      })
+
+      if (updateRes.ok) {
+        fetchPeca()
+        showToast({ title: 'Sucesso', description: `${files.length} arquivo(s) enviado(s) com sucesso!` })
+      }
+    } catch (error) {
+      console.error('Erro no upload:', error)
+      showToast({ title: 'Erro', description: 'Falha ao enviar arquivo(s)', variant: 'destructive' })
+    } finally {
+      setUploadingModelagem(false)
+      if (e.target) e.target.value = ''
+    }
+  }
+
+  const handleRenameModeling = async () => {
+    if (!editingModeling || !newName.trim() || !peca) return
+    
+    const updatedModelagens = peca.modelagens.map(m => 
+      m.url === editingModeling.url ? { ...m, nome: newName.trim() } : m
+    )
+
+    try {
+      const res = await fetch(`/api/pecas/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ modelagens: updatedModelagens }),
+      })
+
+      if (res.ok) {
+        fetchPeca()
+        setRenameDialogOpen(false)
+        showToast({ title: 'Sucesso', description: 'Arquivo renomeado!' })
+      }
+    } catch (error) {
+      showToast({ title: 'Erro', description: 'Erro ao renomear', variant: 'destructive' })
+    }
+  }
+
+  const handleDeleteModeling = async () => {
+    if (!modelingToDelete || !peca) return
+
+    const updatedModelagens = peca.modelagens.filter(m => m.url !== modelingToDelete.url)
+
+    try {
+      const res = await fetch(`/api/pecas/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ modelagens: updatedModelagens }),
+      })
+
+      if (res.ok) {
+        fetchPeca()
+        setDoubleConfirmOpen(false)
+        setConfirmStep(1)
+        showToast({ title: 'Removido', description: 'Modelagem excluída do histórico' })
+      }
+    } catch (error) {
+      showToast({ title: 'Erro', description: 'Erro ao excluir', variant: 'destructive' })
     }
   }
 
@@ -129,7 +269,35 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="max-w-[210mm] mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 print:pb-0 print:m-0 print:max-w-none print:w-full">
+    <div className="max-w-[210mm] mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 print:pb-0 print:m-0 print:max-w-none print:w-full print:bg-white">
+      <style jsx global>{`
+        @media print {
+          @page {
+            size: A4;
+            margin: 10mm;
+          }
+          body {
+            background: white !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .print-break-avoid {
+            break-inside: avoid !important;
+          }
+          .print-section {
+            display: block;
+            width: 100%;
+            break-inside: auto;
+          }
+          .ficha-footer {
+            break-inside: avoid !important;
+          }
+          /* Forçar quebra se necessário */
+          .page-break {
+            break-after: page;
+          }
+        }
+      `}</style>
       {/* Ações e Navegação */}
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 print:hidden">
         <button 
@@ -140,315 +308,589 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           Voltar
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Link href={`/pecas/${id}/ficha`}>
             <button className="btn-premium h-9 px-4 flex items-center gap-2 bg-black text-white text-[12px] font-bold hover:bg-gray-800 transition-all shadow-lg shadow-black/10">
-              <ClipboardList size={15} />
-              Editar Ficha Profissional
+              <Pencil size={15} />
+              Editar Ficha
             </button>
           </Link>
           <div className="w-[1px] h-4 bg-[--color-border-light] mx-1" />
-          <button className="btn-premium btn-outline h-9 px-4 flex items-center gap-2 bg-white text-[12px] font-bold">
-            <Tag size={15} />
-            Etiqueta
-          </button>
           <button 
             onClick={handlePrint}
-            className="btn-premium btn-primary h-9 px-4 flex items-center gap-2 text-[12px] font-bold"
+            className="btn-premium h-9 px-4 flex items-center gap-2 bg-white border border-[--color-border-light] text-[12px] font-bold text-[--color-text-secondary] hover:bg-gray-50 transition-all"
           >
             <Printer size={15} />
-            Imprimir
+            Imprimir Ficha A4
           </button>
-          <div className="w-[1px] h-4 bg-[--color-border-light] mx-1" />
-          <Link href={`/pecas/${id}/editar`}>
-            <button className="w-9 h-9 flex items-center justify-center rounded-xl text-blue-600 bg-blue-50 hover:bg-blue-100 transition-all">
-              <Pencil size={16} />
+          <Link href={`/pecas/${id}/imprimir`}>
+            <button className="btn-premium h-9 px-4 flex items-center gap-2 bg-white border border-[--color-border-light] text-[12px] font-bold text-[--color-text-secondary] hover:bg-gray-50 transition-all">
+              <Tag size={15} />
+              Imprimir Etiqueta
             </button>
           </Link>
           <button 
             onClick={() => setDeleteDialogOpen(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-xl text-red-600 bg-red-50 hover:bg-red-100 transition-all"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all"
+            title="Excluir peça"
           >
             <Trash2 size={16} />
           </button>
         </div>
       </header>
 
-      {/* Ficha Técnica Clean (Layout A4) */}
-      <div className="bg-white border border-gray-200 shadow-sm print:border-none print:shadow-none min-h-[297mm]">
+      {/* Navegação por Abas */}
+      <nav className="flex gap-2 p-1 bg-gray-100/50 rounded-2xl border border-gray-100 mb-6 print:hidden">
+        <button 
+          onClick={() => setActiveTab('ficha')}
+          className={`flex-1 flex items-center justify-center gap-2 h-10 text-[12px] font-bold rounded-xl transition-all ${activeTab === 'ficha' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          <FileText size={16} /> Ficha Técnica
+        </button>
+        <button 
+          onClick={() => setActiveTab('corte')}
+          className={`flex-1 flex items-center justify-center gap-2 h-10 text-[12px] font-bold rounded-xl transition-all ${activeTab === 'corte' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          <CheckCircle2 size={16} /> Ficha de Corte
+        </button>
+        <button 
+          onClick={() => setActiveTab('modelagem')}
+          className={`flex-1 flex items-center justify-center gap-2 h-10 text-[12px] font-bold rounded-xl transition-all ${activeTab === 'modelagem' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          <Scissors size={16} /> Modelagem
+        </button>
+      </nav>
+
+      {/* CONTEÚDO DAS ABAS */}
+      <div className="relative">
         
-        {/* CABEÇALHO COMPACTO */}
-        <div className="grid grid-cols-4 border-b-2 border-black">
-          <div className="col-span-1 p-2 border-r-2 border-black flex flex-col justify-center items-center">
-            <div className="w-9 h-9 bg-black text-white rounded-md flex items-center justify-center font-bold text-lg mb-0.5">JC</div>
-            <p className="text-[8px] font-black uppercase tracking-widest">JC STUDIO</p>
-          </div>
-          <div className="col-span-2 p-2 flex flex-col justify-center">
-            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5">Ficha Técnica de Vestuário</p>
-            <h1 className="text-xl font-black uppercase tracking-tight leading-none text-black">{peca.nome}</h1>
-          </div>
-          <div className="col-span-1 p-2 border-l-2 border-black space-y-1.5 bg-gray-50">
-             <div className="flex flex-col gap-0.5">
-               <p className="text-[7px] font-black uppercase text-gray-400">Referência</p>
-               <p className="text-[13px] font-black text-black leading-none">{peca.referencia}</p>
-             </div>
-             <div className="flex flex-col gap-0.5">
-               <p className="text-[7px] font-black uppercase text-gray-400">Coleção</p>
-               <p className="text-[11px] font-bold text-gray-600 leading-none">{peca.colecao}</p>
-             </div>
+        {/* ABA FICHA TÉCNICA */}
+        <div className={`${activeTab === 'ficha' ? 'block' : 'hidden print:block'}`}>
+          <div className="bg-white overflow-hidden relative shadow-sm print:shadow-none">
+            
+            {/* CONTAINER PÁGINA 1: CABEÇALHO ATÉ AVIAMENTOS */}
+            <div className="print-section">
+            
+            {/* CABEÇALHO INDUSTRIAL PADRONIZADO */}
+            <div className="grid grid-cols-4 border-2 border-black">
+               <div className="col-span-1 p-2 border-r-2 border-black flex flex-col justify-center items-center bg-black text-white">
+                  <div className="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-black text-lg mb-0.5">JC</div>
+                  <p className="text-[8px] font-black uppercase tracking-widest leading-none">JC STUDIO</p>
+               </div>
+               <div className="col-span-2 p-2 px-3 flex flex-col justify-center">
+                  <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5">Ficha Técnica de Vestuário</p>
+                  <h1 className="text-xl font-black uppercase tracking-tight leading-none truncate">{peca.nome}</h1>
+                  <p className="text-[10px] font-bold text-gray-500 mt-1 uppercase tracking-widest">{peca.colecao}</p>
+               </div>
+               <div className="col-span-1 p-2 border-l-2 border-black flex flex-col justify-center items-center bg-gray-50">
+                  <div className="text-center mb-1.5 border-b border-black/10 pb-1 w-full">
+                    <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5">Referência</p>
+                    <p className="text-[14px] font-black text-black leading-none uppercase">{peca.referencia}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[7px] font-black uppercase text-gray-300">Data Cadastro</p>
+                    <p className="text-[9px] font-bold text-gray-400 leading-none">
+                      {peca.createdAt ? new Date(peca.createdAt).toLocaleDateString('pt-BR') : '—'}
+                    </p>
+                  </div>
+               </div>
+            </div>
+
+            {/* BLOCO DE EQUIPE E DADOS TÉCNICOS (ESTRUTURA EM 2 LINHAS) */}
+            <div className="border-x-2 border-b-2 border-black bg-gray-50/30">
+              {/* LINHA 1: EQUIPE */}
+              <div className="grid grid-cols-5 border-b-2 border-black">
+                <div className="p-1 border-r-2 border-black">
+                  <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 leading-none">Estilista</p>
+                  <p className="text-[11px] font-bold text-black uppercase truncate">{peca.estilista || '—'}</p>
+                </div>
+                <div className="p-1 border-r-2 border-black">
+                  <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 leading-none">Modelista</p>
+                  <p className="text-[11px] font-bold text-black uppercase truncate">{peca.modelista || '—'}</p>
+                </div>
+                <div className="p-1 border-r-2 border-black">
+                  <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 leading-none">Pilotista</p>
+                  <p className="text-[11px] font-bold text-black uppercase truncate">{peca.pilotista || '—'}</p>
+                </div>
+                <div className="p-1 border-r-2 border-black">
+                  <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 leading-none">Oficina</p>
+                  <p className="text-[11px] font-bold text-black uppercase truncate">{peca.oficina || '—'}</p>
+                </div>
+                <div className="p-1">
+                  <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 leading-none">Resp. Corte</p>
+                  <p className="text-[11px] font-bold text-black uppercase truncate">{peca.responsavelCorte || '—'}</p>
+                </div>
+              </div>
+
+              {/* LINHA 2: GRADE E TAMANHO PILOTO (MAIS ESPAÇO) */}
+              <div className="grid grid-cols-6 bg-white">
+                <div className="col-span-5 p-1 px-3 border-r-2 border-black">
+                  <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 leading-none">Grade de Tamanhos Disponíveis</p>
+                  <p className="text-[12px] font-black text-black uppercase tracking-[0.2em]">{peca.gradeCorte || '—'}</p>
+                </div>
+                <div className="col-span-1 p-1 flex flex-col justify-center items-center bg-gray-50">
+                  <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5 leading-none">Tam. Piloto</p>
+                  <p className="text-[16px] font-black text-black leading-none">{peca.tamanhoPiloto || '—'}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* FOTOS PADRONIZADAS */}
+            <div className="border-x-2 border-b-2 border-black p-1 bg-white">
+              <div className="grid grid-cols-2 gap-2 h-[340px]">
+                <PhotoContainerClean label="Vista Frente" src={peca.fotoFrente} />
+                <PhotoContainerClean label="Vista Verso" src={peca.fotoVerso} />
+              </div>
+            </div>
+
+            {/* MATERIAIS PADRONIZADOS */}
+            <div className="p-3 border-x-2 border-b-2 border-black space-y-2 bg-white">
+               <div className="flex items-center gap-2 mb-1 px-1">
+                  <div className="h-[2px] w-6 bg-black"></div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-black flex items-center gap-2">
+                     <Package size={14} /> Matéria Prima (Tecidos)
+                  </p>
+               </div>
+               <table className="w-full text-left border-collapse border-2 border-black">
+                  <thead>
+                     <tr className="bg-black text-white">
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20 w-16">REF</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20">Nome</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20">Composição</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20 w-16 text-center">Larg</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20">Cor</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase text-center w-20 bg-gray-800">Consumo</th>
+                     </tr>
+                  </thead>
+                  <tbody className="text-[11px] font-bold">
+                     {peca.materiais?.map((mat, i) => (
+                        <tr key={i} className="border-b border-black last:border-0 hover:bg-gray-50 transition-colors">
+                           <td className="p-1.5 px-2 border-r border-black font-black">{mat.referencia || '—'}</td>
+                           <td className="p-1.5 px-2 border-r border-black font-black uppercase">{mat.nome || '—'}</td>
+                           <td className="p-1.5 px-2 border-r border-black text-[10px] leading-tight font-medium uppercase">{mat.composicao || '—'}</td>
+                           <td className="p-1.5 px-2 border-r border-black text-center font-black">{mat.largura || '—'}</td>
+                           <td className="p-1.5 px-2 border-r border-black truncate uppercase">{mat.cor || '—'}</td>
+                           <td className="p-1.5 px-2 font-black text-center bg-gray-50">{mat.consumo || '—'}</td>
+                        </tr>
+                     ))}
+                     {(!peca.materiais || peca.materiais.length === 0) && (
+                        <tr><td colSpan={6} className="p-4 text-center text-gray-400 font-bold uppercase text-[10px] italic">Nenhum tecido cadastrado conforme padrão JC.</td></tr>
+                     )}
+                  </tbody>
+               </table>
+            </div>
+
+            {/* AVIAMENTOS PADRONIZADOS */}
+            <div className="p-3 border-x-2 border-b-2 border-black space-y-2 bg-white">
+               <div className="flex items-center gap-2 mb-1 px-1">
+                  <div className="h-[2px] w-6 bg-black"></div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-black flex items-center gap-2">
+                     <Settings size={14} /> Aviamentos e Componentes
+                  </p>
+               </div>
+               <table className="w-full text-left border-collapse border-2 border-black">
+                  <thead>
+                     <tr className="bg-black text-white">
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20 w-16">REF</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20">Nome / Marca</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20 w-24 text-center">Medida</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase border-r border-white/20">Cor</th>
+                        <th className="p-1 px-2 text-[9px] font-black uppercase text-center w-24 bg-gray-800">Consumo</th>
+                     </tr>
+                  </thead>
+                  <tbody className="text-[11px] font-bold">
+                     {peca.aviamentos?.map((av, i) => (
+                        <tr key={i} className="border-b border-black last:border-0 hover:bg-gray-50 transition-colors">
+                           <td className="p-1.5 px-2 border-r border-black font-black">{av.referencia || '—'}</td>
+                           <td className="p-1.5 px-2 border-r border-black font-black uppercase">{av.nome || '—'}</td>
+                           <td className="p-1.5 px-2 border-r border-black text-center uppercase">{av.medida || '—'}</td>
+                           <td className="p-1.5 px-2 border-r border-black truncate uppercase">{av.cor || '—'}</td>
+                           <td className="p-1.5 px-2 font-black text-center bg-gray-50">{av.consumo || '—'}</td>
+                        </tr>
+                     ))}
+                     {(!peca.aviamentos || peca.aviamentos.length === 0) && (
+                        <tr><td colSpan={5} className="p-4 text-center text-gray-400 font-bold uppercase text-[10px] italic">Nenhum aviamento cadastrado conforme padrão JC.</td></tr>
+                     )}
+                  </tbody>
+               </table>
+            </div>
+
+            </div> {/* FIM PÁGINA 1 LÓGICA */}
+
+            {/* CONTAINER PÁGINA 2: OBSERVAÇÕES ATÉ RODAPÉ */}
+            <div className="print-section">
+
+            {/* OBSERVAÇÕES E EQUIPAMENTOS PADRONIZADOS */}
+            <div className="grid grid-cols-3 border-x-2 border-b-2 border-black bg-white">
+               <div className="col-span-2 p-3 border-r-2 border-black space-y-3">
+                  <div className="flex items-center gap-2 mb-1">
+                     <div className="h-[2px] w-6 bg-black"></div>
+                     <p className="text-[10px] font-black uppercase tracking-widest text-black flex items-center gap-2">
+                        <AlertCircle size={14} /> Observações Técnicas de Produção
+                     </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                     <div className="space-y-1 p-2 bg-red-50/30 rounded border border-red-100">
+                        <p className="text-[8px] font-black uppercase text-red-600 tracking-tighter">Pontos Críticos</p>
+                        <p className="text-[10px] leading-tight text-gray-700 font-medium whitespace-pre-wrap">{peca.pontosCriticos || "Nenhuma criticidade reportada."}</p>
+                     </div>
+                     <div className="space-y-1 p-2 bg-blue-50/30 rounded border border-blue-100">
+                        <p className="text-[8px] font-black uppercase text-blue-600 tracking-tighter">Instruções de Costura</p>
+                        <p className="text-[10px] leading-tight text-gray-700 font-medium whitespace-pre-wrap">{peca.caracteristicasCostura || "Seguir padrão de costura industrial JC."}</p>
+                     </div>
+                  </div>
+               </div>
+               <div className="col-span-1 p-3 bg-gray-50/30 flex flex-col justify-start">
+                  <p className="text-[8px] font-black text-gray-400 text-center uppercase tracking-widest mb-2 border-b-2 border-black pb-1">Maquinário Requerido</p>
+                  <div className="space-y-1.5 overflow-hidden">
+                     {peca.equipamentos?.map((eq, i) => (
+                        <div key={i} className="flex gap-2 items-center border-b border-black/10 pb-1.5 last:border-0">
+                           <div className="flex-1">
+                              <p className="text-[7px] font-black uppercase text-gray-400 leading-none mb-0.5">Máquina</p>
+                              <p className="text-[10px] font-black text-black leading-tight uppercase">{eq.maquina}</p>
+                           </div>
+                           <div className="w-14 text-center border-l border-black/10 transition-colors group-hover:bg-white">
+                              <p className="text-[7px] font-black uppercase text-gray-400 leading-none mb-0.5">Agulha</p>
+                              <p className="text-[10px] font-black text-black leading-tight uppercase">{eq.agulha}</p>
+                           </div>
+                        </div>
+                     ))}
+                     {(!peca.equipamentos || peca.equipamentos.length === 0) && (
+                        <div className="text-center py-6"><p className="text-[9px] text-gray-300 font-bold uppercase italic">Sem especificações de máquinas.</p></div>
+                     )}
+                  </div>
+               </div>
+            </div>
+
+            {/* NOTAS GERAIS PADRONIZADAS */}
+            {peca.observacoesGerais && (
+               <div className="p-3 border-x-2 border-b-2 border-black bg-yellow-50/10">
+                  <div className="flex items-start gap-3">
+                     <div className="mt-0.5 p-1 bg-yellow-100 rounded text-yellow-700 print:hidden">
+                        <ClipboardList size={12} />
+                     </div>
+                     <div className="flex-1">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-yellow-800/40 mb-1 leading-none">Anotações Gerais Adicionais</p>
+                        <p className="text-[10px] leading-relaxed text-gray-700 font-medium italic whitespace-pre-wrap">{peca.observacoesGerais}</p>
+                     </div>
+                  </div>
+               </div>
+            )}
+
+            {/* RODAPÉ INDUSTRIAL PADRONIZADO */}
+            <div className="p-3 px-8 flex justify-between items-center bg-white border-x-2 border-b-2 border-black print:mb-0">
+               <div className="flex gap-6">
+                  <div className="flex flex-col">
+                    <p className="text-[7px] font-black text-gray-300 uppercase leading-none mb-0.5">Identificador de Documento</p>
+                    <p className="text-[8px] font-black text-gray-400 uppercase leading-none">DOC-JC-FT-{peca.id.slice(-8).toUpperCase()}</p>
+                  </div>
+                  <div className="flex flex-col">
+                    <p className="text-[7px] font-black text-gray-300 uppercase leading-none mb-0.5">Data de Emissão</p>
+                    <p className="text-[8px] font-black text-gray-400 uppercase leading-none">{new Date().toLocaleDateString('pt-BR')}</p>
+                  </div>
+               </div>
+               <div className="w-48 border-t-2 border-black text-center pt-1.5">
+                  <p className="text-[8px] font-black uppercase tracking-[0.2em] text-black">Aprovação Técnica</p>
+               </div>
+            </div>
+
+            </div> {/* FIM PÁGINA 2 LÓGICA */}
+
           </div>
         </div>
 
-        {/* BLOCO DE EQUIPE E MODELAGEM (TABELA INDUSTRIAL PARA ESTABILIDADE TOTAL NO PRINT) */}
-        <div className="border-b-2 border-black bg-gray-50/50 print:bg-gray-50/50">
-          <table className="w-full border-collapse">
-            <tbody>
-              <tr>
-                {/* COLUNA 1: DADOS (70%) */}
-                <td className="w-[70%] p-0.5 align-top">
-                  <table className="w-full border-separate border-spacing-y-0.5 border-spacing-x-8">
-                    <tbody>
-                      <tr>
-                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Estilista" value={peca.estilista} /></td>
-                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Modelista" value={peca.modelista} /></td>
-                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Pilotista" value={peca.pilotista} /></td>
-                      </tr>
-                      <tr>
-                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Resp. Corte" value={peca.responsavelCorte} /></td>
-                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Oficina" value={peca.oficina} /></td>
-                        <td className="w-1/3 align-top"><TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} /></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-                {/* COLUNA 2: GRADE (30%) */}
-                <td className="w-[30%] p-0.5 align-top border-l-2 border-dashed border-gray-300 min-w-[180px]">
-                  <p className="text-[9px] font-black uppercase text-gray-500 mb-2">Grade / Qtd. (Corte)</p>
-                  <table className="border-collapse border-2 border-black w-full text-center bg-white">
+        {/* ABA MODELAGEM */}
+        {activeTab === 'modelagem' && (
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+            <input 
+              type="file" 
+              id="modeling-upload-internal" 
+              className="hidden" 
+              multiple
+              onChange={handleModelagemUpload}
+              disabled={uploadingModelagem}
+            />
+            <div className="bg-white border border-gray-100 rounded-[32px] p-10 shadow-sm">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-black text-black uppercase tracking-tight">Arquivos de Modelagem</h2>
+                  <p className="text-gray-400 text-sm">Centralize aqui os arquivos da modelagem desta peça.</p>
+                </div>
+                <button 
+                  onClick={() => document.getElementById('modeling-upload-internal')?.click()}
+                  disabled={uploadingModelagem}
+                  className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-gray-800 transition-all shadow-lg shadow-black/10"
+                >
+                  {uploadingModelagem ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : <Settings size={18} />}
+                  Novo Upload
+                </button>
+              </div>
+
+              {peca.modelagens && peca.modelagens.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
                     <thead>
-                      <tr className="bg-gray-50 uppercase text-[10px] font-black">
-                        {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((size, i) => (
-                          <th key={i} className="border-2 border-black px-1 py-1 min-w-[35px] leading-none">{size.trim()}</th>
-                        ))}
+                      <tr className="border-b border-gray-100">
+                        <th className="py-4 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Nome do Arquivo</th>
+                        <th className="py-4 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest w-40 text-center">Data de Upload</th>
+                        <th className="py-4 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest w-48 text-right">Ações</th>
                       </tr>
                     </thead>
-                    <tbody className="h-8">
-                      <tr>
-                        {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
-                          <td key={i} className="border-2 border-black"></td>
-                        ))}
-                      </tr>
+                    <tbody>
+                      {peca.modelagens.map((mod, i) => (
+                        <tr key={i} className="border-b border-gray-50 group hover:bg-gray-50/50 transition-all">
+                          <td className="py-4 px-2">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-gray-100 text-gray-400 rounded-lg group-hover:text-black transition-colors">
+                                <Scissors size={14} />
+                              </div>
+                              <span className="text-sm font-bold text-black break-all leading-tight">
+                                {mod.nome}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-2 text-center">
+                            <span className="text-xs text-gray-500 font-medium">
+                              {mod.createdAt ? new Date(mod.createdAt).toLocaleDateString('pt-BR') : '—'}
+                            </span>
+                          </td>
+                          <td className="py-4 px-2">
+                            <div className="flex items-center justify-end gap-2">
+                              <a 
+                                href={mod.url} 
+                                target="_blank" 
+                                className="p-2 text-gray-400 hover:text-black hover:bg-white hover:shadow-sm rounded-lg transition-all"
+                                title="Baixar / Visualizar"
+                              >
+                                <Download size={16} />
+                              </a>
+                              <button 
+                                onClick={() => {
+                                  setEditingModeling(mod)
+                                  setNewName(mod.nome)
+                                  setRenameDialogOpen(true)
+                                }}
+                                className="p-2 text-gray-400 hover:text-black hover:bg-white hover:shadow-sm rounded-lg transition-all"
+                                title="Renomear"
+                              >
+                                <Type size={16} />
+                              </button>
+                              <button 
+                                onClick={() => {
+                                  setModelingToDelete(mod)
+                                  setConfirmStep(1)
+                                  setDoubleConfirmOpen(true)
+                                }}
+                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                title="Remover"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        {/* REGISTRO FOTOGRÁFICO (LARGURA TOTAL - SEM TÍTULO) */}
-        <div className="border-b-2 border-black p-1">
-          <div className="grid grid-cols-2 gap-4 h-[350px]">
-             <PhotoContainerClean label="Frente" src={peca.fotoFrente} />
-             <PhotoContainerClean label="Verso" src={peca.fotoVerso} />
-          </div>
-        </div>
-
-        {/* MATÉRIA PRIMA (TECIDOS) - COMPACTA */}
-        <div className="p-3 border-b-2 border-black space-y-2">
-          <SectionLabel icon={<Package size={14} />} label="Matéria Prima" />
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-100/80 border-b-2 border-black">
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300 w-16">REF</th>
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Nome</th>
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Composição</th>
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300 w-16 text-center">Larg</th>
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
-                <th className="p-1 text-[9px] font-black uppercase text-center w-20">Consumo</th>
-              </tr>
-            </thead>
-            <tbody className="text-[11px]">
-              {peca.materiais && peca.materiais.length > 0 ? (
-                peca.materiais.map((mat, i) => (
-                  <tr key={i} className="border-b border-gray-200">
-                    <td className="p-1 border-r border-gray-200 font-bold">{mat.referencia || '—'}</td>
-                    <td className="p-1 border-r border-gray-200 font-bold uppercase">{mat.nome || '—'}</td>
-                    <td className="p-1 border-r border-gray-200 text-[10px] leading-tight">{mat.composicao || '—'}</td>
-                    <td className="p-1 border-r border-gray-200 text-center font-bold">{mat.largura || '—'}</td>
-                    <td className="p-1 border-r border-gray-200 truncate">{mat.cor || '—'}</td>
-                    <td className="p-1 font-black text-center bg-gray-50">{mat.consumo || '—'}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan={6} className="p-3 text-center text-gray-400 italic">Nenhum tecido cadastrado.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* AVIAMENTOS - COMPACTA */}
-        <div className="p-3 border-b-2 border-black space-y-2">
-          <SectionLabel icon={<Settings size={14} />} label="Aviamentos" />
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-100/80 border-b-2 border-black">
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300 w-16">REF</th>
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Nome / Marca</th>
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300 w-24 text-center">Medida</th>
-                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
-                <th className="p-1 text-[9px] font-black uppercase text-center w-24">Consumo</th>
-              </tr>
-            </thead>
-            <tbody className="text-[11px]">
-              {peca.aviamentos && peca.aviamentos.length > 0 ? (
-                peca.aviamentos.map((av, i) => (
-                  <tr key={i} className="border-b border-gray-200">
-                    <td className="p-1 border-r border-gray-200 font-bold">{av.referencia || '—'}</td>
-                    <td className="p-1 border-r border-gray-200 font-bold uppercase">{av.nome || '—'}</td>
-                    <td className="p-1 border-r border-gray-200 text-center">{av.medida || '—'}</td>
-                    <td className="p-1 border-r border-gray-200 truncate">{av.cor || '—'}</td>
-                    <td className="p-1 font-black text-center bg-gray-50">{av.consumo || '—'}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colSpan={5} className="p-3 text-center text-gray-400 italic">Nenhum aviamento cadastrado.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* OBSERVAÇÕES E COSTURA (HÍBRIDO) */}
-        <div className="grid grid-cols-3 border-b-2 border-black">
-          <div className="col-span-2 p-2 border-r-2 border-black space-y-1">
-             <SectionLabel icon={<AlertCircle size={14} />} label="Observações Técnicas" />
-             <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-0.5">
-                   <p className="text-[8px] font-black uppercase text-red-500">Pontos Críticos</p>
-                   <p className="text-[10px] leading-tight text-gray-600 italic whitespace-pre-wrap">{peca.pontosCriticos || "—"}</p>
                 </div>
-                <div className="space-y-0.5">
-                   <p className="text-[8px] font-black uppercase text-blue-500">Acabamento</p>
-                   <p className="text-[10px] leading-tight text-gray-600 whitespace-pre-wrap">{peca.caracteristicasCostura || "—"}</p>
-                </div>
-             </div>
-          </div>
-          <div className="col-span-1 p-1.5 bg-gray-50/50 flex flex-col justify-start overflow-hidden">
-             <p className="text-[8px] font-black text-gray-400 text-center uppercase tracking-widest mb-0.5 border-b border-black/5 pb-0.5">Equipamentos</p>
-             <div className="space-y-1 overflow-y-auto max-h-[100px] pr-1 scrollbar-thin">
-                {peca.equipamentos && peca.equipamentos.length > 0 ? (
-                  peca.equipamentos.map((eq, i) => (
-                    <div key={i} className="flex gap-2 items-center border-b border-black/5 pb-1 last:border-0">
-                       <div className="flex-1">
-                          <p className="text-[7px] font-black uppercase text-gray-400 leading-none">Máquina</p>
-                          <p className="text-[10px] font-black text-black leading-tight">{eq.maquina}</p>
-                       </div>
-                       <div className="w-12 text-center border-l border-black/5">
-                          <p className="text-[7px] font-black uppercase text-gray-400 leading-none">Agulha</p>
-                          <p className="text-[10px] font-black text-black leading-tight">{eq.agulha}</p>
-                       </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-[9px] text-gray-300 italic">Nenhum equipamento listado.</p>
+              ) : (
+                <div 
+                  className="py-20 text-center border-2 border-dashed border-gray-100 rounded-[32px] cursor-pointer hover:bg-gray-50/50 transition-all group" 
+                  onClick={() => document.getElementById('modeling-upload-internal')?.click()}
+                >
+                  <div className="w-16 h-16 bg-gray-50 text-gray-300 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Scissors size={32} />
                   </div>
-                )}
-             </div>
-          </div>
-        </div>
-
-        {/* OBSERVAÇÕES GERAIS (ESTILO NOTAS) */}
-        {peca.observacoesGerais && (
-          <div className="p-2 bg-yellow-50/20 border-b-2 border-black min-h-[50px]">
-             <div className="flex items-start gap-3">
-                <div className="mt-0.5 p-1 bg-yellow-100 rounded-lg text-yellow-700 print:hidden">
-                   <ClipboardList size={12} />
+                  <p className="text-gray-400 font-medium">Nenhum arquivo de modelagem vinculado.</p>
+                  <p className="text-xs text-gray-300 mt-1 uppercase font-black tracking-tighter">Clique para fazer o primeiro upload</p>
                 </div>
-                <div className="flex-1">
-                   <p className="text-[9px] font-black uppercase tracking-widest text-yellow-800/50 mb-0.5">Notas e Observações Gerais</p>
-                   <p className="text-[10px] leading-tight text-gray-700 whitespace-pre-wrap">{peca.observacoesGerais}</p>
-                </div>
-             </div>
+              )}
+            </div>
           </div>
         )}
 
-        {/* RODAPÉ MINIMALISTA */}
-        <div className="p-1 px-6 flex justify-between items-center bg-white print:mb-0 print:pb-0">
-           <div className="flex gap-4">
-              <p className="text-[7px] font-black text-gray-300 uppercase underline leading-none">DOC-JC-PECA-{peca.id.slice(-6)}</p>
-              <p className="text-[7px] font-black text-gray-300 uppercase leading-none">{new Date().toLocaleDateString('pt-BR')}</p>
-           </div>
-           <div className="w-1/4 border-t border-black">
-              <p className="text-[7px] font-black text-center uppercase tracking-widest mt-0.5">Assinatura Responsável</p>
-           </div>
-        </div>
+        {/* ABA CORTE */}
+        {activeTab === 'corte' && (
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="bg-white border border-gray-100 rounded-[32px] p-10 shadow-sm">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h2 className="text-2xl font-black text-black uppercase tracking-tight">Histórico de Cortes</h2>
+                  <p className="text-gray-400 text-sm">Gerencie as fichas de corte emitidas para esta peça.</p>
+                </div>
+                <Link href={`/pecas/${id}/corte/novo`}>
+                  <button className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-gray-800 transition-all shadow-lg shadow-black/10">
+                    <Scissors size={18} />
+                    Nova Ficha de Corte
+                  </button>
+                </Link>
+              </div>
+
+              {loadingCortes ? (
+                <div className="py-20 flex justify-center">
+                  <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : cortes.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-gray-100">
+                        <th className="py-4 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Nº do Corte</th>
+                        <th className="py-4 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest text-center">Data do Corte</th>
+                        <th className="py-4 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest text-center">Itens / Cores</th>
+                        <th className="py-4 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest text-right">Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cortes.map((corte, i) => (
+                        <tr key={i} className="border-b border-gray-50 group hover:bg-gray-50/50 transition-all">
+                          <td className="py-4 px-2">
+                            <span className="text-sm font-black text-black uppercase">{corte.numeroCorte}</span>
+                          </td>
+                          <td className="py-4 px-2 text-center text-sm font-medium text-gray-500">
+                            {new Date(corte.dataCorte).toLocaleDateString('pt-BR')}
+                          </td>
+                          <td className="py-4 px-2 text-center">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-gray-100 text-gray-800">
+                              {corte.items?.length || 0} materiais
+                            </span>
+                          </td>
+                          <td className="py-4 px-2">
+                            <div className="flex items-center justify-end gap-2">
+                              {/* Link para Impressão */}
+                              <Link 
+                                href={`/pecas/${id}/corte/${corte.id}/imprimir`}
+                                className="p-2 text-gray-400 hover:text-black hover:bg-white hover:shadow-sm rounded-lg transition-all"
+                                title="Visualizar Ficha de Corte"
+                              >
+                                <Eye size={16} />
+                              </Link>
+                              {/* Botão para Deletar */}
+                              <button 
+                                onClick={async () => {
+                                  if (confirm('Deseja realmente excluir esta ficha de corte?')) {
+                                    try {
+                                      await fetch(`/api/pecas/${id}/corte/${corte.id}`, { method: 'DELETE' })
+                                      fetchCortes()
+                                      showToast({ title: 'Sucesso', description: 'Ficha de corte excluída' })
+                                    } catch (err) {
+                                      showToast({ title: 'Erro', description: 'Erro ao excluir', variant: 'destructive' })
+                                    }
+                                  }
+                                }}
+                                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                                title="Remover"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="py-20 text-center border-2 border-dashed border-gray-100 rounded-[32px]">
+                  <div className="w-16 h-16 bg-gray-50 text-gray-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle2 size={32} />
+                  </div>
+                  <p className="text-gray-400 font-medium">Nenhuma ficha de corte registrada.</p>
+                  <p className="text-xs text-gray-300 mt-1 uppercase font-black tracking-tighter">Utilize o botão acima para criar o primeiro corte</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
       </div>
 
+      {/* MODAL EDITAR FICHA (EXISTENTE) */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirmar exclusão</DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja excluir esta peça? Esta ação não pode ser desfeita.
-            </DialogDescription>
+            <DialogDescription>Tem certeza que deseja excluir esta peça?</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
-              {deleting ? 'Excluindo...' : 'Excluir'}
-            </Button>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
+            <Button variant="destructive" onClick={handleDelete} disabled={deleting}>{deleting ? 'Excluindo...' : 'Excluir'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <style jsx global>{`
-        @media print {
-          @page {
-            size: A4;
-            margin: 0;
-          }
-          html, body { 
-            margin: 0 !important; 
-            padding: 0 !important;
-            background: white !important;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
-          .print\\:hidden { 
-            display: none !important; 
-            visibility: hidden !important; 
-            height: 0 !important; 
-            overflow: hidden !important; 
-          }
-          /* Container principal sem margens ou sombras que desloquem o conteúdo */
-          .max-w-\\[210mm\\] { 
-            width: 100% !important; 
-            max-width: none !important; 
-            margin: 0 !important; 
-            padding: 0.5cm !important; /* Margem controlada interna */
-            border: none !important;
-            box-shadow: none !important;
-            height: auto !important;
-            overflow: visible !important;
-            position: relative !important;
-            top: 0 !important;
-            left: 0 !important;
-          }
-          /* Evitar quebras de página */
-          .border-b-2 { 
-            break-inside: avoid !important;
-            page-break-inside: avoid !important;
-          }
-          /* Ocultar elementos de UI que podem "vazar" */
-          [role="dialog"], button, [data-state] {
-            display: none !important;
-          }
-        }
-      `}</style>
+      {/* MODAL RENOMEAR MODELAGEM */}
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Type size={18} /> Renomear Arquivo
+            </DialogTitle>
+            <DialogDescription>
+              Ajuste o nome para facilitar a identificação futura.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label htmlFor="modeling-name" className="text-[10px] font-black uppercase text-gray-400 mb-2 block">Nome do Arquivo</Label>
+            <Input 
+              id="modeling-name"
+              value={newName} 
+              onChange={(e) => setNewName(e.target.value)}
+              className="h-11 rounded-xl"
+              placeholder="Ex: Modelagem_V2_Ajustada.pdf"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameDialogOpen(false)} className="rounded-xl">Cancelar</Button>
+            <Button onClick={handleRenameModeling} className="bg-black text-white hover:bg-gray-800 rounded-xl px-8">Salvar</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* MODAL EXCLUSÃO DUPLA MODELAGEM */}
+      <Dialog open={doubleConfirmOpen} onOpenChange={setDoubleConfirmOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-red-600 flex items-center gap-2">
+              <AlertCircle size={20} /> Atenção!
+            </DialogTitle>
+            <DialogDescription className="font-bold text-gray-900">
+              {confirmStep === 1 
+                ? "Deseja realmente remover este arquivo de modelagem?" 
+                : "Esta ação é irreversível. O arquivo será removido do histórico da peça. Confirmar?"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start gap-3">
+              <Scissors size={14} className="text-gray-400 shrink-0 mt-0.5" />
+              <span className="text-xs font-bold text-gray-900 break-all leading-relaxed">
+                {modelingToDelete?.nome}
+              </span>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setDoubleConfirmOpen(false)} className="rounded-xl flex-1">Cancelar</Button>
+            {confirmStep === 1 ? (
+              <Button 
+                onClick={() => setConfirmStep(2)} 
+                className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl flex-1"
+              >
+                Sim, Remover
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleDeleteModeling} 
+                className="bg-red-600 hover:bg-red-700 text-white rounded-xl flex-1 font-black uppercase tracking-widest text-[10px]"
+              >
+                APAGAR AGORA
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   )
 }
@@ -464,7 +906,7 @@ function SectionLabel({ icon, label }: { icon: React.ReactNode, label: string })
 function TechnicalItemSmall({ label, value }: { label: string, value: string | null }) {
   return (
     <div className="flex flex-col">
-      <p className="text-[8px] font-black uppercase text-gray-500 mb-0">{label}</p>
+      <p className="text-[8px] font-black uppercase text-gray-500">{label}</p>
       <p className="text-[13px] font-bold text-black border-b border-black/10">{value || '—'}</p>
     </div>
   )
@@ -473,13 +915,9 @@ function TechnicalItemSmall({ label, value }: { label: string, value: string | n
 function PhotoContainerClean({ label, src }: { label: string, src: string | null }) {
   return (
     <div className="flex flex-col gap-1.5 h-full overflow-hidden">
-       <div className="flex-1 rounded-2xl flex items-center justify-center overflow-hidden bg-white transition-all relative">
+       <div className="flex-1 rounded-2xl flex items-center justify-center overflow-hidden bg-white relative border border-gray-100">
           {src ? (
-            <img 
-              src={src} 
-              className="absolute inset-0 w-full h-full object-contain p-2" 
-              alt={label}
-            />
+            <img src={src} className="absolute inset-0 w-full h-full object-contain p-2" alt={label} />
           ) : (
             <div className="text-center p-2 opacity-20">
               <ImageIcon size={32} className="mx-auto mb-1 text-gray-400" />
@@ -487,7 +925,12 @@ function PhotoContainerClean({ label, src }: { label: string, src: string | null
             </div>
           )}
        </div>
-       <p className="text-[10px] font-black uppercase text-center tracking-widest text-gray-400 mt-1">{label}</p>
+       <p className="text-[10px] font-black uppercase text-center tracking-widest text-gray-400">{label}</p>
     </div>
   )
+}
+
+// Helper components for UI
+function Label({ children, className, ...props }: any) {
+  return <label className={`text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 ${className}`} {...props}>{children}</label>
 }

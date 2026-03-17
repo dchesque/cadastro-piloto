@@ -20,7 +20,7 @@ model PecaPiloto {
   tamanhoPiloto       String?
   gradeCorte          String?
   fotoFrente          String?
-  fotoVerso           String?
+  fotoVerso          String?
   
   // Observações Técnicas
   caracteristicasCostura String?
@@ -28,6 +28,7 @@ model PecaPiloto {
   maquina                String? // Manter legado
   agulha                 String? // Manter legado
   observacoesGerais      String?
+  modelagens             PecaModelagem[]
   
   // Legado / Simples (Manter para compatibilidade inicial)
   fornecedor          String?
@@ -42,8 +43,52 @@ model PecaPiloto {
   aviamentos          PecaAviamento[]
   equipamentos        PecaEquipamento[]
   
+  fichasCorte        PecaCorte[]
+  
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+}
+
+model PecaCorte {
+  id                String   @id @default(cuid())
+  pecaId            String
+  peca              PecaPiloto @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  numeroCorte       String   // Ex: 001/2026
+  dataCorte         DateTime @default(now())
+  observacoes       String?
+  items             PecaCorteItem[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model PecaCorteItem {
+  id                String   @id @default(cuid())
+  corteId           String
+  corte             PecaCorte @relation(fields: [corteId], references: [id], onDelete: Cascade)
+  
+  // Dados do Tecido (reaproveitados ou manuais)
+  tecidoOriginalId  String?  // Opcional: link para PecaTecido
+  nome              String?
+  fornecedor        String?
+  cor               String?
+  largura           String?
+  
+  // Grade de Quantidades (JSON para flexibilidade: { "M": { previsto: 10, real: 12 }, ... })
+  grade             Json?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model PecaModelagem {
+  id        String   @id @default(cuid())
+  pecaId    String
+  peca      PecaPiloto @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  nome      String
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model PecaTecido {

@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.12.0] - 2026-03-17
+### Added
+- **Navegação Inteligente**: Reordenada a ordem das abas para (Ficha Técnica > Ficha de Corte > Modelagem) visando agilidade produtiva.
+- **Otimização de Impressão A4**: Implementada quebra de página lógica após Aviamentos e margens reduzidas para preenchimento total da folha.
+- **Data de Cadastro**: Adicionada a data de criação da peça no bloco de referência do cabeçalho.
+- **Grade de Tamanhos**: Novo campo de grade disponível integrado ao cabeçalho técnico.
+### Changed
+- **Estética Industrial Premium**: Refinamento visual do cabeçalho e tabelas para alinhamento com o padrão JC STUDIO.
+- **Compactação de Layout**: Redução de espaçamentos no bloco de equipe para maior densidade de informação.
+### Fixed
+- **Reintegração de Campos**: Restaurado o campo "Responsável pelo Corte" que estava omitido na versão anterior.
+
 ## [1.11.0] - 2026-03-17
 ### Added
 - **Ficha Técnica Profissional**: Sistema completo para documentação técnica de vestuário.
