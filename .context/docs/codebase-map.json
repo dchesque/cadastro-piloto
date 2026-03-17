@@ -1,0 +1,782 @@
+{
+  "version": "1.0.0",
+  "generated": "2026-03-17T19:35:57.528Z",
+  "stack": {
+    "primaryLanguage": "typescript",
+    "languages": [
+      "javascript",
+      "typescript"
+    ],
+    "frameworks": [
+      "nextjs"
+    ],
+    "buildTools": [
+      "docker",
+      "docker-compose"
+    ],
+    "testFrameworks": [],
+    "packageManager": "npm",
+    "isMonorepo": false,
+    "hasDocker": true,
+    "hasCI": false,
+    "runtimeEnvironment": "browser"
+  },
+  "structure": {
+    "totalFiles": 81,
+    "rootPath": ".",
+    "topDirectories": [
+      {
+        "name": "app",
+        "fileCount": 33,
+        "description": "Application entry (Next.js app router)"
+      },
+      {
+        "name": "components",
+        "fileCount": 13,
+        "description": "UI components"
+      },
+      {
+        "name": "docs",
+        "fileCount": 2,
+        "description": "Documentation files"
+      },
+      {
+        "name": "lib",
+        "fileCount": 3,
+        "description": "Shared library code"
+      },
+      {
+        "name": "prisma",
+        "fileCount": 2,
+        "description": "Module directory"
+      },
+      {
+        "name": "public",
+        "fileCount": 13,
+        "description": "Public static assets"
+      }
+    ],
+    "languageDistribution": [
+      {
+        "extension": ".tsx",
+        "count": 32
+      },
+      {
+        "extension": ".ts",
+        "count": 22
+      },
+      {
+        "extension": ".pdf",
+        "count": 4
+      },
+      {
+        "extension": ".md",
+        "count": 4
+      },
+      {
+        "extension": ".eps",
+        "count": 4
+      },
+      {
+        "extension": ".json",
+        "count": 3
+      },
+      {
+        "extension": ".png",
+        "count": 3
+      },
+      {
+        "extension": ".jpg",
+        "count": 3
+      },
+      {
+        "extension": ".js",
+        "count": 2
+      },
+      {
+        "extension": ".yml",
+        "count": 1
+      }
+    ]
+  },
+  "architecture": {
+    "layers": [
+      {
+        "name": "Utils",
+        "description": "Shared utilities and helpers",
+        "directories": [
+          "lib"
+        ],
+        "symbolCount": 7,
+        "dependsOn": []
+      },
+      {
+        "name": "Controllers",
+        "description": "Request handling and routing",
+        "directories": [
+          "app\\api\\users",
+          "app\\api\\upload",
+          "app\\api\\tecidos",
+          "app\\api\\setup",
+          "app\\api\\pecas",
+          "app\\api\\users\\password",
+          "app\\api\\tecidos\\[id]",
+          "app\\api\\tecidos\\referencia",
+          "app\\api\\pecas\\[id]",
+          "app\\api\\pecas\\referencia",
+          "app\\api\\auth\\[...nextauth]",
+          "app\\api\\pecas\\[id]\\corte",
+          "app\\api\\pecas\\[id]\\corte\\[corteId]"
+        ],
+        "symbolCount": 22,
+        "dependsOn": []
+      },
+      {
+        "name": "Components",
+        "description": "UI components and views",
+        "directories": [
+          "components",
+          "app",
+          "components\\ui",
+          "app\\tecidos",
+          "app\\pecas",
+          "app\\minha-conta",
+          "app\\login",
+          "app\\tecidos\\[id]",
+          "app\\tecidos\\novo",
+          "app\\pecas\\[id]",
+          "app\\pecas\\nova",
+          "app\\tecidos\\[id]\\imprimir",
+          "app\\pecas\\[id]\\imprimir",
+          "app\\pecas\\[id]\\ficha",
+          "app\\pecas\\[id]\\corte\\novo",
+          "app\\pecas\\[id]\\corte\\[corteId]\\imprimir"
+        ],
+        "symbolCount": 23,
+        "dependsOn": []
+      }
+    ],
+    "patterns": [],
+    "entryPoints": [],
+    "mainEntryPoints": [],
+    "moduleExports": []
+  },
+  "symbols": {
+    "classes": [],
+    "interfaces": [
+      {
+        "name": "ButtonProps",
+        "kind": "interface",
+        "file": "components\\ui\\button.tsx",
+        "line": 31,
+        "exported": true
+      },
+      {
+        "name": "InputProps",
+        "kind": "interface",
+        "file": "components\\ui\\input.tsx",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "LabelProps",
+        "kind": "interface",
+        "file": "components\\ui\\label.tsx",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "TextareaProps",
+        "kind": "interface",
+        "file": "components\\ui\\textarea.tsx",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "Aviamento",
+        "kind": "interface",
+        "file": "app\\pecas\\[id]\\ficha\\page.tsx",
+        "line": 33,
+        "exported": false
+      },
+      {
+        "name": "CorteTecido",
+        "kind": "interface",
+        "file": "app\\tecidos\\page.tsx",
+        "line": 18,
+        "exported": false
+      },
+      {
+        "name": "CorteTecido",
+        "kind": "interface",
+        "file": "app\\tecidos\\[id]\\page.tsx",
+        "line": 31,
+        "exported": false
+      },
+      {
+        "name": "Equipamento",
+        "kind": "interface",
+        "file": "app\\pecas\\[id]\\ficha\\page.tsx",
+        "line": 45,
+        "exported": false
+      },
+      {
+        "name": "FieldProps",
+        "kind": "interface",
+        "file": "components\\ui\\field.tsx",
+        "line": 3,
+        "exported": false
+      },
+      {
+        "name": "Material",
+        "kind": "interface",
+        "file": "app\\pecas\\[id]\\ficha\\page.tsx",
+        "line": 21,
+        "exported": false
+      },
+      {
+        "name": "NavbarProps",
+        "kind": "interface",
+        "file": "components\\navbar.tsx",
+        "line": 6,
+        "exported": false
+      },
+      {
+        "name": "PecaPiloto",
+        "kind": "interface",
+        "file": "app\\pecas\\page.tsx",
+        "line": 18,
+        "exported": false
+      },
+      {
+        "name": "PecaPiloto",
+        "kind": "interface",
+        "file": "app\\pecas\\[id]\\corte\\novo\\page.tsx",
+        "line": 22,
+        "exported": false
+      },
+      {
+        "name": "SidebarProps",
+        "kind": "interface",
+        "file": "components\\sidebar.tsx",
+        "line": 16,
+        "exported": false
+      },
+      {
+        "name": "UserData",
+        "kind": "interface",
+        "file": "app\\minha-conta\\page.tsx",
+        "line": 19,
+        "exported": false
+      }
+    ],
+    "functions": [
+      {
+        "name": "AppShell",
+        "kind": "function",
+        "file": "components\\app-shell.tsx",
+        "line": 9,
+        "exported": true
+      },
+      {
+        "name": "AuthProvider",
+        "kind": "function",
+        "file": "components\\auth-provider.tsx",
+        "line": 5,
+        "exported": true
+      },
+      {
+        "name": "cn",
+        "kind": "function",
+        "file": "lib\\utils.ts",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "DashboardPage",
+        "kind": "function",
+        "file": "app\\page.tsx",
+        "line": 10,
+        "exported": true
+      },
+      {
+        "name": "DELETE",
+        "kind": "function",
+        "file": "app\\api\\tecidos\\[id]\\route.ts",
+        "line": 62,
+        "exported": true
+      },
+      {
+        "name": "DELETE",
+        "kind": "function",
+        "file": "app\\api\\pecas\\[id]\\route.ts",
+        "line": 156,
+        "exported": true
+      },
+      {
+        "name": "DELETE",
+        "kind": "function",
+        "file": "app\\api\\pecas\\[id]\\corte\\[corteId]\\route.ts",
+        "line": 82,
+        "exported": true
+      },
+      {
+        "name": "Error",
+        "kind": "function",
+        "file": "app\\error.tsx",
+        "line": 3,
+        "exported": true
+      },
+      {
+        "name": "formatCurrency",
+        "kind": "function",
+        "file": "lib\\utils.ts",
+        "line": 8,
+        "exported": true
+      },
+      {
+        "name": "formatDate",
+        "kind": "function",
+        "file": "lib\\utils.ts",
+        "line": 16,
+        "exported": true
+      },
+      {
+        "name": "formatDecimal",
+        "kind": "function",
+        "file": "lib\\utils.ts",
+        "line": 29,
+        "exported": true
+      },
+      {
+        "name": "formatNumber",
+        "kind": "function",
+        "file": "lib\\utils.ts",
+        "line": 21,
+        "exported": true
+      },
+      {
+        "name": "gerarReferenciaPeca",
+        "kind": "function",
+        "file": "lib\\gerarReferencia.ts",
+        "line": 3,
+        "exported": true
+      },
+      {
+        "name": "gerarReferenciaTecido",
+        "kind": "function",
+        "file": "lib\\gerarReferencia.ts",
+        "line": 27,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\users\\route.ts",
+        "line": 47,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\tecidos\\route.ts",
+        "line": 5,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\pecas\\route.ts",
+        "line": 5,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\tecidos\\[id]\\route.ts",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\tecidos\\referencia\\route.ts",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\pecas\\[id]\\route.ts",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\pecas\\referencia\\route.ts",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\pecas\\[id]\\corte\\route.ts",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "GET",
+        "kind": "function",
+        "file": "app\\api\\pecas\\[id]\\corte\\[corteId]\\route.ts",
+        "line": 4,
+        "exported": true
+      },
+      {
+        "name": "Loading",
+        "kind": "function",
+        "file": "app\\loading.tsx",
+        "line": 1,
+        "exported": true
+      },
+      {
+        "name": "Navbar",
+        "kind": "function",
+        "file": "components\\navbar.tsx",
+        "line": 10,
+        "exported": true
+      },
+      {
+        "name": "PATCH",
+        "kind": "function",
+        "file": "app\\api\\users\\password\\route.ts",
+        "line": 6,
+        "exported": true
+      },
+      {
+        "name": "POST",
+        "kind": "function",
+        "file": "app\\api\\users\\route.ts",
+        "line": 6,
+        "exported": true
+      },
+      {
+        "name": "POST",
+        "kind": "function",
+        "file": "app\\api\\upload\\route.ts",
+        "line": 6,
+        "exported": true
+      },
+      {
+        "name": "POST",
+        "kind": "function",
+        "file": "app\\api\\tecidos\\route.ts",
+        "line": 33,
+        "exported": true
+      },
+      {
+        "name": "POST",
+        "kind": "function",
+        "file": "app\\api\\setup\\route.ts",
+        "line": 7,
+        "exported": true
+      }
+    ],
+    "types": [
+      {
+        "name": "Tipo",
+        "kind": "type",
+        "file": "components\\ui\\type-badge.tsx",
+        "line": 3,
+        "exported": false
+      }
+    ],
+    "enums": []
+  },
+  "publicAPI": [
+    {
+      "name": "AppShell",
+      "kind": "function",
+      "file": "components\\app-shell.tsx",
+      "line": 9,
+      "exported": true
+    },
+    {
+      "name": "AuthProvider",
+      "kind": "function",
+      "file": "components\\auth-provider.tsx",
+      "line": 5,
+      "exported": true
+    },
+    {
+      "name": "ButtonProps",
+      "kind": "interface",
+      "file": "components\\ui\\button.tsx",
+      "line": 31,
+      "exported": true
+    },
+    {
+      "name": "cn",
+      "kind": "function",
+      "file": "lib\\utils.ts",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "DashboardPage",
+      "kind": "function",
+      "file": "app\\page.tsx",
+      "line": 10,
+      "exported": true
+    },
+    {
+      "name": "DELETE",
+      "kind": "function",
+      "file": "app\\api\\tecidos\\[id]\\route.ts",
+      "line": 62,
+      "exported": true
+    },
+    {
+      "name": "DELETE",
+      "kind": "function",
+      "file": "app\\api\\pecas\\[id]\\route.ts",
+      "line": 156,
+      "exported": true
+    },
+    {
+      "name": "DELETE",
+      "kind": "function",
+      "file": "app\\api\\pecas\\[id]\\corte\\[corteId]\\route.ts",
+      "line": 82,
+      "exported": true
+    },
+    {
+      "name": "Error",
+      "kind": "function",
+      "file": "app\\error.tsx",
+      "line": 3,
+      "exported": true
+    },
+    {
+      "name": "formatCurrency",
+      "kind": "function",
+      "file": "lib\\utils.ts",
+      "line": 8,
+      "exported": true
+    },
+    {
+      "name": "formatDate",
+      "kind": "function",
+      "file": "lib\\utils.ts",
+      "line": 16,
+      "exported": true
+    },
+    {
+      "name": "formatDecimal",
+      "kind": "function",
+      "file": "lib\\utils.ts",
+      "line": 29,
+      "exported": true
+    },
+    {
+      "name": "formatNumber",
+      "kind": "function",
+      "file": "lib\\utils.ts",
+      "line": 21,
+      "exported": true
+    },
+    {
+      "name": "gerarReferenciaPeca",
+      "kind": "function",
+      "file": "lib\\gerarReferencia.ts",
+      "line": 3,
+      "exported": true
+    },
+    {
+      "name": "gerarReferenciaTecido",
+      "kind": "function",
+      "file": "lib\\gerarReferencia.ts",
+      "line": 27,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\users\\route.ts",
+      "line": 47,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\tecidos\\route.ts",
+      "line": 5,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\pecas\\route.ts",
+      "line": 5,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\tecidos\\[id]\\route.ts",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\tecidos\\referencia\\route.ts",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\pecas\\[id]\\route.ts",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\pecas\\referencia\\route.ts",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\pecas\\[id]\\corte\\route.ts",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "GET",
+      "kind": "function",
+      "file": "app\\api\\pecas\\[id]\\corte\\[corteId]\\route.ts",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "InputProps",
+      "kind": "interface",
+      "file": "components\\ui\\input.tsx",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "LabelProps",
+      "kind": "interface",
+      "file": "components\\ui\\label.tsx",
+      "line": 4,
+      "exported": true
+    },
+    {
+      "name": "Loading",
+      "kind": "function",
+      "file": "app\\loading.tsx",
+      "line": 1,
+      "exported": true
+    },
+    {
+      "name": "Navbar",
+      "kind": "function",
+      "file": "components\\navbar.tsx",
+      "line": 10,
+      "exported": true
+    },
+    {
+      "name": "PATCH",
+      "kind": "function",
+      "file": "app\\api\\users\\password\\route.ts",
+      "line": 6,
+      "exported": true
+    },
+    {
+      "name": "POST",
+      "kind": "function",
+      "file": "app\\api\\users\\route.ts",
+      "line": 6,
+      "exported": true
+    }
+  ],
+  "dependencies": {
+    "mostImported": [
+      {
+        "file": "auth.config.ts",
+        "importedBy": 2
+      },
+      {
+        "file": "lib\\prisma.ts",
+        "importedBy": 1,
+        "description": "Shared library code"
+      },
+      {
+        "file": "app\\globals.css",
+        "importedBy": 1,
+        "description": "Application entry (Next.js app router)"
+      }
+    ]
+  },
+  "stats": {
+    "totalSymbols": 56,
+    "exportedSymbols": 42,
+    "analysisTimeMs": 545
+  },
+  "keyFiles": [
+    {
+      "path": "auth.config.ts",
+      "description": "Tool configuration",
+      "category": "config"
+    },
+    {
+      "path": "next.config.ts",
+      "description": "Tool configuration",
+      "category": "config"
+    },
+    {
+      "path": "package.json",
+      "description": "Package manifest",
+      "category": "config"
+    },
+    {
+      "path": "postcss.config.js",
+      "description": "Tool configuration",
+      "category": "config"
+    },
+    {
+      "path": "tailwind.config.ts",
+      "description": "Tool configuration",
+      "category": "config"
+    },
+    {
+      "path": "tsconfig.json",
+      "description": "TypeScript configuration",
+      "category": "config"
+    },
+    {
+      "path": "lib\\utils.ts",
+      "description": "Utility functions",
+      "category": "util"
+    }
+  ],
+  "navigation": {
+    "tests": "src/**/*.test.ts",
+    "config": [
+      "package.json",
+      "tsconfig.json",
+      "next.config.ts"
+    ],
+    "types": [
+      "next-env.d.ts"
+    ],
+    "mainLogic": [
+      "src"
+    ]
+  }
+}
