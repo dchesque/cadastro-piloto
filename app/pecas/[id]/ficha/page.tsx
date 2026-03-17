@@ -40,6 +40,12 @@ interface Aviamento {
   consumo: string
 }
 
+interface Equipamento {
+  id?: string
+  maquina: string
+  agulha: string
+}
+
 export default function FichaTecnicaPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const { id } = use(params)
@@ -65,7 +71,10 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
     pontosCriticos: '',
     maquina: '',
     agulha: '',
+    observacoesGerais: '',
   })
+
+  const [equipamentos, setEquipamentos] = useState<Equipamento[]>([])
 
   const [uploading, setUploading] = useState<{ frente: boolean, verso: boolean }>({ frente: false, verso: false })
 
@@ -126,9 +135,11 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
             pontosCriticos: data.pontosCriticos || '',
             maquina: data.maquina || '',
             agulha: data.agulha || '',
+            observacoesGerais: data.observacoesGerais || '',
           })
           setMateriais(data.materiais || [])
           setAviamentos(data.aviamentos || [])
+          setEquipamentos(data.equipamentos || [])
         }
       } catch (error) {
         console.error('Erro ao carregar dados:', error)
@@ -149,7 +160,8 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
         body: JSON.stringify({
           ...formData,
           materiais,
-          aviamentos
+          aviamentos,
+          equipamentos
         }),
       })
 
@@ -193,6 +205,20 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
     const newAviamentos = [...aviamentos]
     newAviamentos[index] = { ...newAviamentos[index], [field]: value }
     setAviamentos(newAviamentos)
+  }
+
+  const addEquipamento = () => {
+    setEquipamentos([...equipamentos, { maquina: '', agulha: '' }])
+  }
+
+  const removeEquipamento = (index: number) => {
+    setEquipamentos(equipamentos.filter((_, i) => i !== index))
+  }
+
+  const updateEquipamento = (index: number, field: keyof Equipamento, value: string) => {
+    const newEquipamentos = [...equipamentos]
+    newEquipamentos[index] = { ...newEquipamentos[index], [field]: value }
+    setEquipamentos(newEquipamentos)
   }
 
   if (loading) {
@@ -467,37 +493,62 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
           </div>
         )}
 
-        {/* ABA COSTURA */}
         {activeTab === 'costura' && (
           <div className="space-y-10 animate-in fade-in duration-500">
-            <SectionHeader title="Especificações de Costura e Acabamento" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Field label="Máquina">
-                <input value={formData.maquina} onChange={e => setFormData({...formData, maquina: e.target.value})} className={inputClass} placeholder="Ex: Reta Eletrônica" />
+            <div className="flex items-center justify-between">
+              <SectionHeader title="Especificações de Máquinas e Agulhas" />
+              <button type="button" onClick={addEquipamento} className="flex items-center gap-2 text-[12px] font-bold text-[--color-accent-peca] hover:bg-[--color-accent-peca]/5 px-4 py-2 rounded-full transition-all">
+                <Plus size={16} /> Adicionar Máquina
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+              {equipamentos.map((eq, idx) => (
+                <div key={idx} className="flex items-end gap-3 p-4 bg-gray-50/50 border border-gray-100 rounded-2xl relative group">
+                  <div className="flex-1 grid grid-cols-2 gap-4">
+                    <Field label="Máquina">
+                      <input value={eq.maquina} onChange={e => updateEquipamento(idx, 'maquina', e.target.value)} className={inputClass} placeholder="Ex: Reta" />
+                    </Field>
+                    <Field label="Agulha">
+                      <input value={eq.agulha} onChange={e => updateEquipamento(idx, 'agulha', e.target.value)} className={inputClass} placeholder="Ex: 80" />
+                    </Field>
+                  </div>
+                  <button type="button" onClick={() => removeEquipamento(idx)} className="mb-1 p-2 text-red-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              ))}
+              {equipamentos.length === 0 && <p className="col-span-2 text-center py-6 text-gray-400 italic text-sm">Nenhuma máquina específica adicionada.</p>}
+            </div>
+
+            <SectionHeader title="Processos e Detalhes" />
+            <div className="grid grid-cols-1 gap-8">
+              <Field label="Características de Costura e Acabamento">
+                <textarea 
+                  value={formData.caracteristicasCostura} 
+                  onChange={e => setFormData({...formData, caracteristicasCostura: e.target.value})} 
+                  className={`${inputClass} min-h-[120px] py-4 leading-relaxed resize-none`} 
+                  placeholder="Detalhe como deve ser a costura e o acabamento da peça..." 
+                />
               </Field>
-              <Field label="Agulha">
-                <input value={formData.agulha} onChange={e => setFormData({...formData, agulha: e.target.value})} className={inputClass} placeholder="Ex: 80" />
+
+              <Field label="Pontos Críticos de Execução">
+                <textarea 
+                  value={formData.pontosCriticos} 
+                  onChange={e => setFormData({...formData, pontosCriticos: e.target.value})} 
+                  className={`${inputClass} min-h-[100px] py-4 leading-relaxed resize-none bg-red-50/10 border-red-100 focus:border-red-300 focus:ring-red-500/5 text-red-900 placeholder:text-red-300`} 
+                  placeholder="Aponte processos que exigem atenção redobrada durante a fabricação..." 
+                />
               </Field>
-              <div className="md:col-span-2">
-                <Field label="Características de Costura e Acabamento">
-                  <textarea 
-                    value={formData.caracteristicasCostura} 
-                    onChange={e => setFormData({...formData, caracteristicasCostura: e.target.value})} 
-                    className={`${inputClass} min-h-[160px] py-4 leading-relaxed resize-none`} 
-                    placeholder="Detalhe como deve ser a costura e o acabamento da peça..." 
-                  />
-                </Field>
-              </div>
-              <div className="md:col-span-2">
-                <Field label="Pontos Críticos de Execução">
-                  <textarea 
-                    value={formData.pontosCriticos} 
-                    onChange={e => setFormData({...formData, pontosCriticos: e.target.value})} 
-                    className={`${inputClass} min-h-[120px] py-4 leading-relaxed resize-none bg-red-50/10 border-red-100 focus:border-red-300 focus:ring-red-500/5 text-red-900 placeholder:text-red-300`} 
-                    placeholder="Aponte processos que exigem atenção redobrada durante a fabricação..." 
-                  />
-                </Field>
-              </div>
+
+              <Field label="Observações Gerais e Adicionais">
+                <textarea 
+                  value={formData.observacoesGerais} 
+                  onChange={e => setFormData({...formData, observacoesGerais: e.target.value})} 
+                  className={`${inputClass} min-h-[160px] py-4 leading-relaxed resize-none bg-gray-50/30`} 
+                  placeholder="Instruções gerais sobre a fabricação, embalagem ou qualquer detalhe extra..." 
+                />
+              </Field>
             </div>
           </div>
         )}

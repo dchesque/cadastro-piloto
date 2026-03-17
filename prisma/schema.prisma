@@ -24,8 +24,9 @@ model PecaPiloto {
   // Observações Técnicas
   caracteristicasCostura String?
   pontosCriticos         String?
-  maquina                String?
-  agulha                 String?
+  maquina                String? // Manter legado
+  agulha                 String? // Manter legado
+  observacoesGerais      String?
   
   // Legado / Simples (Manter para compatibilidade inicial)
   fornecedor          String?
@@ -38,6 +39,7 @@ model PecaPiloto {
   // Relações para Ficha Completa
   materiais           PecaTecido[]
   aviamentos          PecaAviamento[]
+  equipamentos        PecaEquipamento[]
   
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
@@ -69,6 +71,16 @@ model PecaAviamento {
   codFornecedor String?
   composicao    String?
   consumo       String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model PecaEquipamento {
+  id            String     @id @default(cuid())
+  pecaId        String
+  peca          PecaPiloto @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  maquina       String?
+  agulha        String?
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }

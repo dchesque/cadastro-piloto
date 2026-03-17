@@ -15,6 +15,9 @@ export async function GET(
         },
         aviamentos: {
           orderBy: { createdAt: 'asc' }
+        },
+        equipamentos: {
+          orderBy: { createdAt: 'asc' }
         }
       }
     })
@@ -44,8 +47,8 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
     
-    // Extrair materiais e aviamentos do corpo, se existirem
-    const { materiais, aviamentos, ...pecaData } = body
+    // Extrair materiais, aviamentos e equipamentos do corpo, se existirem
+    const { materiais, aviamentos, equipamentos, ...pecaData } = body
 
     // Usar transação para garantir integridade ao atualizar ficha completa
     const result = await prisma.$transaction(async (tx) => {
@@ -77,6 +80,20 @@ export async function PUT(
           await tx.pecaAviamento.createMany({
             data: aviamentos.map((a: any) => ({
               ...a,
+              pecaId: id,
+              id: undefined
+            }))
+          })
+        }
+      }
+
+      // 4. Se houver equipamentos (ficha completa), sincronizar
+      if (equipamentos) {
+        await tx.pecaEquipamento.deleteMany({ where: { pecaId: id } })
+        if (equipamentos.length > 0) {
+          await tx.pecaEquipamento.createMany({
+            data: equipamentos.map((e: any) => ({
+              ...e,
               pecaId: id,
               id: undefined
             }))

@@ -19,7 +19,8 @@ import {
   Scissors,
   Settings,
   AlertCircle,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Check
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -50,10 +51,12 @@ interface PecaPiloto {
   pontosCriticos: string | null
   maquina: string | null
   agulha: string | null
+  observacoesGerais: string | null
   createdAt: string
   updatedAt: string
   materiais: any[]
   aviamentos: any[]
+  equipamentos: any[]
 }
 
 export default function PecaViewPage({ params }: { params: Promise<{ id: string }> }) {
@@ -293,20 +296,45 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                 </div>
              </div>
           </div>
-          <div className="col-span-1 p-3 bg-gray-50/50 flex flex-col justify-center">
-             <div className="flex gap-4 mb-1">
-                <div className="flex-1 text-center border-b border-black/10 pb-1">
-                   <p className="text-[7px] font-black uppercase text-gray-400">Máquina</p>
-                   <p className="text-[11px] font-black text-black">{peca.maquina || '—'}</p>
-                </div>
-                <div className="flex-1 text-center border-b border-black/10 pb-1">
-                   <p className="text-[7px] font-black uppercase text-gray-400">Agulha</p>
-                   <p className="text-[11px] font-black text-black">{peca.agulha || '—'}</p>
-                </div>
+          <div className="col-span-1 p-3 bg-gray-50/50 flex flex-col justify-start overflow-hidden">
+             <p className="text-[9px] font-black text-gray-400 text-center uppercase tracking-widest mb-3 border-b border-black/5 pb-1">Equipamentos</p>
+             <div className="space-y-3 overflow-y-auto max-h-[120px] pr-1 scrollbar-thin">
+                {peca.equipamentos && peca.equipamentos.length > 0 ? (
+                  peca.equipamentos.map((eq, i) => (
+                    <div key={i} className="flex gap-2 items-center border-b border-black/5 pb-2 last:border-0">
+                       <div className="flex-1">
+                          <p className="text-[7px] font-black uppercase text-gray-400">Máquina</p>
+                          <p className="text-[10px] font-black text-black leading-tight">{eq.maquina}</p>
+                       </div>
+                       <div className="w-12 text-center border-l border-black/5">
+                          <p className="text-[7px] font-black uppercase text-gray-400">Agulha</p>
+                          <p className="text-[10px] font-black text-black leading-tight">{eq.agulha}</p>
+                       </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-[9px] text-gray-300 italic">Nenhum equipamento listado.</p>
+                  </div>
+                )}
              </div>
-             <p className="text-[9px] font-black text-gray-300 text-center uppercase tracking-widest">Especificações</p>
           </div>
         </div>
+
+        {/* OBSERVAÇÕES GERAIS (ESTILO NOTAS) */}
+        {peca.observacoesGerais && (
+          <div className="p-4 bg-yellow-50/20 border-b-2 border-black min-h-[80px]">
+             <div className="flex items-start gap-3">
+                <div className="mt-1 p-1.5 bg-yellow-100 rounded-lg text-yellow-700 print:hidden">
+                   <ClipboardList size={14} />
+                </div>
+                <div className="flex-1">
+                   <p className="text-[9px] font-black uppercase tracking-widest text-yellow-800/50 mb-1">Notas e Observações Gerais</p>
+                   <p className="text-[11px] leading-relaxed text-gray-700 whitespace-pre-wrap">{peca.observacoesGerais}</p>
+                </div>
+             </div>
+          </div>
+        )}
 
         {/* RODAPÉ MINIMALISTA */}
         <div className="p-6 flex justify-between items-center bg-white">
