@@ -199,32 +199,35 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           </div>
         </div>
 
-        {/* BLOCO DE EQUIPE E MODELAGEM (UNIFICADO) */}
+        {/* BLOCO DE EQUIPE E MODELAGEM (DUAS COLUNAS PRINCIPAIS) */}
         <div className="border-b-2 border-black bg-gray-50/50 p-4">
-          <div className="grid grid-cols-3 gap-y-4 gap-x-8">
-            <TechnicalItemSmall label="Estilista" value={peca.estilista} />
-            <TechnicalItemSmall label="Modelista" value={peca.modelista} />
-            <TechnicalItemSmall label="Pilotista" value={peca.pilotista} />
-            
-            <TechnicalItemSmall label="Resp. Corte" value={peca.responsavelCorte} />
-            <TechnicalItemSmall label="Oficina" value={peca.oficina} />
-            <TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} />
-            
-            {/* GRADE COMPACTA EM TABLE - OCUPANDO A TERCEIRA LINHA OU INTEGRADA */}
-            <div className="flex flex-col col-span-3 pt-2">
-              <p className="text-[7px] font-black uppercase text-gray-400 mb-0.5">Grade / Quantidades (Corte)</p>
-              <table className="border-collapse border border-black w-full text-center">
+          <div className="grid grid-cols-[1fr_auto] gap-x-12 items-center">
+            {/* COLUNA 1: DADOS (2 LINHAS) */}
+            <div className="grid grid-cols-3 gap-y-6 gap-x-8">
+              <TechnicalItemSmall label="Estilista" value={peca.estilista} />
+              <TechnicalItemSmall label="Modelista" value={peca.modelista} />
+              <TechnicalItemSmall label="Pilotista" value={peca.pilotista} />
+              
+              <TechnicalItemSmall label="Resp. Corte" value={peca.responsavelCorte} />
+              <TechnicalItemSmall label="Oficina" value={peca.oficina} />
+              <TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} />
+            </div>
+
+            {/* COLUNA 2: GRADE (ALTURA TOTAL) */}
+            <div className="flex flex-col border-l-2 border-dashed border-gray-300 pl-8 min-w-[150px]">
+              <p className="text-[8px] font-black uppercase text-gray-400 mb-2">Grade / Qtd. (Corte)</p>
+              <table className="border-collapse border-2 border-black w-full text-center bg-white shadow-sm">
                 <thead>
-                  <tr className="bg-gray-50 uppercase text-[8px] font-black">
+                  <tr className="bg-gray-50 uppercase text-[9px] font-black">
                     {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((size, i) => (
-                      <th key={i} className="border border-black px-1 py-0.5">{size.trim()}</th>
+                      <th key={i} className="border-2 border-black px-2 py-1 min-w-[35px]">{size.trim()}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="h-5">
+                <tbody className="h-10">
                   <tr>
                     {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
-                      <td key={i} className="border border-black"></td>
+                      <td key={i} className="border-2 border-black"></td>
                     ))}
                   </tr>
                 </tbody>
