@@ -166,6 +166,9 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
     return <div className="p-20 text-center animate-pulse">Carregando formulário técnico...</div>
   }
 
+  const inputClass = "w-full h-11 px-4 bg-white border border-[--color-border-light] rounded-[16px] text-[15px] font-medium text-[--color-text-primary] placeholder:text-[--color-text-tertiary] focus:outline-none focus:border-[--color-accent] focus:ring-4 focus:ring-[--color-accent]/5 transition-all duration-200"
+  const monoClass = "font-mono text-[13px] tracking-tight"
+
   return (
     <form onSubmit={handleSave} className="max-w-[1000px] mx-auto space-y-8 pb-32 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <header className="flex items-center justify-between">
@@ -205,7 +208,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                 <input 
                   value={formData.nome} 
                   onChange={e => setFormData({...formData, nome: e.target.value})} 
-                  className="input-premium bg-gray-50/30 focus:bg-white" 
+                  className={inputClass}
                   placeholder="Ex: Blusa Crepe Alcinha"
                 />
               </Field>
@@ -213,7 +216,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                 <input 
                   value={formData.referencia} 
                   onChange={e => setFormData({...formData, referencia: e.target.value})} 
-                  className="input-premium bg-gray-50/30 focus:bg-white font-bold" 
+                  className={`${inputClass} ${monoClass} font-bold`}
                   placeholder="Ex: PP-2026-0001"
                 />
               </Field>
@@ -221,7 +224,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                 <input 
                   value={formData.colecao} 
                   onChange={e => setFormData({...formData, colecao: e.target.value})} 
-                  className="input-premium bg-gray-50/30 focus:bg-white" 
+                  className={inputClass}
                   placeholder="Ex: Inverno 2026"
                 />
               </Field>
@@ -230,16 +233,16 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
             <SectionHeader title="Equipe de Desenvolvimento" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Field label="Estilista">
-                <input value={formData.estilista} onChange={e => setFormData({...formData, estilista: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
+                <input value={formData.estilista} onChange={e => setFormData({...formData, estilista: e.target.value})} className={inputClass} placeholder="Nome do estilista" />
               </Field>
               <Field label="Modelista">
-                <input value={formData.modelista} onChange={e => setFormData({...formData, modelista: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
+                <input value={formData.modelista} onChange={e => setFormData({...formData, modelista: e.target.value})} className={inputClass} placeholder="Nome da modelista" />
               </Field>
               <Field label="Pilotista">
-                <input value={formData.pilotista} onChange={e => setFormData({...formData, pilotista: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
+                <input value={formData.pilotista} onChange={e => setFormData({...formData, pilotista: e.target.value})} className={inputClass} placeholder="Nome da pilotista" />
               </Field>
               <Field label="Responsável Corte">
-                <input value={formData.responsavelCorte} onChange={e => setFormData({...formData, responsavelCorte: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
+                <input value={formData.responsavelCorte} onChange={e => setFormData({...formData, responsavelCorte: e.target.value})} className={inputClass} placeholder="Nome do cortador" />
               </Field>
             </div>
           </div>
@@ -251,10 +254,10 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
             <SectionHeader title="Modelagem Técnica" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Field label="Grade de Tamanhos (Corte)">
-                <input placeholder="Ex: P, M, G, GG" value={formData.gradeCorte} onChange={e => setFormData({...formData, gradeCorte: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
+                <input placeholder="Ex: P, M, G, GG" value={formData.gradeCorte} onChange={e => setFormData({...formData, gradeCorte: e.target.value})} className={inputClass} />
               </Field>
               <Field label="Tamanho da Peça Piloto">
-                <input placeholder="Ex: M" value={formData.tamanhoPiloto} onChange={e => setFormData({...formData, tamanhoPiloto: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
+                <input placeholder="Ex: M" value={formData.tamanhoPiloto} onChange={e => setFormData({...formData, tamanhoPiloto: e.target.value})} className={inputClass} />
               </Field>
             </div>
 
@@ -262,17 +265,17 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Field label="URL Foto Frente (ou Desenho Técnico)">
                 <div className="space-y-4">
-                  <input value={formData.fotoFrente} onChange={e => setFormData({...formData, fotoFrente: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white text-xs" placeholder="Cole aqui o link da imagem..." />
-                  <div className="aspect-[4/5] w-full bg-gray-50 rounded-[24px] flex items-center justify-center border-2 border-dashed border-gray-100 overflow-hidden group hover:border-[--color-accent-peca]/20 transition-all">
-                     {formData.fotoFrente ? <img src={formData.fotoFrente} className="w-full h-full object-contain" /> : <div className="text-center opacity-20"><ImageIcon size={48} className="mx-auto mb-2" /><p className="text-[10px] font-black uppercase">Visualização Frente</p></div>}
+                  <input value={formData.fotoFrente} onChange={e => setFormData({...formData, fotoFrente: e.target.value})} className={`${inputClass} text-xs`} placeholder="Cole aqui o link da imagem..." />
+                  <div className="aspect-[4/5] w-full bg-gray-50 rounded-[28px] flex items-center justify-center border-2 border-dashed border-gray-200 overflow-hidden group hover:border-[--color-accent]/30 transition-all shadow-inner">
+                     {formData.fotoFrente ? <img src={formData.fotoFrente} className="w-full h-full object-contain p-4" /> : <div className="text-center opacity-30"><ImageIcon size={48} className="mx-auto mb-2 text-gray-400" /><p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Visualização Frente</p></div>}
                   </div>
                 </div>
               </Field>
               <Field label="URL Foto Verso (ou Desenho Técnico)">
                 <div className="space-y-4">
-                  <input value={formData.fotoVerso} onChange={e => setFormData({...formData, fotoVerso: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white text-xs" placeholder="Cole aqui o link da imagem..." />
-                  <div className="aspect-[4/5] w-full bg-gray-50 rounded-[24px] flex items-center justify-center border-2 border-dashed border-gray-100 overflow-hidden group hover:border-[--color-accent-peca]/20 transition-all">
-                     {formData.fotoVerso ? <img src={formData.fotoVerso} className="w-full h-full object-contain" /> : <div className="text-center opacity-20"><ImageIcon size={48} className="mx-auto mb-2" /><p className="text-[10px] font-black uppercase">Visualização Verso</p></div>}
+                  <input value={formData.fotoVerso} onChange={e => setFormData({...formData, fotoVerso: e.target.value})} className={`${inputClass} text-xs`} placeholder="Cole aqui o link da imagem..." />
+                  <div className="aspect-[4/5] w-full bg-gray-50 rounded-[28px] flex items-center justify-center border-2 border-dashed border-gray-200 overflow-hidden group hover:border-[--color-accent]/30 transition-all shadow-inner">
+                     {formData.fotoVerso ? <img src={formData.fotoVerso} className="w-full h-full object-contain p-4" /> : <div className="text-center opacity-30"><ImageIcon size={48} className="mx-auto mb-2 text-gray-400" /><p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Visualização Verso</p></div>}
                   </div>
                 </div>
               </Field>
@@ -303,22 +306,22 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                       </button>
                     </div>
                     <Field label="Nome/Tipo">
-                      <input value={mat.nome} onChange={e => updateMaterial(idx, 'nome', e.target.value)} className="input-premium bg-white" />
+                      <input value={mat.nome} onChange={e => updateMaterial(idx, 'nome', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Cor">
-                      <input value={mat.cor} onChange={e => updateMaterial(idx, 'cor', e.target.value)} className="input-premium bg-white" />
+                      <input value={mat.cor} onChange={e => updateMaterial(idx, 'cor', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Cod. Fornecedor">
-                      <input value={mat.codFornecedor} onChange={e => updateMaterial(idx, 'codFornecedor', e.target.value)} className="input-premium bg-white" />
+                      <input value={mat.codFornecedor} onChange={e => updateMaterial(idx, 'codFornecedor', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Composição">
-                      <input value={mat.composicao} onChange={e => updateMaterial(idx, 'composicao', e.target.value)} className="input-premium bg-white" />
+                      <input value={mat.composicao} onChange={e => updateMaterial(idx, 'composicao', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Largura">
-                      <input value={mat.largura} onChange={e => updateMaterial(idx, 'largura', e.target.value)} className="input-premium bg-white" placeholder="Ex: 1,50m" />
+                      <input value={mat.largura} onChange={e => updateMaterial(idx, 'largura', e.target.value)} className={inputClass} placeholder="Ex: 1,50m" />
                     </Field>
                     <Field label="Consumo p/ Peça">
-                      <input value={mat.consumo} onChange={e => updateMaterial(idx, 'consumo', e.target.value)} className="input-premium bg-white" />
+                      <input value={mat.consumo} onChange={e => updateMaterial(idx, 'consumo', e.target.value)} className={inputClass} />
                     </Field>
                   </div>
                 </div>
@@ -351,22 +354,22 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                       </button>
                     </div>
                     <Field label="Nome">
-                      <input value={av.nome} onChange={e => updateAviamento(idx, 'nome', e.target.value)} className="input-premium bg-white" />
+                      <input value={av.nome} onChange={e => updateAviamento(idx, 'nome', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Medida">
-                      <input value={av.medida} onChange={e => updateAviamento(idx, 'medida', e.target.value)} className="input-premium bg-white" />
+                      <input value={av.medida} onChange={e => updateAviamento(idx, 'medida', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Cor">
-                      <input value={av.cor} onChange={e => updateAviamento(idx, 'cor', e.target.value)} className="input-premium bg-white" />
+                      <input value={av.cor} onChange={e => updateAviamento(idx, 'cor', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Cod. Fornecedor">
-                      <input value={av.codFornecedor} onChange={e => updateAviamento(idx, 'codFornecedor', e.target.value)} className="input-premium bg-white" />
+                      <input value={av.codFornecedor} onChange={e => updateAviamento(idx, 'codFornecedor', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Composição">
-                      <input value={av.composicao} onChange={e => updateAviamento(idx, 'composicao', e.target.value)} className="input-premium bg-white" />
+                      <input value={av.composicao} onChange={e => updateAviamento(idx, 'composicao', e.target.value)} className={inputClass} />
                     </Field>
                     <Field label="Consumo p/ Peça">
-                      <input value={av.consumo} onChange={e => updateAviamento(idx, 'consumo', e.target.value)} className="input-premium bg-white" />
+                      <input value={av.consumo} onChange={e => updateAviamento(idx, 'consumo', e.target.value)} className={inputClass} />
                     </Field>
                   </div>
                 </div>
@@ -382,17 +385,17 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
             <SectionHeader title="Especificações de Costura e Acabamento" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Field label="Máquina">
-                <input value={formData.maquina} onChange={e => setFormData({...formData, maquina: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" placeholder="Ex: Reta Eletrônica" />
+                <input value={formData.maquina} onChange={e => setFormData({...formData, maquina: e.target.value})} className={inputClass} placeholder="Ex: Reta Eletrônica" />
               </Field>
               <Field label="Agulha">
-                <input value={formData.agulha} onChange={e => setFormData({...formData, agulha: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" placeholder="Ex: 80" />
+                <input value={formData.agulha} onChange={e => setFormData({...formData, agulha: e.target.value})} className={inputClass} placeholder="Ex: 80" />
               </Field>
               <div className="md:col-span-2">
                 <Field label="Características de Costura e Acabamento">
                   <textarea 
                     value={formData.caracteristicasCostura} 
                     onChange={e => setFormData({...formData, caracteristicasCostura: e.target.value})} 
-                    className="input-premium min-h-[160px] py-6 bg-gray-50/30 focus:bg-white leading-relaxed" 
+                    className={`${inputClass} min-h-[160px] py-4 leading-relaxed resize-none`} 
                     placeholder="Detalhe como deve ser a costura e o acabamento da peça..." 
                   />
                 </Field>
@@ -402,7 +405,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                   <textarea 
                     value={formData.pontosCriticos} 
                     onChange={e => setFormData({...formData, pontosCriticos: e.target.value})} 
-                    className="input-premium min-h-[120px] py-6 bg-red-50/20 border-red-50 focus:border-red-200 focus:bg-white text-red-900 placeholder:text-red-300 leading-relaxed" 
+                    className={`${inputClass} min-h-[120px] py-4 leading-relaxed resize-none bg-red-50/10 border-red-100 focus:border-red-300 focus:ring-red-500/5 text-red-900 placeholder:text-red-300`} 
                     placeholder="Aponte processos que exigem atenção redobrada durante a fabricação..." 
                   />
                 </Field>
