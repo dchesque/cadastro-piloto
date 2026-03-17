@@ -373,18 +373,22 @@ function TechnicalItemSmall({ label, value }: { label: string, value: string | n
 
 function PhotoContainerClean({ label, src }: { label: string, src: string | null }) {
   return (
-    <div className="flex flex-col gap-1.5 h-full">
-       <div className="flex-1 border-2 border-dashed border-gray-200 rounded-xl flex items-center justify-center overflow-hidden bg-white/50 group hover:border-black/20 transition-all">
+    <div className="flex flex-col gap-1.5 h-full overflow-hidden">
+       <div className="flex-1 rounded-2xl flex items-center justify-center overflow-hidden bg-white transition-all relative">
           {src ? (
-            <img src={src} className="w-full h-full object-contain" />
+            <img 
+              src={src} 
+              className="absolute inset-0 w-full h-full object-contain p-2" 
+              alt={label}
+            />
           ) : (
             <div className="text-center p-2 opacity-20">
-              <ImageIcon size={24} className="mx-auto mb-1" />
+              <ImageIcon size={32} className="mx-auto mb-1 text-gray-400" />
               <p className="text-[8px] font-black uppercase tracking-tighter">SEM FOTO {label}</p>
             </div>
           )}
        </div>
-       <p className="text-[8px] font-black uppercase text-center tracking-widest text-gray-300">{label}</p>
+       <p className="text-[10px] font-black uppercase text-center tracking-widest text-gray-400 mt-1">{label}</p>
     </div>
   )
 }
