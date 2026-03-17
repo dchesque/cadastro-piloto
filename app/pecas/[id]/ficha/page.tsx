@@ -198,26 +198,48 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
       <div className="bg-white border border-[--color-border-light] rounded-[32px] p-8 sm:p-10 shadow-sm min-h-[500px]">
         {/* ABA GERAL */}
         {activeTab === 'geral' && (
-          <div className="space-y-8 animate-in fade-in duration-500">
-            <SectionHeader title="Identificação e Responsáveis" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-10 animate-in fade-in duration-500">
+            <SectionHeader title="Identificação da Peça" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Field label="Nome da Peça">
-                <input value={formData.nome} onChange={e => setFormData({...formData, nome: e.target.value})} className="input-premium" />
+                <input 
+                  value={formData.nome} 
+                  onChange={e => setFormData({...formData, nome: e.target.value})} 
+                  className="input-premium bg-gray-50/30 focus:bg-white" 
+                  placeholder="Ex: Blusa Crepe Alcinha"
+                />
+              </Field>
+              <Field label="Referência">
+                <input 
+                  value={formData.referencia} 
+                  onChange={e => setFormData({...formData, referencia: e.target.value})} 
+                  className="input-premium bg-gray-50/30 focus:bg-white font-bold" 
+                  placeholder="Ex: PP-2026-0001"
+                />
               </Field>
               <Field label="Coleção">
-                <input value={formData.colecao} onChange={e => setFormData({...formData, colecao: e.target.value})} className="input-premium" />
+                <input 
+                  value={formData.colecao} 
+                  onChange={e => setFormData({...formData, colecao: e.target.value})} 
+                  className="input-premium bg-gray-50/30 focus:bg-white" 
+                  placeholder="Ex: Inverno 2026"
+                />
               </Field>
+            </div>
+
+            <SectionHeader title="Equipe de Desenvolvimento" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Field label="Estilista">
-                <input value={formData.estilista} onChange={e => setFormData({...formData, estilista: e.target.value})} className="input-premium" />
+                <input value={formData.estilista} onChange={e => setFormData({...formData, estilista: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
               </Field>
               <Field label="Modelista">
-                <input value={formData.modelista} onChange={e => setFormData({...formData, modelista: e.target.value})} className="input-premium" />
+                <input value={formData.modelista} onChange={e => setFormData({...formData, modelista: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
               </Field>
               <Field label="Pilotista">
-                <input value={formData.pilotista} onChange={e => setFormData({...formData, pilotista: e.target.value})} className="input-premium" />
+                <input value={formData.pilotista} onChange={e => setFormData({...formData, pilotista: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
               </Field>
               <Field label="Responsável Corte">
-                <input value={formData.responsavelCorte} onChange={e => setFormData({...formData, responsavelCorte: e.target.value})} className="input-premium" />
+                <input value={formData.responsavelCorte} onChange={e => setFormData({...formData, responsavelCorte: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
               </Field>
             </div>
           </div>
@@ -225,35 +247,35 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
 
         {/* ABA MODELAGEM */}
         {activeTab === 'modelagem' && (
-          <div className="space-y-8 animate-in fade-in duration-500">
-            <SectionHeader title="Modelagem e Imagens" />
+          <div className="space-y-10 animate-in fade-in duration-500">
+            <SectionHeader title="Modelagem Técnica" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <Field label="Grade de Tamanhos (Corte)">
-                  <input placeholder="Ex: P, M, G, GG" value={formData.gradeCorte} onChange={e => setFormData({...formData, gradeCorte: e.target.value})} className="input-premium" />
-                </Field>
-                <Field label="Tamanho da Peça Piloto">
-                  <input placeholder="Ex: M" value={formData.tamanhoPiloto} onChange={e => setFormData({...formData, tamanhoPiloto: e.target.value})} className="input-premium" />
-                </Field>
-              </div>
-              <div className="space-y-6">
-                <Field label="URL Foto Frente">
-                  <div className="flex gap-2">
-                    <input value={formData.fotoFrente} onChange={e => setFormData({...formData, fotoFrente: e.target.value})} className="input-premium" placeholder="https://..." />
-                    <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden">
-                       {formData.fotoFrente ? <img src={formData.fotoFrente} className="w-full h-full object-cover" /> : <ImageIcon size={20} className="text-gray-300" />}
-                    </div>
+              <Field label="Grade de Tamanhos (Corte)">
+                <input placeholder="Ex: P, M, G, GG" value={formData.gradeCorte} onChange={e => setFormData({...formData, gradeCorte: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
+              </Field>
+              <Field label="Tamanho da Peça Piloto">
+                <input placeholder="Ex: M" value={formData.tamanhoPiloto} onChange={e => setFormData({...formData, tamanhoPiloto: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" />
+              </Field>
+            </div>
+
+            <SectionHeader title="Referências Visuais" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Field label="URL Foto Frente (ou Desenho Técnico)">
+                <div className="space-y-4">
+                  <input value={formData.fotoFrente} onChange={e => setFormData({...formData, fotoFrente: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white text-xs" placeholder="Cole aqui o link da imagem..." />
+                  <div className="aspect-[4/5] w-full bg-gray-50 rounded-[24px] flex items-center justify-center border-2 border-dashed border-gray-100 overflow-hidden group hover:border-[--color-accent-peca]/20 transition-all">
+                     {formData.fotoFrente ? <img src={formData.fotoFrente} className="w-full h-full object-contain" /> : <div className="text-center opacity-20"><ImageIcon size={48} className="mx-auto mb-2" /><p className="text-[10px] font-black uppercase">Visualização Frente</p></div>}
                   </div>
-                </Field>
-                <Field label="URL Foto Verso">
-                  <div className="flex gap-2">
-                    <input value={formData.fotoVerso} onChange={e => setFormData({...formData, fotoVerso: e.target.value})} className="input-premium" placeholder="https://..." />
-                    <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 overflow-hidden">
-                       {formData.fotoVerso ? <img src={formData.fotoVerso} className="w-full h-full object-cover" /> : <ImageIcon size={20} className="text-gray-300" />}
-                    </div>
+                </div>
+              </Field>
+              <Field label="URL Foto Verso (ou Desenho Técnico)">
+                <div className="space-y-4">
+                  <input value={formData.fotoVerso} onChange={e => setFormData({...formData, fotoVerso: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white text-xs" placeholder="Cole aqui o link da imagem..." />
+                  <div className="aspect-[4/5] w-full bg-gray-50 rounded-[24px] flex items-center justify-center border-2 border-dashed border-gray-100 overflow-hidden group hover:border-[--color-accent-peca]/20 transition-all">
+                     {formData.fotoVerso ? <img src={formData.fotoVerso} className="w-full h-full object-contain" /> : <div className="text-center opacity-20"><ImageIcon size={48} className="mx-auto mb-2" /><p className="text-[10px] font-black uppercase">Visualização Verso</p></div>}
                   </div>
-                </Field>
-              </div>
+                </div>
+              </Field>
             </div>
           </div>
         )}
@@ -356,24 +378,34 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
 
         {/* ABA COSTURA */}
         {activeTab === 'costura' && (
-          <div className="space-y-8 animate-in fade-in duration-500">
+          <div className="space-y-10 animate-in fade-in duration-500">
             <SectionHeader title="Especificações de Costura e Acabamento" />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <Field label="Máquina">
-                <input value={formData.maquina} onChange={e => setFormData({...formData, maquina: e.target.value})} className="input-premium" placeholder="Ex: Reta Eletrônica" />
+                <input value={formData.maquina} onChange={e => setFormData({...formData, maquina: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" placeholder="Ex: Reta Eletrônica" />
               </Field>
               <Field label="Agulha">
-                <input value={formData.agulha} onChange={e => setFormData({...formData, agulha: e.target.value})} className="input-premium" placeholder="Ex: 80" />
+                <input value={formData.agulha} onChange={e => setFormData({...formData, agulha: e.target.value})} className="input-premium bg-gray-50/30 focus:bg-white" placeholder="Ex: 80" />
               </Field>
               <div className="md:col-span-2">
                 <Field label="Características de Costura e Acabamento">
-                  <textarea value={formData.caracteristicasCostura} onChange={e => setFormData({...formData, caracteristicasCostura: e.target.value})} className="input-premium min-h-[100px] py-4" placeholder="Detalhe como deve ser a costura e o acabamento..." />
+                  <textarea 
+                    value={formData.caracteristicasCostura} 
+                    onChange={e => setFormData({...formData, caracteristicasCostura: e.target.value})} 
+                    className="input-premium min-h-[160px] py-6 bg-gray-50/30 focus:bg-white leading-relaxed" 
+                    placeholder="Detalhe como deve ser a costura e o acabamento da peça..." 
+                  />
                 </Field>
               </div>
               <div className="md:col-span-2">
                 <Field label="Pontos Críticos de Execução">
-                  <textarea value={formData.pontosCriticos} onChange={e => setFormData({...formData, pontosCriticos: e.target.value})} className="input-premium min-h-[100px] py-4 border-red-50 focus:border-red-200" placeholder="Aponte processos que exigem atenção redobrada..." />
-                </Field>
+                  <textarea 
+                    value={formData.pontosCriticos} 
+                    onChange={e => setFormData({...formData, pontosCriticos: e.target.value})} 
+                    className="input-premium min-h-[120px] py-6 bg-red-50/20 border-red-50 focus:border-red-200 focus:bg-white text-red-900 placeholder:text-red-300 leading-relaxed" 
+                    placeholder="Aponte processos que exigem atenção redobrada durante a fabricação..." 
+                  />
+                </div>
               </div>
             </div>
           </div>
