@@ -3,7 +3,18 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/components/ui/toast'
-import { ArrowLeft, Printer, Save, Trash2 } from 'lucide-react'
+import { 
+  ArrowLeft, 
+  Printer, 
+  Pencil, 
+  Trash2, 
+  Calendar, 
+  Building2, 
+  FileText, 
+  Palette, 
+  Ruler, 
+  CheckCircle2
+} from 'lucide-react'
 import Link from 'next/link'
 import {
   Dialog,
@@ -14,7 +25,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Field } from '@/components/ui/field'
+import { formatDate } from '@/lib/utils'
 
 interface CorteTecido {
   id: string
@@ -28,58 +39,26 @@ interface CorteTecido {
   cor: string
   refCor: string | null
   observacoes: string | null
+  createdAt: string
+  updatedAt: string
 }
 
-export default function TecidoDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function TecidoViewPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()
   const { id } = use(params)
-
+  
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
   const [tecido, setTecido] = useState<CorteTecido | null>(null)
-  const [formData, setFormData] = useState({
-    referencia: '',
-    nome: '',
-    fornecedor: '',
-    composicao: '',
-    metragem: '',
-    largura: '',
-    preco: '',
-    cor: '',
-    refCor: '',
-    observacoes: '',
-  })
-  const [errors, setErrors] = useState<Record<string, string>>({})
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
-
-  useEffect(() => {
-    if (id) {
-      fetchTecido()
-    }
-  }, [id])
 
   const fetchTecido = async () => {
     setLoading(true)
     try {
       const response = await fetch(`/api/tecidos/${id}`)
       const result = await response.json()
-
       if (response.ok) {
-        const tecidoData = result.data
-        setTecido(tecidoData)
-        setFormData({
-          referencia: tecidoData.referencia,
-          nome: tecidoData.nome,
-          fornecedor: tecidoData.fornecedor,
-          composicao: tecidoData.composicao,
-          metragem: tecidoData.metragem.toString(),
-          largura: tecidoData.largura.toString(),
-          preco: tecidoData.preco.toString(),
-          cor: tecidoData.cor,
-          refCor: tecidoData.refCor || '',
-          observacoes: tecidoData.observacoes || '',
-        })
+        setTecido(result.data)
       }
     } catch (error) {
       console.error('Erro ao buscar tecido:', error)
@@ -88,285 +67,181 @@ export default function TecidoDetailPage({ params }: { params: Promise<{ id: str
     }
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-    setErrors((prev) => ({ ...prev, [name]: '' }))
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    setSaving(true)
-    try {
-      const response = await fetch(`/api/tecidos/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          metragem: formData.metragem ? parseFloat(formData.metragem) : null,
-          largura: formData.largura ? parseFloat(formData.largura) : null,
-          preco: formData.preco ? parseFloat(formData.preco) : null,
-          refCor: formData.refCor || null,
-        }),
-      })
-
-      const result = await response.json()
-
-      if (response.ok) {
-        showToast({
-          title: 'Sucesso',
-          description: 'Tecido atualizado com sucesso',
-        })
-        fetchTecido()
-      } else {
-        showToast({
-          title: 'Erro',
-          description: result.message || 'Erro ao atualizar tecido',
-          variant: 'destructive',
-        })
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar tecido:', error)
-      showToast({
-        title: 'Erro',
-        description: 'Erro ao atualizar tecido',
-        variant: 'destructive',
-      })
-    } finally {
-      setSaving(false)
-    }
-  }
+  useEffect(() => {
+    if (id) fetchTecido()
+  }, [id])
 
   const handleDelete = async () => {
     setDeleting(true)
     try {
-      const response = await fetch(`/api/tecidos/${id}`, {
-        method: 'DELETE',
-      })
-
+      const response = await fetch(`/api/tecidos/${id}`, { method: 'DELETE' })
       if (response.ok) {
-        showToast({
-          title: 'Sucesso',
-          description: 'Tecido excluído com sucesso',
-        })
+        showToast({ title: 'Sucesso', description: 'Tecido excluído com sucesso' })
         router.push('/tecidos')
-      } else {
-        showToast({
-          title: 'Erro',
-          description: 'Erro ao excluir tecido',
-          variant: 'destructive',
-        })
       }
     } catch (error) {
       console.error('Erro ao excluir tecido:', error)
-      showToast({
-        title: 'Erro',
-        description: 'Erro ao excluir tecido',
-        variant: 'destructive',
-      })
     } finally {
       setDeleting(false)
       setDeleteDialogOpen(false)
     }
   }
 
+  const handlePrint = () => {
+    window.print()
+  }
+
   if (loading) {
     return (
-      <div className="max-w-[640px] mx-auto py-20 flex flex-col items-center justify-center gap-4">
-        <div className="w-8 h-8 border-2 border-[--color-accent] border-t-transparent rounded-full animate-spin" />
-        <p className="text-[14px] text-[--color-text-secondary]">Carregando tecido...</p>
+      <div className="max-w-[800px] mx-auto py-20 flex flex-col items-center justify-center gap-4">
+        <div className="w-8 h-8 border-2 border-[--color-accent-tecido] border-t-transparent rounded-full animate-spin" />
+        <p className="text-[14px] text-[--color-text-secondary]">Carregando ficha técnica...</p>
       </div>
     )
   }
 
   if (!tecido) {
     return (
-      <div className="max-w-[640px] mx-auto py-20 text-center">
+      <div className="max-w-[800px] mx-auto py-20 text-center">
         <p className="text-[15px] font-medium text-[--color-text-secondary]">Tecido não encontrado</p>
         <Link href="/tecidos">
-          <button className="mt-4 text-[14px] text-[--color-accent] hover:underline">Voltar para lista</button>
+          <button className="mt-4 text-[14px] text-[--color-accent-tecido] hover:underline transition-all">Voltar para lista</button>
         </Link>
       </div>
     )
   }
 
-  const inputClass = "w-full h-11 px-4 bg-white border border-[--color-border-light] rounded-[16px] text-[15px] font-medium text-[--color-text-primary] placeholder:text-[--color-text-tertiary] focus:outline-none focus:border-[--color-accent-tecido] focus:ring-4 focus:ring-[--color-accent-tecido]/5 transition-all duration-200"
-  const monoClass = "font-mono text-[13px] tracking-tight"
-
   return (
-    <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
-      <header className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
-        <div className="space-y-4">
+    <div className="max-w-[800px] mx-auto space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Ações e Navegação */}
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
+        <button 
+          onClick={() => router.push('/tecidos')}
+          className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[--color-text-tertiary] hover:text-[--color-accent-tecido] transition-all group px-4 py-2 rounded-full bg-white border border-[--color-border-light] w-fit shadow-sm"
+        >
+          <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+          Voltar para Lista
+        </button>
+
+        <div className="flex items-center gap-2">
           <button 
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[--color-text-tertiary] hover:text-[--color-accent-tecido] transition-all group px-3 py-1.5 rounded-full bg-[--color-bg-subtle]"
+            onClick={handlePrint}
+            className="btn-premium btn-outline h-10 px-5 flex items-center gap-2 bg-white text-[13px] font-bold"
           >
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-            Voltar
+            <Printer size={16} />
+            Imprimir
           </button>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-light text-[--color-text-primary] tracking-tight">Editar Corte de Tecido</h1>
-            <p className="text-[14px] text-[--color-text-secondary] font-medium uppercase tracking-wider font-bold">JC PLUS SIZE</p>
-          </div>
+          <Link href={`/tecidos/${id}/editar`}>
+            <button className="btn-premium btn-outline h-10 px-5 flex items-center gap-2 bg-white text-[13px] font-bold border-blue-100 text-blue-700 hover:bg-blue-50">
+              <Pencil size={16} />
+              Editar
+            </button>
+          </Link>
+          <button 
+            onClick={() => setDeleteDialogOpen(true)}
+            className="btn-premium btn-outline h-10 px-5 flex items-center gap-2 bg-white text-[13px] font-bold border-red-100 text-red-600 hover:bg-red-50"
+          >
+            <Trash2 size={16} />
+            Excluir
+          </button>
         </div>
-        
-        <Link href={`/tecidos/${id}/imprimir`}>
-          <button className="btn-premium btn-outline h-12 px-6 flex items-center gap-2 bg-white">
-            <Printer size={18} />
-            Imprimir Etiqueta
-          </button>
-        </Link>
       </header>
 
-      <form onSubmit={handleSubmit} className="bg-white border border-[--color-border-light] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-card hover:shadow-hover transition-all duration-500">
-        <div className="p-6 space-y-5">
-          <Field label="Referência" hint="Você pode editar o código se necessário">
-            <div className="relative">
-              <input 
-                name="referencia"
-                value={formData.referencia} 
-                onChange={handleChange}
-                className={`${inputClass} ${monoClass}`} 
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[--color-accent-tecido] opacity-50" />
+      {/* Ficha Técnica */}
+      <div className="bg-white border border-[--color-border-light] rounded-[32px] overflow-hidden shadow-card print:border-none print:shadow-none print:rounded-none">
+        {/* Cabeçalho da Ficha */}
+        <div className="bg-[--color-bg-subtle]/30 p-8 sm:p-12 border-b border-[--color-border-light] relative overflow-hidden">
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-[--color-accent-tecido] flex items-center justify-center text-white shadow-lg shadow-[--color-accent-tecido]/20">
+                  <Palette size={20} />
+                </div>
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[--color-text-tertiary]">Ficha de Material #Tecido</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-light text-[--color-text-primary] tracking-tight">{tecido.nome}</h1>
+              <div className="flex items-center gap-4 text-[13px] text-[--color-text-secondary] font-medium">
+                <span className="flex items-center gap-1.5"><Calendar size={14} className="opacity-50" /> {formatDate(tecido.createdAt)}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[--color-border-medium]" />
+                <span className="font-mono bg-white px-2 py-0.5 rounded-md border border-[--color-border-light] text-[11px] text-[--color-accent-tecido] font-bold tracking-tighter uppercase">{tecido.referencia}</span>
+              </div>
             </div>
-          </Field>
-
-          <Field label="Nome do tecido" error={errors.nome}>
-            <input
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              className={`${inputClass} ${errors.nome ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-            />
-          </Field>
-
-          <Field label="Fornecedor" error={errors.fornecedor}>
-            <input
-              name="fornecedor"
-              value={formData.fornecedor}
-              onChange={handleChange}
-              className={`${inputClass} ${errors.fornecedor ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-            />
-          </Field>
-
-          <Field label="Composição" error={errors.composicao}>
-            <input
-              name="composicao"
-              value={formData.composicao}
-              onChange={handleChange}
-              className={`${inputClass} ${errors.composicao ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-            />
-          </Field>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <Field label="Metragem (m)" error={errors.metragem}>
-              <input
-                name="metragem"
-                type="number"
-                step="0.01"
-                value={formData.metragem}
-                onChange={handleChange}
-                className={`${inputClass} ${monoClass} ${errors.metragem ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-              />
-            </Field>
-
-            <Field label="Largura (m)" error={errors.largura}>
-              <input
-                name="largura"
-                type="number"
-                step="0.01"
-                value={formData.largura}
-                onChange={handleChange}
-                className={`${inputClass} ${monoClass} ${errors.largura ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-              />
-            </Field>
-
-            <Field label="Preço (R$/m)" error={errors.preco}>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[--color-text-tertiary] font-mono text-xs">R$</span>
-                <input
-                  name="preco"
-                  type="number"
-                  step="0.01"
-                  value={formData.preco}
-                  onChange={handleChange}
-                  className={`${inputClass} pl-10 ${monoClass} ${errors.preco ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-                />
+            <div className="px-6 py-3 bg-white border border-[--color-border-light] rounded-2xl shadow-sm text-center min-w-[140px]">
+              <p className="text-[10px] font-bold text-[--color-text-tertiary] uppercase tracking-widest mb-1">Status de Estoque</p>
+              <div className="flex items-center justify-center gap-2 text-green-600 font-bold text-[14px]">
+                <CheckCircle2 size={16} />
+                Disponível
               </div>
-            </Field>
+            </div>
           </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Cor" error={errors.cor}>
-              <input
-                name="cor"
-                value={formData.cor}
-                onChange={handleChange}
-                className={`${inputClass} ${errors.cor ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-              />
-            </Field>
-
-            <Field label="Ref. da cor" hint="Opcional">
-              <input
-                name="refCor"
-                value={formData.refCor}
-                onChange={handleChange}
-                className={`${inputClass} ${monoClass}`}
-              />
-            </Field>
-          </div>
-
-          <Field label="Observações">
-            <textarea
-              name="observacoes"
-              value={formData.observacoes}
-              onChange={handleChange}
-              rows={4}
-              className={`${inputClass} h-auto py-4 leading-relaxed resize-none`}
-            />
-          </Field>
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[--color-accent-tecido]/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
         </div>
 
-        <div className="bg-[--color-bg-subtle]/50 border-t border-[--color-border-light] p-6 flex flex-col sm:flex-row justify-end gap-3">
-          <div className="flex-1 flex justify-start">
-            <button 
-              type="button" 
-              onClick={() => setDeleteDialogOpen(true)}
-              disabled={deleting}
-              className="text-[14px] font-medium text-destructive hover:bg-destructive/5 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Trash2 size={16} />
-              Excluir
-            </button>
-          </div>
-          <button 
-            type="button" 
-            onClick={() => router.back()}
-            className="btn-premium btn-outline h-12 px-8 bg-white"
-          >
-            Cancelar
-          </button>
-          <button 
-            type="submit" 
-            disabled={saving}
-            className="btn-premium btn-primary h-12 px-10 shadow-premium disabled:opacity-50"
-          >
-            {saving ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Salvando...
+        {/* Conteúdo da Ficha */}
+        <div className="p-8 sm:p-12 space-y-12">
+          {/* Sessão: Informações Gerais */}
+          <section className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-[--color-text-secondary]">
+                <Building2 size={16} />
               </div>
-            ) : (
-              <>
-                <Save size={18} />
-                Salvar alterações
-              </>
-            )}
-          </button>
+              <h2 className="text-[14px] font-bold uppercase tracking-widest text-[--color-text-primary]">Origem e Fornecimento</h2>
+              <div className="flex-1 h-[1px] bg-[--color-border-light]/50" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <InfoItem icon={<Building2 size={16} />} label="Fornecedor" value={tecido.fornecedor} />
+              <InfoItem icon={<Palette size={16} />} label="Características de Cor" value={`${tecido.cor} ${tecido.refCor ? `(${tecido.refCor})` : ''}`} />
+            </div>
+          </section>
+
+          {/* Sessão: Dados Técnicos */}
+          <section className="space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-[--color-text-secondary]">
+                <Ruler size={16} />
+              </div>
+              <h2 className="text-[14px] font-bold uppercase tracking-widest text-[--color-text-primary]">Especificações Técnicas</h2>
+              <div className="flex-1 h-[1px] bg-[--color-border-light]/50" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 p-8 bg-[--color-bg-subtle]/20 rounded-2xl border border-[--color-border-light]/50">
+              <InfoItem label="Metragem" value={`${tecido.metragem.toLocaleString('pt-BR')} m`} />
+              <InfoItem label="Largura" value={`${tecido.largura.toLocaleString('pt-BR')} m`} />
+              <InfoItem label="Preço Unitário" value={`R$ ${tecido.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} />
+            </div>
+
+            <div className="p-6 bg-white border border-[--color-border-light] rounded-2xl flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-[--color-accent-tecido]/10 flex items-center justify-center text-[--color-accent-tecido]">
+                <FileText size={20} />
+              </div>
+              <div>
+                <p className="text-[10px] font-bold text-[--color-text-tertiary] uppercase tracking-widest mb-1">Composição Têxtil</p>
+                <p className="text-[16px] font-medium text-[--color-text-primary]">{tecido.composicao}</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Sessão: Observações */}
+          {tecido.observacoes && (
+            <section className="space-y-4">
+              <div className="flex items-center gap-3">
+                <h2 className="text-[14px] font-bold uppercase tracking-widest text-[--color-text-tertiary]">Notas de Armazenamento</h2>
+                <div className="flex-1 h-[1px] bg-[--color-border-light]/50" />
+              </div>
+              <div className="p-8 bg-white border border-[--color-border-light] rounded-[24px] shadow-sm italic text-[15px] text-[--color-text-secondary] leading-relaxed relative">
+                <div className="absolute top-4 left-4 text-4xl text-gray-100 font-serif leading-none">"</div>
+                <p className="relative z-10">{tecido.observacoes}</p>
+              </div>
+            </section>
+          )}
+
+          <div className="pt-8 border-t border-[--color-border-light] flex justify-between items-center text-[11px] text-[--color-text-tertiary] font-medium uppercase tracking-[0.2em]">
+            <span>JC PLUS SIZE - Controle de Estoque</span>
+            <span className="print:block hidden">Emitido em {new Date().toLocaleDateString('pt-BR')}</span>
+          </div>
         </div>
-      </form>
+      </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
@@ -386,6 +261,20 @@ export default function TecidoDetailPage({ params }: { params: Promise<{ id: str
           </DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  )
+}
+
+function InfoItem({ icon, label, value }: { icon?: React.ReactNode, label: string, value: string }) {
+  return (
+    <div className="space-y-1.5 flex flex-col group">
+      <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-[--color-text-tertiary] uppercase tracking-widest">
+        {icon && <span className="opacity-60">{icon}</span>}
+        {label}
+      </div>
+      <div className="text-[16px] sm:text-[17px] font-medium text-[--color-text-primary] tracking-tight group-hover:text-[--color-accent-tecido] transition-all">
+        {value || '—'}
+      </div>
     </div>
   )
 }

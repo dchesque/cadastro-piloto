@@ -158,6 +158,11 @@ export default function PecasPage() {
                     </button>
                   </Link>
                   <Link href={`/pecas/${peca.id}`}>
+                    <button title="Visualizar Ficha" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
+                      <Search size={16} />
+                    </button>
+                  </Link>
+                  <Link href={`/pecas/${peca.id}/editar`}>
                     <button title="Editar" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
                       <Pencil size={16} />
                     </button>

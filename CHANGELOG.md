@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.10.0] - 2026-03-17
+### Added
+- Páginas de **Visualização (Ficha Técnica)** para Peças e Tecidos.
+- Ícone de "olho" (Visualizar) nos cards de listagem para acesso rápido.
+- Funcionalidade de **impressão** direta da ficha técnica formatada.
+- Novo layout premium para exibição de detalhes técnicos.
+### Changed
+- Rota de edição movida para `[id]/editar` para priorizar a visualização.
+- Melhorias na navegação entre listagem, ficha e edição.
+
 Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
 
 ## [1.9.0] - 2026-03-16
