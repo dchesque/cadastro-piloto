@@ -67,6 +67,39 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
     agulha: '',
   })
 
+  const [uploading, setUploading] = useState<{ frente: boolean, verso: boolean }>({ frente: false, verso: false })
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>, lado: 'frente' | 'verso') => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploading(prev => ({ ...prev, [lado]: true }))
+    
+    try {
+      const formDataUpload = new FormData()
+      formDataUpload.append('file', file)
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataUpload,
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
+        setFormData(prev => ({ ...prev, [lado === 'frente' ? 'fotoFrente' : 'fotoVerso']: result.url }))
+        showToast({ title: 'Sucesso', description: 'Imagem enviada com sucesso!' })
+      } else {
+        showToast({ title: 'Erro', description: result.error || 'Erro no upload', variant: 'destructive' })
+      }
+    } catch (error) {
+      console.error('Erro no upload:', error)
+      showToast({ title: 'Erro', description: 'Falha ao enviar arquivo', variant: 'destructive' })
+    } finally {
+      setUploading(prev => ({ ...prev, [lado]: false }))
+    }
+  }
+
   const [materiais, setMateriais] = useState<Material[]>([])
   const [aviamentos, setAviamentos] = useState<Aviamento[]>([])
 
@@ -263,20 +296,75 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
 
             <SectionHeader title="Referências Visuais" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <Field label="URL Foto Frente (ou Desenho Técnico)">
+              <Field label="Frente (ou Desenho Técnico)" hint="Clique abaixo para fazer upload">
                 <div className="space-y-4">
-                  <input value={formData.fotoFrente} onChange={e => setFormData({...formData, fotoFrente: e.target.value})} className={`${inputClass} text-xs`} placeholder="Cole aqui o link da imagem..." />
-                  <div className="aspect-[4/5] w-full bg-gray-50 rounded-[28px] flex items-center justify-center border-2 border-dashed border-gray-200 overflow-hidden group hover:border-[--color-accent]/30 transition-all shadow-inner">
-                     {formData.fotoFrente ? <img src={formData.fotoFrente} className="w-full h-full object-contain p-4" /> : <div className="text-center opacity-30"><ImageIcon size={48} className="mx-auto mb-2 text-gray-400" /><p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Visualização Frente</p></div>}
+                  <div className="relative group cursor-pointer">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={e => handleUpload(e, 'frente')} 
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      disabled={uploading.frente}
+                    />
+                    <div className={`aspect-[4/5] w-full bg-gray-50 rounded-[28px] flex items-center justify-center border-2 border-dashed overflow-hidden transition-all shadow-inner 
+                      ${uploading.frente ? 'border-[--color-accent] animate-pulse' : 'border-gray-200 group-hover:border-[--color-accent]/30 group-hover:bg-gray-100/50'}`}>
+                       {uploading.frente ? (
+                         <div className="text-center">
+                           <div className="w-8 h-8 border-4 border-[--color-accent]/30 border-t-[--color-accent] rounded-full animate-spin mx-auto mb-2" />
+                           <p className="text-[10px] font-bold uppercase text-[--color-accent]">Enviando...</p>
+                         </div>
+                       ) : formData.fotoFrente ? (
+                         <img src={formData.fotoFrente} className="w-full h-full object-contain p-4" />
+                       ) : (
+                         <div className="text-center opacity-30">
+                           <ImageIcon size={48} className="mx-auto mb-2 text-gray-400" />
+                           <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Clique para Upload</p>
+                         </div>
+                       )}
+                    </div>
                   </div>
+                  <input 
+                    value={formData.fotoFrente} 
+                    onChange={e => setFormData({...formData, fotoFrente: e.target.value})} 
+                    className={`${inputClass} text-[11px] opacity-50 focus:opacity-100`} 
+                    placeholder="Ou cole a URL da imagem aqui..." 
+                  />
                 </div>
               </Field>
-              <Field label="URL Foto Verso (ou Desenho Técnico)">
+
+              <Field label="Verso (ou Desenho Técnico)" hint="Clique abaixo para fazer upload">
                 <div className="space-y-4">
-                  <input value={formData.fotoVerso} onChange={e => setFormData({...formData, fotoVerso: e.target.value})} className={`${inputClass} text-xs`} placeholder="Cole aqui o link da imagem..." />
-                  <div className="aspect-[4/5] w-full bg-gray-50 rounded-[28px] flex items-center justify-center border-2 border-dashed border-gray-200 overflow-hidden group hover:border-[--color-accent]/30 transition-all shadow-inner">
-                     {formData.fotoVerso ? <img src={formData.fotoVerso} className="w-full h-full object-contain p-4" /> : <div className="text-center opacity-30"><ImageIcon size={48} className="mx-auto mb-2 text-gray-400" /><p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Visualização Verso</p></div>}
+                  <div className="relative group cursor-pointer">
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={e => handleUpload(e, 'verso')} 
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      disabled={uploading.verso}
+                    />
+                    <div className={`aspect-[4/5] w-full bg-gray-50 rounded-[28px] flex items-center justify-center border-2 border-dashed overflow-hidden transition-all shadow-inner 
+                      ${uploading.verso ? 'border-[--color-accent] animate-pulse' : 'border-gray-200 group-hover:border-[--color-accent]/30 group-hover:bg-gray-100/50'}`}>
+                       {uploading.verso ? (
+                         <div className="text-center">
+                           <div className="w-8 h-8 border-4 border-[--color-accent]/30 border-t-[--color-accent] rounded-full animate-spin mx-auto mb-2" />
+                           <p className="text-[10px] font-bold uppercase text-[--color-accent]">Enviando...</p>
+                         </div>
+                       ) : formData.fotoVerso ? (
+                         <img src={formData.fotoVerso} className="w-full h-full object-contain p-4" />
+                       ) : (
+                         <div className="text-center opacity-30">
+                           <ImageIcon size={48} className="mx-auto mb-2 text-gray-400" />
+                           <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">Clique para Upload</p>
+                         </div>
+                       )}
+                    </div>
                   </div>
+                  <input 
+                    value={formData.fotoVerso} 
+                    onChange={e => setFormData({...formData, fotoVerso: e.target.value})} 
+                    className={`${inputClass} text-[11px] opacity-50 focus:opacity-100`} 
+                    placeholder="Ou cole a URL da imagem aqui..." 
+                  />
                 </div>
               </Field>
             </div>
