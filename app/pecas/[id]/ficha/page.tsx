@@ -414,21 +414,18 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                 <div key={idx} className="p-8 bg-white border border-gray-100 rounded-[32px] shadow-sm relative group animate-in slide-in-from-right-4 duration-500">
                   <button type="button" onClick={() => removeMaterial(idx)} className="absolute top-8 right-8 text-red-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><Trash2 size={20} /></button>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
                     <div className="md:col-span-1">
                       <Field label="REF">
                         <input value={mat.referencia} onChange={e => updateMaterial(idx, 'referencia', e.target.value)} className={inputClass} placeholder="Ex: TEC-001" />
                       </Field>
                     </div>
-                    <div className="md:col-span-3">
-                      <Field label="Descrição do Material">
-                        <input value={mat.descricao} onChange={e => updateMaterial(idx, 'descricao', e.target.value)} className={inputClass} placeholder="Ex: Forro para corpo" />
+                    <div className="md:col-span-2">
+                       <Field label="Nome/Tipo">
+                        <input value={mat.nome} onChange={e => updateMaterial(idx, 'nome', e.target.value)} className={inputClass} placeholder="Ex: Fluity" />
                       </Field>
                     </div>
 
-                    <Field label="Nome/Tipo">
-                      <input value={mat.nome} onChange={e => updateMaterial(idx, 'nome', e.target.value)} className={inputClass} placeholder="Ex: Fluity" />
-                    </Field>
                     <Field label="Cor">
                       <input value={mat.cor} onChange={e => updateMaterial(idx, 'cor', e.target.value)} className={inputClass} placeholder="Ex: Azul Marinho" />
                     </Field>
@@ -466,23 +463,20 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
               {aviamentos.map((av, idx) => (
                 <div key={idx} className="p-8 bg-white border border-gray-100 rounded-[32px] shadow-sm relative group animate-in slide-in-from-right-4 duration-500">
                   <button type="button" onClick={() => removeAviamento(idx)} className="absolute top-8 right-8 text-red-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"><Trash2 size={20} /></button>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-6">
                     <div className="md:col-span-1">
                       <Field label="REF">
                         <input value={av.referencia} onChange={e => updateAviamento(idx, 'referencia', e.target.value)} className={inputClass} placeholder="Ex: AVI-01" />
                       </Field>
                     </div>
-                    <div className="md:col-span-3">
-                      <Field label="Descrição / Uso">
-                        <input value={av.descricao} onChange={e => updateAviamento(idx, 'descricao', e.target.value)} className={inputClass} placeholder="Ex: Zíper invisível" />
+                    <div className="md:col-span-2">
+                      <Field label="Nome / Marca">
+                        <input value={av.nome} onChange={e => updateAviamento(idx, 'nome', e.target.value)} className={inputClass} placeholder="Ex: YKK" />
                       </Field>
                     </div>
 
-                    <Field label="Nome / Marca">
-                      <input value={av.nome} onChange={e => updateAviamento(idx, 'nome', e.target.value)} className={inputClass} placeholder="Ex: YKK" />
-                    </Field>
                     <Field label="Medida">
-                      <input value={av.medida} onChange={e => updateAviamento(idx, 'medida', e.target.value)} className={inputClass} />
+                      <input value={av.medida} onChange={e => updateAviamento(idx, 'medida', e.target.value)} className={inputClass} placeholder="Ex: 15cm" />
                     </Field>
                     <Field label="Cor">
                       <input value={av.cor} onChange={e => updateAviamento(idx, 'cor', e.target.value)} className={inputClass} />

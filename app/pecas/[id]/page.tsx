@@ -226,7 +226,6 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             <thead>
               <tr className="bg-gray-100/80 border-b-2 border-black">
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-16">REF</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Descrição</th>
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Nome</th>
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Composição</th>
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-16 text-center">Larg</th>
@@ -239,7 +238,6 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                 peca.materiais.map((mat, i) => (
                   <tr key={i} className="border-b border-gray-200">
                     <td className="p-1.5 border-r border-gray-200 font-bold">{mat.referencia || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 uppercase">{mat.descricao || '—'}</td>
                     <td className="p-1.5 border-r border-gray-200 font-bold uppercase">{mat.nome || '—'}</td>
                     <td className="p-1.5 border-r border-gray-200 text-[10px] leading-tight">{mat.composicao || '—'}</td>
                     <td className="p-1.5 border-r border-gray-200 text-center font-bold">{mat.largura || '—'}</td>
@@ -248,7 +246,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                   </tr>
                 ))
               ) : (
-                <tr><td colSpan={7} className="p-3 text-center text-gray-400 italic">Nenhum tecido cadastrado.</td></tr>
+                <tr><td colSpan={6} className="p-3 text-center text-gray-400 italic">Nenhum tecido cadastrado.</td></tr>
               )}
             </tbody>
           </table>
@@ -261,7 +259,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             <thead>
               <tr className="bg-gray-100/80 border-b-2 border-black">
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-16">REF</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Descrição / Nome</th>
+                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Nome / Marca</th>
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-24 text-center">Medida</th>
                 <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
                 <th className="p-1.5 text-[9px] font-black uppercase text-center w-24">Consumo</th>
@@ -272,7 +270,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                 peca.aviamentos.map((av, i) => (
                   <tr key={i} className="border-b border-gray-200">
                     <td className="p-1.5 border-r border-gray-200 font-bold">{av.referencia || '—'}</td>
-                    <td className="p-1.5 border-r border-gray-200 font-bold uppercase">{av.descricao} <span className="text-gray-400 font-normal">/</span> {av.nome}</td>
+                    <td className="p-1.5 border-r border-gray-200 font-bold uppercase">{av.nome || '—'}</td>
                     <td className="p-1.5 border-r border-gray-200 text-center">{av.medida || '—'}</td>
                     <td className="p-1.5 border-r border-gray-200 truncate">{av.cor || '—'}</td>
                     <td className="p-1.5 font-black text-center bg-gray-50">{av.consumo || '—'}</td>
