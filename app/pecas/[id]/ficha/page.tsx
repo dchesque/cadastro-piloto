@@ -405,7 +405,7 @@ export default function FichaTecnicaPage({ params }: { params: Promise<{ id: str
                     className="input-premium min-h-[120px] py-6 bg-red-50/20 border-red-50 focus:border-red-200 focus:bg-white text-red-900 placeholder:text-red-300 leading-relaxed" 
                     placeholder="Aponte processos que exigem atenção redobrada durante a fabricação..." 
                   />
-                </div>
+                </Field>
               </div>
             </div>
           </div>
