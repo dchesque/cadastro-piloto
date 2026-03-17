@@ -9,6 +9,14 @@ export async function GET(
     const { id } = await params
     const peca = await prisma.pecaPiloto.findUnique({
       where: { id },
+      include: {
+        materiais: {
+          orderBy: { createdAt: 'asc' }
+        },
+        aviamentos: {
+          orderBy: { createdAt: 'asc' }
+        }
+      }
     })
 
     if (!peca) {
@@ -35,13 +43,51 @@ export async function PUT(
   try {
     const { id } = await params
     const body = await request.json()
+    
+    // Extrair materiais e aviamentos do corpo, se existirem
+    const { materiais, aviamentos, ...pecaData } = body
 
-    const peca = await prisma.pecaPiloto.update({
-      where: { id },
-      data: body,
+    // Usar transação para garantir integridade ao atualizar ficha completa
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Atualizar dados principais da peça
+      const updatedPeca = await tx.pecaPiloto.update({
+        where: { id },
+        data: pecaData,
+      })
+
+      // 2. Se houver materiais (ficha completa), sincronizar
+      if (materiais) {
+        // Deletar existentes e criar novos (abordagem de sincronização simples)
+        await tx.pecaTecido.deleteMany({ where: { pecaId: id } })
+        if (materiais.length > 0) {
+          await tx.pecaTecido.createMany({
+            data: materiais.map((m: any) => ({
+              ...m,
+              pecaId: id,
+              id: undefined // Deixar prisma gerar IDs
+            }))
+          })
+        }
+      }
+
+      // 3. Se houver aviamentos (ficha completa), sincronizar
+      if (aviamentos) {
+        await tx.pecaAviamento.deleteMany({ where: { pecaId: id } })
+        if (aviamentos.length > 0) {
+          await tx.pecaAviamento.createMany({
+            data: aviamentos.map((a: any) => ({
+              ...a,
+              pecaId: id,
+              id: undefined
+            }))
+          })
+        }
+      }
+
+      return updatedPeca
     })
 
-    return NextResponse.json({ data: peca })
+    return NextResponse.json({ data: result })
   } catch (error) {
     console.error('Erro ao atualizar peça:', error)
     return NextResponse.json(

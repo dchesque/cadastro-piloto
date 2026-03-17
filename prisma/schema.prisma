@@ -8,19 +8,68 @@ datasource db {
 }
 
 model PecaPiloto {
-  id          String   @id @default(cuid())
-  referencia  String   @unique
-  nome        String?
-  colecao     String?
-  modelista   String?
-  fornecedor  String?
-  tecido      String?
-  composicao  String?
-  precoTecido Float?
-  tamanhos    String?
-  observacoes String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  referencia          String   @unique
+  nome                String?
+  colecao             String?
+  estilista           String?
+  modelista           String?
+  pilotista           String?
+  responsavelCorte    String?
+  tamanhoPiloto       String?
+  gradeCorte          String?
+  fotoFrente          String?
+  fotoVerso           String?
+  
+  // Observações Técnicas
+  caracteristicasCostura String?
+  pontosCriticos         String?
+  maquina                String?
+  agulha                 String?
+  
+  // Legado / Simples (Manter para compatibilidade inicial)
+  fornecedor          String?
+  tecido              String?
+  composicao          String?
+  precoTecido         Float?
+  tamanhos            String?
+  observacoes         String?
+
+  // Relações para Ficha Completa
+  materiais           PecaTecido[]
+  aviamentos          PecaAviamento[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model PecaTecido {
+  id            String     @id @default(cuid())
+  pecaId        String
+  peca          PecaPiloto @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  descricao     String?
+  nome          String?
+  cor           String?
+  codFornecedor String?
+  composicao    String?
+  consumo       String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model PecaAviamento {
+  id            String     @id @default(cuid())
+  pecaId        String
+  peca          PecaPiloto @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  descricao     String?
+  nome          String?
+  medida        String?
+  cor           String?
+  codFornecedor String?
+  composicao    String?
+  consumo       String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
 model CorteTecido {
@@ -38,6 +87,7 @@ model CorteTecido {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
 model User {
   id        String   @id @default(cuid())
   username  String   @unique

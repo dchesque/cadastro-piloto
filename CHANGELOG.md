@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.11.0] - 2026-03-17
+### Added
+- **Ficha Técnica Profissional**: Sistema completo para documentação técnica de vestuário.
+- **Multimateriais**: Suporte para adicionar vários tecidos e aviamentos por peça com controle de consumo.
+- **Fotos Frente/Verso**: Espaço dedicado para links de imagens da peça piloto.
+- **Detalhes de Equipe**: Novos campos para Estilista, Pilotista e Responsável Corte.
+- **Manual de Costura**: Seção para agulha, máquina e pontos críticos de execução.
+- **Layout Industrial A4**: Nova visualização de impressão seguindo padrões técnicos de fábrica.
+### Changed
+- Refatoração total do Banco de Dados para suportar relações de materiais.
+- Upgrade na API de peças para salvar fichas complexas.
+
 ## [1.10.0] - 2026-03-17
 ### Added
 - Páginas de **Visualização (Ficha Técnica)** para Peças e Tecidos.
