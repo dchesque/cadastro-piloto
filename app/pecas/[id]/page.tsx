@@ -199,11 +199,11 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           </div>
         </div>
 
-        {/* BLOCO DE EQUIPE E MODELAGEM (DUAS COLUNAS PRINCIPAIS) */}
+        {/* BLOCO DE EQUIPE E MODELAGEM (DUAS COLUNAS PRINCIPAIS - GRID 12) */}
         <div className="border-b-2 border-black bg-gray-50/50 p-4">
-          <div className="grid grid-cols-[1fr_auto] gap-x-12 items-center">
-            {/* COLUNA 1: DADOS (2 LINHAS) */}
-            <div className="grid grid-cols-3 gap-y-6 gap-x-8">
+          <div className="grid grid-cols-12 gap-x-8 items-start">
+            {/* COLUNA 1: DADOS (COL-SPAN-8) */}
+            <div className="col-span-8 grid grid-cols-3 gap-y-5 gap-x-6">
               <TechnicalItemSmall label="Estilista" value={peca.estilista} />
               <TechnicalItemSmall label="Modelista" value={peca.modelista} />
               <TechnicalItemSmall label="Pilotista" value={peca.pilotista} />
@@ -213,18 +213,18 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
               <TechnicalItemSmall label="Tam. Piloto" value={peca.tamanhoPiloto} />
             </div>
 
-            {/* COLUNA 2: GRADE (ALTURA TOTAL) */}
-            <div className="flex flex-col border-l-2 border-dashed border-gray-300 pl-8 min-w-[150px]">
+            {/* COLUNA 2: GRADE (COL-SPAN-4) */}
+            <div className="col-span-4 flex flex-col border-l-2 border-dashed border-gray-300 pl-6 h-full">
               <p className="text-[8px] font-black uppercase text-gray-400 mb-2">Grade / Qtd. (Corte)</p>
               <table className="border-collapse border-2 border-black w-full text-center bg-white shadow-sm">
                 <thead>
                   <tr className="bg-gray-50 uppercase text-[9px] font-black">
                     {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((size, i) => (
-                      <th key={i} className="border-2 border-black px-2 py-1 min-w-[35px]">{size.trim()}</th>
+                      <th key={i} className="border-2 border-black px-1 py-1 min-w-[30px] leading-tight">{size.trim()}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="h-10">
+                <tbody className="h-8">
                   <tr>
                     {peca.gradeCorte?.split(/[,/\s]+/).filter(s => s.trim() !== '').map((_, i) => (
                       <td key={i} className="border-2 border-black"></td>
@@ -398,12 +398,18 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
 
       <style jsx global>{`
         @media print {
-          body { background: white !important; padding: 0 !important; }
-          .print\\:hidden { display: none !important; }
           @page {
             size: A4;
             margin: 0cm;
           }
+          body { 
+            background: white !important; 
+            padding: 0 !important; 
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .print\\:hidden { display: none !important; }
+          .max-w-\\[210mm\\] { width: 210mm !important; max-width: 210mm !important; margin: 0 !important; }
         }
       `}</style>
     </div>
@@ -421,8 +427,8 @@ function SectionLabel({ icon, label }: { icon: React.ReactNode, label: string })
 function TechnicalItemSmall({ label, value }: { label: string, value: string | null }) {
   return (
     <div className="flex flex-col">
-      <p className="text-[7px] font-black uppercase text-gray-400 mb-0.5">{label}</p>
-      <p className="text-[11px] font-bold text-black border-b border-black/5 pb-0.5 truncate">{value || '—'}</p>
+      <p className="text-[8px] font-black uppercase text-gray-400 mb-0.5">{label}</p>
+      <p className="text-[12px] font-bold text-black border-b border-black/5 pb-0.5">{value || '—'}</p>
     </div>
   )
 }
