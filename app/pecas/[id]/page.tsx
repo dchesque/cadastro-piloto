@@ -374,13 +374,13 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         )}
 
         {/* RODAPÉ MINIMALISTA */}
-        <div className="p-2 px-6 flex justify-between items-center bg-white print:mb-0 print:pb-0">
+        <div className="p-1 px-6 flex justify-between items-center bg-white print:mb-0 print:pb-0">
            <div className="flex gap-4">
-              <p className="text-[7px] font-black text-gray-300 uppercase underline">DOC-JC-PECA-{peca.id.slice(-6)}</p>
-              <p className="text-[7px] font-black text-gray-300 uppercase">{new Date().toLocaleDateString('pt-BR')}</p>
+              <p className="text-[7px] font-black text-gray-300 uppercase underline leading-none">DOC-JC-PECA-{peca.id.slice(-6)}</p>
+              <p className="text-[7px] font-black text-gray-300 uppercase leading-none">{new Date().toLocaleDateString('pt-BR')}</p>
            </div>
-           <div className="w-1/3 border-t border-black pb-1">
-              <p className="text-[8px] font-black text-center uppercase tracking-widest mt-1">Assinatura Responsável</p>
+           <div className="w-1/4 border-t border-black">
+              <p className="text-[7px] font-black text-center uppercase tracking-widest mt-0.5">Assinatura Responsável</p>
            </div>
         </div>
 
@@ -409,29 +409,43 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         @media print {
           @page {
             size: A4;
-            margin: 0.3cm;
+            margin: 0;
           }
-          body { 
-            background: white !important; 
-            padding: 0 !important; 
+          html, body { 
+            margin: 0 !important; 
+            padding: 0 !important;
+            background: white !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .print\\:hidden { display: none !important; }
-          /* Forçar a Ficha a ocupar toda a largura da folha e evitar página em branco */
+          .print\\:hidden { 
+            display: none !important; 
+            visibility: hidden !important; 
+            height: 0 !important; 
+            overflow: hidden !important; 
+          }
+          /* Container principal sem margens ou sombras que desloquem o conteúdo */
           .max-w-\\[210mm\\] { 
             width: 100% !important; 
             max-width: none !important; 
             margin: 0 !important; 
-            padding: 0 !important;
+            padding: 0.5cm !important; /* Margem controlada interna */
             border: none !important;
             box-shadow: none !important;
             height: auto !important;
-            overflow: hidden !important;
+            overflow: visible !important;
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
           }
-          /* Prevenir quebras de página dentro de seções importantes */
+          /* Evitar quebras de página */
           .border-b-2 { 
             break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+          /* Ocultar elementos de UI que podem "vazar" */
+          [role="dialog"], button, [data-state] {
+            display: none !important;
           }
         }
       `}</style>
