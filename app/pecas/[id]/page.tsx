@@ -205,8 +205,8 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             <tbody>
               <tr>
                 {/* COLUNA 1: DADOS (70%) */}
-                <td className="w-[70%] p-2 align-top">
-                  <table className="w-full border-separate border-spacing-y-2 border-spacing-x-8">
+                <td className="w-[70%] p-1 align-top">
+                  <table className="w-full border-separate border-spacing-y-1 border-spacing-x-8">
                     <tbody>
                       <tr>
                         <td className="w-1/3 align-top"><TechnicalItemSmall label="Estilista" value={peca.estilista} /></td>
@@ -222,7 +222,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                   </table>
                 </td>
                 {/* COLUNA 2: GRADE (30%) */}
-                <td className="w-[30%] p-2 align-top border-l-2 border-dashed border-gray-300 min-w-[180px]">
+                <td className="w-[30%] p-1 align-top border-l-2 border-dashed border-gray-300 min-w-[180px]">
                   <p className="text-[9px] font-black uppercase text-gray-500 mb-2">Grade / Qtd. (Corte)</p>
                   <table className="border-collapse border-2 border-black w-full text-center bg-white">
                     <thead>
@@ -410,7 +410,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         @media print {
           @page {
             size: A4;
-            margin: 0.5cm;
+            margin: 0.3cm;
           }
           body { 
             background: white !important; 
@@ -445,8 +445,8 @@ function SectionLabel({ icon, label }: { icon: React.ReactNode, label: string })
 function TechnicalItemSmall({ label, value }: { label: string, value: string | null }) {
   return (
     <div className="flex flex-col">
-      <p className="text-[9px] font-black uppercase text-gray-500 mb-0.5">{label}</p>
-      <p className="text-[14px] font-bold text-black border-b border-black/10 pb-1">{value || '—'}</p>
+      <p className="text-[8px] font-black uppercase text-gray-500 mb-0">{label}</p>
+      <p className="text-[13px] font-bold text-black border-b border-black/10">{value || '—'}</p>
     </div>
   )
 }
