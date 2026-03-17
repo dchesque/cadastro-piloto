@@ -14,7 +14,8 @@ import {
   FileText, 
   Package, 
   Search,
-  CheckCircle2
+  CheckCircle2,
+  Tag
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -113,125 +114,140 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="max-w-[800px] mx-auto space-y-8 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+    <div className="max-w-[210mm] mx-auto pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700 print:pb-0 print:m-0">
       {/* Ações e Navegação */}
-      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
+      <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 print:hidden">
         <button 
           onClick={() => router.push('/pecas')}
           className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[--color-text-tertiary] hover:text-[--color-accent-peca] transition-all group px-4 py-2 rounded-full bg-white border border-[--color-border-light] w-fit shadow-sm"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-          Voltar para Lista
+          Voltar
         </button>
 
         <div className="flex items-center gap-2">
+          <Link href={`/pecas/${id}/imprimir`}>
+            <button className="btn-premium btn-outline h-9 px-4 flex items-center gap-2 bg-white text-[12px] font-bold">
+              <Tag size={15} />
+              Etiqueta
+            </button>
+          </Link>
           <button 
             onClick={handlePrint}
-            className="btn-premium btn-outline h-10 px-5 flex items-center gap-2 bg-white text-[13px] font-bold"
+            className="btn-premium btn-primary h-9 px-4 flex items-center gap-2 text-[12px] font-bold"
           >
-            <Printer size={16} />
-            Imprimir
+            <Printer size={15} />
+            Imprimir Ficha (A4)
           </button>
+          <div className="w-[1px] h-4 bg-[--color-border-light] mx-1" />
           <Link href={`/pecas/${id}/editar`}>
-            <button className="btn-premium btn-outline h-10 px-5 flex items-center gap-2 bg-white text-[13px] font-bold border-blue-100 text-blue-700 hover:bg-blue-50">
+            <button className="w-9 h-9 flex items-center justify-center rounded-xl text-blue-600 bg-blue-50 hover:bg-blue-100 transition-all">
               <Pencil size={16} />
-              Editar
             </button>
           </Link>
           <button 
             onClick={() => setDeleteDialogOpen(true)}
-            className="btn-premium btn-outline h-10 px-5 flex items-center gap-2 bg-white text-[13px] font-bold border-red-100 text-red-600 hover:bg-red-50"
+            className="w-9 h-9 flex items-center justify-center rounded-xl text-red-600 bg-red-50 hover:bg-red-100 transition-all"
           >
             <Trash2 size={16} />
-            Excluir
           </button>
         </div>
       </header>
 
-      {/* Ficha Técnica */}
-      <div className="bg-white border border-[--color-border-light] rounded-[32px] overflow-hidden shadow-card print:border-none print:shadow-none print:rounded-none">
-        {/* Cabeçalho da Ficha */}
-        <div className="bg-[--color-bg-subtle]/30 p-8 sm:p-12 border-b border-[--color-border-light] relative overflow-hidden">
-          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div className="space-y-2">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-[--color-accent-peca] flex items-center justify-center text-white shadow-lg shadow-[--color-accent-peca]/20">
-                  <FileText size={20} />
-                </div>
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[--color-text-tertiary]">Ficha Técnica #Peça</span>
+      {/* Ficha Técnica (Layout A4) */}
+      <div className="bg-white border border-[--color-border-light] rounded-[24px] overflow-hidden shadow-card print:border-none print:shadow-none print:rounded-none">
+        {/* Cabeçalho */}
+        <div className="p-8 sm:p-12 border-b border-[--color-border-light] flex justify-between items-start print:p-8">
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-[--color-accent-peca] flex items-center justify-center text-white shadow-lg">
+                <FileText size={24} />
               </div>
-              <h1 className="text-3xl sm:text-4xl font-light text-[--color-text-primary] tracking-tight">{peca.nome}</h1>
-              <div className="flex items-center gap-4 text-[13px] text-[--color-text-secondary] font-medium">
-                <span className="flex items-center gap-1.5"><Calendar size={14} className="opacity-50" /> {formatDate(peca.createdAt)}</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[--color-border-medium]" />
-                <span className="font-mono bg-white px-2 py-0.5 rounded-md border border-[--color-border-light] text-[11px] text-[--color-accent-peca] font-bold tracking-tighter uppercase">{peca.referencia}</span>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[--color-text-tertiary] leading-none mb-1">Ficha Técnica</p>
+                <h1 className="text-3xl font-light text-[--color-text-primary] tracking-tight leading-none uppercase">Peça Piloto</h1>
               </div>
             </div>
-            <div className="px-6 py-3 bg-white border border-[--color-border-light] rounded-2xl shadow-sm text-center min-w-[140px]">
-              <p className="text-[10px] font-bold text-[--color-text-tertiary] uppercase tracking-widest mb-1">Status</p>
-              <div className="flex items-center justify-center gap-2 text-green-600 font-bold text-[14px]">
-                <CheckCircle2 size={16} />
-                Cadastrado
+            
+            <div className="space-y-1">
+              <p className="text-[18px] font-bold text-[--color-text-primary] uppercase">{peca.nome}</p>
+              <div className="flex items-center gap-3">
+                <code className="text-[14px] bg-[--color-bg-subtle] px-3 py-1 rounded-lg border border-[--color-border-light] font-mono font-bold text-[--color-accent-peca] tracking-tight">
+                  REF: {peca.referencia}
+                </code>
+                <span className="text-[12px] text-[--color-text-tertiary] flex items-center gap-1.5 font-medium">
+                  <Calendar size={13} /> {formatDate(peca.createdAt)}
+                </span>
               </div>
             </div>
           </div>
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[--color-accent-peca]/5 to-transparent rounded-full -translate-y-1/2 translate-x-1/2" />
+
+          <div className="text-right space-y-2">
+             <div className="text-[14px] font-bold text-[--color-text-primary] tracking-tight">JC PLUS SIZE</div>
+             <div className="text-[10px] font-medium text-[--color-text-tertiary] uppercase tracking-widest leading-relaxed">
+               Gestão de Pilotos e Peças<br />
+               Sistema Interno
+             </div>
+             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 rounded-full border border-green-100 text-green-700 text-[11px] font-bold uppercase tracking-wider mt-4">
+                <CheckCircle2 size={13} />
+                Confirmado
+             </div>
+          </div>
         </div>
 
-        {/* Conteúdo da Ficha */}
-        <div className="p-8 sm:p-12 space-y-12">
-          {/* Sessão: Informações Gerais */}
-          <section className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-[--color-text-secondary]">
-                <Package size={16} />
-              </div>
-              <h2 className="text-[14px] font-bold uppercase tracking-widest text-[--color-text-primary]">Informações de Produção</h2>
-              <div className="flex-1 h-[1px] bg-[--color-border-light]/50" />
+        {/* Grid de Informações Técnicas */}
+        <div className="p-8 sm:p-12 print:p-8 space-y-10">
+          
+          {/* Seção 1: Detalhes de Produção */}
+          <div className="space-y-6">
+            <h2 className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest text-[--color-text-tertiary] print:text-black">
+              <User size={14} /> Detalhes de Produção
+            </h2>
+            <div className="grid grid-cols-2 gap-y-10 border border-[--color-border-light] rounded-3xl p-8 print:border-gray-200">
+              <DataRow label="Modelista" value={peca.modelista} />
+              <DataRow label="Coleção" value={peca.colecao} />
+              <DataRow label="Fornecedor" value={peca.fornecedor} />
+              <DataRow label="Grade de Tamanhos" value={peca.tamanhos} />
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <InfoItem icon={<User size={16} />} label="Modelista" value={peca.modelista} />
-              <InfoItem icon={<Search size={16} />} label="Coleção" value={peca.colecao} />
-              <InfoItem icon={<Building2 size={16} />} label="Fornecedor Principal" value={peca.fornecedor} />
-              <InfoItem icon={<Package size={16} />} label="Grade de Tamanhos" value={peca.tamanhos} />
+          {/* Seção 2: Material Principal */}
+          <div className="space-y-6">
+            <h2 className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest text-[--color-text-tertiary] print:text-black">
+              <Package size={14} /> Material Principal
+            </h2>
+            <div className="grid grid-cols-2 gap-y-10 border border-[--color-border-light] rounded-3xl p-8 bg-[--color-bg-subtle]/10 print:bg-white print:border-gray-200">
+              <DataRow label="Tecido" value={peca.tecido} />
+              <DataRow label="Composição" value={peca.composicao} />
+              <DataRow label="Preço Unitário" value={`R$ ${peca.precoTecido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} /metro`} />
             </div>
-          </section>
+          </div>
 
-          {/* Sessão: Tecido e Composição */}
-          <section className="space-y-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center text-[--color-text-secondary]">
-                <FileText size={16} />
-              </div>
-              <h2 className="text-[14px] font-bold uppercase tracking-widest text-[--color-text-primary]">Material e Composição</h2>
-              <div className="flex-1 h-[1px] bg-[--color-border-light]/50" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-[--color-bg-subtle]/20 rounded-2xl border border-[--color-border-light]/50">
-              <InfoItem label="Tecido" value={peca.tecido} />
-              <InfoItem label="Composição" value={peca.composicao} />
-              <InfoItem label="Preço do Material" value={`R$ ${peca.precoTecido.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} /metro`} />
-            </div>
-          </section>
-
-          {/* Sessão: Observações */}
+          {/* Seção 3: Observações */}
           {peca.observacoes && (
-            <section className="space-y-4">
-              <div className="flex items-center gap-3">
-                <h2 className="text-[14px] font-bold uppercase tracking-widest text-[--color-text-tertiary]">Observações Técnicas</h2>
-                <div className="flex-1 h-[1px] bg-[--color-border-light]/50" />
+            <div className="space-y-4">
+              <h2 className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-widest text-[--color-text-tertiary] print:text-black">
+                <Search size={14} /> Observações Técnicas
+              </h2>
+              <div className="border border-[--color-border-light] rounded-3xl p-8 min-h-[120px] print:border-gray-200">
+                <p className="text-[15px] text-[--color-text-primary] leading-relaxed whitespace-pre-wrap">
+                  {peca.observacoes}
+                </p>
               </div>
-              <div className="p-8 bg-white border border-[--color-border-light] rounded-[24px] shadow-sm italic text-[15px] text-[--color-text-secondary] leading-relaxed relative">
-                <div className="absolute top-4 left-4 text-4xl text-gray-100 font-serif leading-none">"</div>
-                <p className="relative z-10">{peca.observacoes}</p>
-              </div>
-            </section>
+            </div>
           )}
 
-          <div className="pt-8 border-t border-[--color-border-light] flex justify-between items-center text-[11px] text-[--color-text-tertiary] font-medium uppercase tracking-[0.2em]">
-            <span>JC PLUS SIZE - Gestão de Pilotos</span>
-            <span className="print:block hidden">Emitido em {new Date().toLocaleDateString('pt-BR')}</span>
+          {/* Footer Ficha */}
+          <div className="pt-10 flex justify-between items-end border-t border-dashed border-[--color-border-light] print:border-gray-100">
+            <div className="space-y-1">
+              <p className="text-[10px] font-bold text-[--color-text-tertiary] uppercase tracking-widest">Documento Gerado em</p>
+              <p className="text-[12px] font-medium text-[--color-text-secondary]">{new Date().toLocaleString('pt-BR')}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[12px] font-bold text-[--color-text-primary] uppercase tracking-tighter">JC STUDIO 2026</p>
+              <p className="text-[10px] text-[--color-text-tertiary]">Assinatura Responsável</p>
+              <div className="mt-4 w-48 h-[1px] bg-gray-300 ml-auto" />
+            </div>
           </div>
         </div>
       </div>
@@ -254,20 +270,30 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <style jsx global>{`
+        @media print {
+          body { background: white !important; }
+          .print\\:hidden { display: none !important; }
+          .print\\:block { display: block !important; }
+          .print\\:border-none { border: none !important; }
+          .print\\:shadow-none { shadow: none !important; }
+          .print\\:rounded-none { border-radius: 0 !important; }
+          @page {
+            size: A4;
+            margin: 1cm;
+          }
+        }
+      `}</style>
     </div>
   )
 }
 
-function InfoItem({ icon, label, value }: { icon?: React.ReactNode, label: string, value: string }) {
+function DataRow({ label, value }: { label: string, value: string | number }) {
   return (
-    <div className="space-y-1.5 flex flex-col group">
-      <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold text-[--color-text-tertiary] uppercase tracking-widest">
-        {icon && <span className="opacity-60">{icon}</span>}
-        {label}
-      </div>
-      <div className="text-[16px] sm:text-[17px] font-medium text-[--color-text-primary] tracking-tight group-hover:text-[--color-accent-peca] transition-all">
-        {value || '—'}
-      </div>
+    <div className="space-y-1">
+      <p className="text-[10px] font-bold text-[--color-text-tertiary] uppercase tracking-widest">{label}</p>
+      <p className="text-[16px] font-medium text-[--color-text-primary] leading-tight">{value || '—'}</p>
     </div>
   )
 }

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { Search, Plus, Pencil, Printer, Trash2, Scissors } from 'lucide-react'
+import { Search, Plus, Pencil, Printer, Trash2, Scissors, Eye } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { TypeBadge } from '@/components/ui/type-badge'
 import {
@@ -152,14 +152,14 @@ export default function TecidosPage() {
               <div className="flex items-center justify-between mb-4 relative z-10">
                 <TypeBadge tipo="tecido" />
                 <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Link href={`/tecidos/${tecido.id}/imprimir`}>
-                    <button title="Imprimir" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-green-100 hover:text-green-700 transition-all duration-200">
-                      <Printer size={16} />
-                    </button>
-                  </Link>
                   <Link href={`/tecidos/${tecido.id}`}>
                     <button title="Visualizar Ficha" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-green-100 hover:text-green-700 transition-all duration-200">
-                      <Search size={16} />
+                      <Eye size={16} />
+                    </button>
+                  </Link>
+                  <Link href={`/tecidos/${tecido.id}/imprimir`}>
+                    <button title="Imprimir Etiqueta" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-green-100 hover:text-green-700 transition-all duration-200">
+                      <Printer size={16} />
                     </button>
                   </Link>
                   <Link href={`/tecidos/${tecido.id}/editar`}>
