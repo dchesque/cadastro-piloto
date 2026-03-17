@@ -179,22 +179,22 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         
         {/* CABEÇALHO COMPACTO */}
         <div className="grid grid-cols-4 border-b-2 border-black">
-          <div className="col-span-1 p-4 border-r-2 border-black flex flex-col justify-center items-center">
-            <div className="w-10 h-10 bg-black text-white rounded-md flex items-center justify-center font-bold text-lg mb-1">JC</div>
+          <div className="col-span-1 p-2 border-r-2 border-black flex flex-col justify-center items-center">
+            <div className="w-9 h-9 bg-black text-white rounded-md flex items-center justify-center font-bold text-lg mb-0.5">JC</div>
             <p className="text-[8px] font-black uppercase tracking-widest">JC STUDIO</p>
           </div>
-          <div className="col-span-2 p-4 flex flex-col justify-center">
-            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Ficha Técnica de Vestuário</p>
-            <h1 className="text-2xl font-black uppercase tracking-tight leading-none text-black">{peca.nome}</h1>
+          <div className="col-span-2 p-2 flex flex-col justify-center">
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5">Ficha Técnica de Vestuário</p>
+            <h1 className="text-xl font-black uppercase tracking-tight leading-none text-black">{peca.nome}</h1>
           </div>
-          <div className="col-span-1 p-4 border-l-2 border-black space-y-2 bg-gray-50">
-             <div className="flex flex-col gap-1">
-               <p className="text-[8px] font-black uppercase text-gray-400">Referência</p>
-               <p className="text-[14px] font-black text-black leading-none">{peca.referencia}</p>
+          <div className="col-span-1 p-2 border-l-2 border-black space-y-1.5 bg-gray-50">
+             <div className="flex flex-col gap-0.5">
+               <p className="text-[7px] font-black uppercase text-gray-400">Referência</p>
+               <p className="text-[13px] font-black text-black leading-none">{peca.referencia}</p>
              </div>
-             <div className="flex flex-col gap-1">
-               <p className="text-[8px] font-black uppercase text-gray-400">Coleção</p>
-               <p className="text-[12px] font-bold text-gray-600">{peca.colecao}</p>
+             <div className="flex flex-col gap-0.5">
+               <p className="text-[7px] font-black uppercase text-gray-400">Coleção</p>
+               <p className="text-[11px] font-bold text-gray-600 leading-none">{peca.colecao}</p>
              </div>
           </div>
         </div>
@@ -205,8 +205,8 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             <tbody>
               <tr>
                 {/* COLUNA 1: DADOS (70%) */}
-                <td className="w-[70%] p-1 align-top">
-                  <table className="w-full border-separate border-spacing-y-1 border-spacing-x-8">
+                <td className="w-[70%] p-0.5 align-top">
+                  <table className="w-full border-separate border-spacing-y-0.5 border-spacing-x-8">
                     <tbody>
                       <tr>
                         <td className="w-1/3 align-top"><TechnicalItemSmall label="Estilista" value={peca.estilista} /></td>
@@ -222,7 +222,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                   </table>
                 </td>
                 {/* COLUNA 2: GRADE (30%) */}
-                <td className="w-[30%] p-1 align-top border-l-2 border-dashed border-gray-300 min-w-[180px]">
+                <td className="w-[30%] p-0.5 align-top border-l-2 border-dashed border-gray-300 min-w-[180px]">
                   <p className="text-[9px] font-black uppercase text-gray-500 mb-2">Grade / Qtd. (Corte)</p>
                   <table className="border-collapse border-2 border-black w-full text-center bg-white">
                     <thead>
@@ -246,10 +246,9 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           </table>
         </div>
 
-        {/* REGISTRO FOTOGRÁFICO (LARGURA TOTAL) */}
-        <div className="border-b-2 border-black min-h-[350px] p-2 space-y-2">
-          <SectionLabel icon={<ImageIcon size={14} />} label="Frente / Verso" />
-          <div className="grid grid-cols-2 gap-4 h-[300px]">
+        {/* REGISTRO FOTOGRÁFICO (LARGURA TOTAL - SEM TÍTULO) */}
+        <div className="border-b-2 border-black p-1">
+          <div className="grid grid-cols-2 gap-4 h-[350px]">
              <PhotoContainerClean label="Frente" src={peca.fotoFrente} />
              <PhotoContainerClean label="Verso" src={peca.fotoVerso} />
           </div>
@@ -294,11 +293,11 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-100/80 border-b-2 border-black">
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-16">REF</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Nome / Marca</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300 w-24 text-center">Medida</th>
-                <th className="p-1.5 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
-                <th className="p-1.5 text-[9px] font-black uppercase text-center w-24">Consumo</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300 w-16">REF</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Nome / Marca</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300 w-24 text-center">Medida</th>
+                <th className="p-1 text-[9px] font-black uppercase border-r border-gray-300">Cor</th>
+                <th className="p-1 text-[9px] font-black uppercase text-center w-24">Consumo</th>
               </tr>
             </thead>
             <tbody className="text-[11px]">
@@ -334,18 +333,18 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                 </div>
              </div>
           </div>
-          <div className="col-span-1 p-2 bg-gray-50/50 flex flex-col justify-start overflow-hidden">
-             <p className="text-[9px] font-black text-gray-400 text-center uppercase tracking-widest mb-1 border-b border-black/5 pb-0.5">Equipamentos</p>
-             <div className="space-y-1.5 overflow-y-auto max-h-[100px] pr-1 scrollbar-thin">
+          <div className="col-span-1 p-1.5 bg-gray-50/50 flex flex-col justify-start overflow-hidden">
+             <p className="text-[8px] font-black text-gray-400 text-center uppercase tracking-widest mb-0.5 border-b border-black/5 pb-0.5">Equipamentos</p>
+             <div className="space-y-1 overflow-y-auto max-h-[100px] pr-1 scrollbar-thin">
                 {peca.equipamentos && peca.equipamentos.length > 0 ? (
                   peca.equipamentos.map((eq, i) => (
-                    <div key={i} className="flex gap-2 items-center border-b border-black/5 pb-2 last:border-0">
+                    <div key={i} className="flex gap-2 items-center border-b border-black/5 pb-1 last:border-0">
                        <div className="flex-1">
-                          <p className="text-[7px] font-black uppercase text-gray-400">Máquina</p>
+                          <p className="text-[7px] font-black uppercase text-gray-400 leading-none">Máquina</p>
                           <p className="text-[10px] font-black text-black leading-tight">{eq.maquina}</p>
                        </div>
                        <div className="w-12 text-center border-l border-black/5">
-                          <p className="text-[7px] font-black uppercase text-gray-400">Agulha</p>
+                          <p className="text-[7px] font-black uppercase text-gray-400 leading-none">Agulha</p>
                           <p className="text-[10px] font-black text-black leading-tight">{eq.agulha}</p>
                        </div>
                     </div>
@@ -375,10 +374,10 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         )}
 
         {/* RODAPÉ MINIMALISTA */}
-        <div className="p-6 flex justify-between items-center bg-white">
+        <div className="p-2 px-6 flex justify-between items-center bg-white print:mb-0 print:pb-0">
            <div className="flex gap-4">
-              <p className="text-[8px] font-black text-gray-300 uppercase underline">DOC-JC-PECA-{peca.id.slice(-6)}</p>
-              <p className="text-[8px] font-black text-gray-300 uppercase">{new Date().toLocaleDateString('pt-BR')}</p>
+              <p className="text-[7px] font-black text-gray-300 uppercase underline">DOC-JC-PECA-{peca.id.slice(-6)}</p>
+              <p className="text-[7px] font-black text-gray-300 uppercase">{new Date().toLocaleDateString('pt-BR')}</p>
            </div>
            <div className="w-1/3 border-t border-black pb-1">
               <p className="text-[8px] font-black text-center uppercase tracking-widest mt-1">Assinatura Responsável</p>
@@ -419,7 +418,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             print-color-adjust: exact !important;
           }
           .print\\:hidden { display: none !important; }
-          /* Forçar a Ficha a ocupar toda a largura da folha */
+          /* Forçar a Ficha a ocupar toda a largura da folha e evitar página em branco */
           .max-w-\\[210mm\\] { 
             width: 100% !important; 
             max-width: none !important; 
@@ -427,6 +426,12 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             padding: 0 !important;
             border: none !important;
             box-shadow: none !important;
+            height: auto !important;
+            overflow: hidden !important;
+          }
+          /* Prevenir quebras de página dentro de seções importantes */
+          .border-b-2 { 
+            break-inside: avoid !important;
           }
         }
       `}</style>
