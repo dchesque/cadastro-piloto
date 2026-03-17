@@ -209,7 +209,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
 
         {/* REGISTRO FOTOGRÁFICO (LARGURA TOTAL) */}
         <div className="border-b-2 border-black min-h-[450px] p-4 space-y-4">
-          <SectionLabel icon={<ImageIcon size={14} />} label="Registro Fotográfico" />
+          <SectionLabel icon={<ImageIcon size={14} />} label="Frente / Verso" />
           <div className="grid grid-cols-2 gap-4 h-[400px]">
              <PhotoContainerClean label="Frente" src={peca.fotoFrente} />
              <PhotoContainerClean label="Verso" src={peca.fotoVerso} />
