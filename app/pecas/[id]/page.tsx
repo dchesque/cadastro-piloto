@@ -180,8 +180,8 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             <p className="text-[8px] font-black uppercase tracking-widest">JC STUDIO</p>
           </div>
           <div className="col-span-2 p-4 flex flex-col justify-center">
-            <h1 className="text-xl font-black uppercase tracking-tight leading-none mb-1 text-black">Ficha Técnica de Vestuário</h1>
-            <p className="text-[12px] font-bold text-gray-500 uppercase tracking-widest">{peca.nome}</p>
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-1">Ficha Técnica de Vestuário</p>
+            <h1 className="text-2xl font-black uppercase tracking-tight leading-none text-black">{peca.nome}</h1>
           </div>
           <div className="col-span-1 p-4 border-l-2 border-black space-y-2 bg-gray-50">
              <div className="flex flex-col gap-1">
