@@ -1023,7 +1023,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         pecaId={id}
         pecaNome={peca.nome || peca.referencia}
         cortes={cortes.map(c => ({ id: c.id, numeroCorte: c.numeroCorte }))}
-        modelagens={peca.modelagens || []}
+        modelagens={(peca.modelagens || []).filter(m => !!m.id) as { id: string; nome: string; url: string }[]}
         open={shareDialogOpen}
         onOpenChange={setShareDialogOpen}
       />
