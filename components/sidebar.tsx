@@ -101,29 +101,6 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               )
             })}
 
-            {/* Link de Administração — visível apenas para admins */}
-            {(session?.user as any)?.role === 'admin' && (
-              <>
-                <div className="h-[1px] bg-white/5 my-2" />
-                <Link
-                  href="/admin/usuarios"
-                  onClick={onClose}
-                  className={cn(
-                    'flex items-center gap-3 rounded-[12px] px-4 py-3 text-[14px] font-medium transition-all duration-200 group relative',
-                    pathname.startsWith('/admin')
-                      ? 'bg-white/10 text-sidebar-text shadow-inner after:absolute after:left-0 after:top-2 after:bottom-2 after:w-1 after:bg-white after:rounded-full'
-                      : 'text-sidebar-text-muted hover:bg-white/[0.05] hover:text-sidebar-text'
-                  )}
-                >
-                  <Users
-                    size={18}
-                    strokeWidth={pathname.startsWith('/admin') ? 2.5 : 2}
-                    className={cn("transition-colors duration-200", pathname.startsWith('/admin') ? "text-white" : "group-hover:text-sidebar-text")}
-                  />
-                  Usuários
-                </Link>
-              </>
-            )}
           </nav>
 
           <div className="mt-auto p-4 space-y-4">
