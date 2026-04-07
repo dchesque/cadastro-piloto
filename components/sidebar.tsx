@@ -122,7 +122,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <>
                     <div className="h-[1px] bg-white/5" />
                     <Link
-                      href="/admin/usuarios"
+                      href="/admin"
                       onClick={() => { setIsUserMenuOpen(false); onClose?.(); }}
                       className="flex items-center gap-3 px-4 py-3 text-[14px] font-medium text-sidebar-text-muted hover:bg-white/5 hover:text-sidebar-text transition-colors"
                     >
