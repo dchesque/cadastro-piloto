@@ -36,7 +36,9 @@ export default function PecasPage() {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [pecaToDelete, setPecaToDelete] = useState<string | null>(null)
+  const [pecaToDelete, setPecaToDelete] = useState<{ id: string; nome: string } | null>(null)
+  const [deleteStep, setDeleteStep] = useState<1 | 2>(1)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
 
   useEffect(() => {
     const abortController = new AbortController()
@@ -64,18 +66,25 @@ export default function PecasPage() {
     if (!pecaToDelete) return
 
     try {
-      const response = await fetch(`/api/pecas/${pecaToDelete}`, {
+      const response = await fetch(`/api/pecas/${pecaToDelete.id}`, {
         method: 'DELETE',
       })
 
       if (response.ok) {
-        setPecas(pecas.filter((p) => p.id !== pecaToDelete))
-        setDeleteDialogOpen(false)
-        setPecaToDelete(null)
+        setPecas(pecas.filter((p) => p.id !== pecaToDelete.id))
+        closeDeleteDialog()
+        showToast({ title: 'Excluído', description: 'Peça removida com sucesso.' })
       }
     } catch (error) {
       console.error('Erro ao excluir peça:', error)
     }
+  }
+
+  const closeDeleteDialog = () => {
+    setDeleteDialogOpen(false)
+    setPecaToDelete(null)
+    setDeleteStep(1)
+    setDeleteConfirmText('')
   }
 
   return (
@@ -104,6 +113,8 @@ export default function PecasPage() {
           placeholder="Buscar por nome, referência ou fornecedor..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          enterKeyHint="search"
+          autoComplete="off"
           className="
             w-full h-12 pl-12 pr-4
             bg-white border border-[--color-border-light]
@@ -117,9 +128,9 @@ export default function PecasPage() {
       </div>
 
       {loading ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" role="status" aria-label="Carregando peças...">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="bg-white border border-[--color-border-light] rounded-[24px] p-6 animate-pulse h-[180px] shadow-sm" />
+            <div key={i} className="bg-white border border-[--color-border-light] rounded-[24px] p-6 animate-pulse h-[180px] shadow-sm" aria-hidden="true" />
           ))}
         </div>
       ) : pecas.length === 0 ? (
@@ -156,29 +167,31 @@ export default function PecasPage() {
             ">
               <div className="flex items-center justify-between mb-4 relative z-10">
                 <TypeBadge tipo="peca" />
-                <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="flex gap-1.5">
                   <Link href={`/pecas/${peca.id}`}>
-                    <button title="Visualizar Ficha" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
+                    <button title="Visualizar Ficha" className="w-11 h-11 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
                       <Eye size={16} />
                     </button>
                   </Link>
                   <Link href={`/pecas/${peca.id}/imprimir`}>
-                    <button title="Imprimir Etiqueta" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
+                    <button title="Imprimir Etiqueta" className="w-11 h-11 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
                       <Printer size={16} />
                     </button>
                   </Link>
                   <Link href={`/pecas/${peca.id}/ficha`}>
-                    <button title="Editar" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
+                    <button title="Editar" className="w-11 h-11 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
                       <Pencil size={16} />
                     </button>
                   </Link>
-                  <button 
+                  <button
                     title="Excluir"
                     onClick={() => {
-                      setPecaToDelete(peca.id)
+                      setPecaToDelete({ id: peca.id, nome: peca.nome })
+                      setDeleteStep(1)
+                      setDeleteConfirmText('')
                       setDeleteDialogOpen(true)
                     }}
-                    className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+                    className="w-11 h-11 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-red-50 hover:text-red-600 transition-all duration-200"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -208,22 +221,87 @@ export default function PecasPage() {
         </div>
       )}
 
-      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirmar exclusão</DialogTitle>
-            <DialogDescription>
-              Tem certeza que deseja excluir esta peça? Esta ação não pode ser desfeita.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-              Cancelar
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Excluir
-            </Button>
-          </DialogFooter>
+      <Dialog open={deleteDialogOpen} onOpenChange={(open) => { if (!open) closeDeleteDialog() }}>
+        <DialogContent className="sm:max-w-md">
+          {deleteStep === 1 ? (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-[--color-text-primary]">
+                  <Trash2 size={18} className="text-red-500" />
+                  Excluir peça piloto?
+                </DialogTitle>
+                <DialogDescription asChild>
+                  <div className="space-y-3 pt-1">
+                    <p className="text-sm text-[--color-text-secondary]">
+                      Você está prestes a excluir permanentemente:
+                    </p>
+                    <div className="rounded-xl bg-[--color-bg-subtle] border border-[--color-border-light] px-4 py-3">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-[--color-text-tertiary] mb-0.5">Peça Piloto</p>
+                      <p className="text-[15px] font-bold text-[--color-text-primary] leading-tight">{pecaToDelete?.nome}</p>
+                    </div>
+                    <p className="text-xs text-[--color-text-tertiary]">
+                      Todos os dados vinculados serão removidos. Essa ação não pode ser desfeita.
+                    </p>
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 sm:gap-0 mt-2">
+                <Button variant="outline" onClick={closeDeleteDialog} className="flex-1 rounded-xl">
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={() => setDeleteStep(2)}
+                  className="flex-1 rounded-xl bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  Continuar →
+                </Button>
+              </DialogFooter>
+            </>
+          ) : (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-red-600">
+                  <Trash2 size={18} />
+                  Confirmação final
+                </DialogTitle>
+                <DialogDescription asChild>
+                  <div className="space-y-3 pt-1">
+                    <p className="text-sm text-[--color-text-secondary]">
+                      Para confirmar, digite o nome da peça exatamente como aparece abaixo:
+                    </p>
+                    <div className="rounded-lg bg-red-50 border border-red-100 px-3 py-2">
+                      <p className="text-[13px] font-black text-red-700 tracking-tight select-all">{pecaToDelete?.nome}</p>
+                    </div>
+                    <input
+                      autoFocus
+                      value={deleteConfirmText}
+                      onChange={(e) => setDeleteConfirmText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && deleteConfirmText.trim().toLowerCase() === pecaToDelete?.nome.trim().toLowerCase()) {
+                          handleDelete()
+                        }
+                      }}
+                      placeholder="Digite o nome da peça..."
+                      className="w-full h-11 px-4 rounded-xl bg-white border border-[--color-border-medium] text-[14px] text-[--color-text-primary] placeholder:text-[--color-text-tertiary] focus:outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100 transition-all"
+                    />
+                  </div>
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="gap-2 sm:gap-0 mt-2">
+                <Button variant="outline" onClick={closeDeleteDialog} className="flex-1 rounded-xl">
+                  Cancelar
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={deleteConfirmText.trim().toLowerCase() !== pecaToDelete?.nome.trim().toLowerCase()}
+                  className="flex-1 rounded-xl"
+                >
+                  Excluir definitivamente
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>

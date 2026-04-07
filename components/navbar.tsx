@@ -9,7 +9,7 @@ interface NavbarProps {
 
 export function Navbar({ onMenuClick }: NavbarProps) {
   return (
-    <header className="sticky top-0 z-30 flex h-16 w-full items-center border-b border-white/5 bg-[#111110] px-4 lg:hidden shadow-lg print:hidden">
+    <header className="sticky top-0 z-30 flex h-16 w-full items-center border-b border-white/5 bg-[#111110] px-4 md:hidden shadow-lg print:hidden">
       <button
         onClick={onMenuClick}
         className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-white/5 border border-white/10 text-white/70 hover:text-white active:scale-95 transition-all"

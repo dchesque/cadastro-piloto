@@ -38,7 +38,7 @@ export default function ImprimirCortePage({ params }: { params: Promise<{ id: st
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[--color-bg-page]">
+      <div className="flex min-h-dvh items-center justify-center bg-[--color-bg-page]">
         <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
       </div>
     )
@@ -46,7 +46,7 @@ export default function ImprimirCortePage({ params }: { params: Promise<{ id: st
 
   if (!peca || !corte) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[--color-bg-page]">
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-[--color-bg-page]">
         <p className="text-[15px] font-medium text-[--color-text-secondary]">Ficha de corte não encontrada</p>
         <Link href={`/pecas/${id}`}>
           <button className="text-[14px] text-[--color-accent] hover:underline">Voltar para a Peça</button>
@@ -60,7 +60,7 @@ export default function ImprimirCortePage({ params }: { params: Promise<{ id: st
   const qrUrl = `${baseUrl}/pecas/${peca.id}/corte/${corte.id}`
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gray-100 p-8 print:p-0 print:bg-white print:min-h-0">
+    <div className="flex min-h-dvh flex-col items-center bg-gray-100 p-8 print:p-0 print:bg-white print:min-h-0">
       
       {/* Botões de Ações */}
       <div className="no-print mb-8 w-full max-w-[210mm] flex justify-between items-center bg-white p-6 rounded-[32px] shadow-sm">

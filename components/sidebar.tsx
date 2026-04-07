@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Shirt, Scissors, LogOut, User, ChevronUp, Settings } from 'lucide-react'
+import { Home, Shirt, Scissors, LogOut, User, ChevronUp, Settings, X } from 'lucide-react'
 import { signOut, useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { useState, useRef, useEffect } from 'react'
@@ -38,16 +38,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       {/* Backdrop for mobile */}
-      <div 
+      <div
         className={cn(
-          "fixed inset-0 z-40 bg-[--color-text-primary]/20 backdrop-blur-sm lg:hidden transition-opacity duration-300 print:hidden",
+          "fixed inset-0 z-40 bg-[--color-text-primary]/20 backdrop-blur-sm md:hidden transition-opacity duration-300 print:hidden",
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         onClick={onClose}
       />
 
       <aside className={cn(
-        "fixed left-0 top-0 z-50 h-screen w-[260px] bg-sidebar-bg border-r border-white/5 shadow-2xl transition-transform duration-300 lg:translate-x-0 print:hidden",
+        "fixed left-0 top-0 z-50 h-screen w-[260px] bg-sidebar-bg border-r border-white/5 shadow-2xl transition-transform duration-300 md:translate-x-0 print:hidden",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex h-full flex-col">
@@ -64,11 +64,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               </span>
             </div>
             {/* Close button for mobile */}
-            <button 
+            <button
               onClick={onClose}
-              className="lg:hidden w-8 h-8 flex items-center justify-center rounded-full bg-white/5 text-sidebar-text-muted hover:text-white"
+              className="md:hidden w-11 h-11 flex items-center justify-center rounded-full bg-white/5 text-sidebar-text-muted hover:text-white transition-colors"
+              aria-label="Fechar menu"
             >
-              <span className="text-xl">×</span>
+              <X size={18} />
             </button>
           </div>
 

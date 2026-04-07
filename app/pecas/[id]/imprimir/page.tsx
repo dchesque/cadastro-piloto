@@ -31,7 +31,7 @@ export default function ImprimirPecaPage({ params }: { params: Promise<{ id: str
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[--color-bg-page]">
+      <div className="flex min-h-dvh items-center justify-center bg-[--color-bg-page]">
         <div className="w-8 h-8 border-2 border-[--color-accent-peca] border-t-transparent rounded-full animate-spin" />
       </div>
     )
@@ -39,7 +39,7 @@ export default function ImprimirPecaPage({ params }: { params: Promise<{ id: str
 
   if (!peca) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[--color-bg-page]">
+      <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-[--color-bg-page]">
         <p className="text-[15px] font-medium text-[--color-text-secondary]">Peça não encontrada</p>
         <Link href="/pecas">
           <button className="text-[14px] text-[--color-accent] hover:underline">Voltar para lista</button>
@@ -60,7 +60,7 @@ export default function ImprimirPecaPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[--color-bg-page] p-4 sm:p-8 print:min-h-0 print:p-0 print:bg-white">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-[--color-bg-page] p-4 sm:p-8 print:min-h-0 print:p-0 print:bg-white">
       <div className="no-print mb-10 w-full max-w-md">
         <Link 
           href={`/pecas/${id}`}

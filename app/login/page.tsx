@@ -51,7 +51,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[--color-bg-page] flex items-center justify-center p-6 animate-in fade-in duration-1000">
+    <div className="min-h-dvh bg-[--color-bg-page] flex items-center justify-center p-6 animate-in fade-in duration-1000">
       <div className="w-full max-w-[400px] space-y-8">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-[24px] bg-white border border-[--color-border-light] shadow-sm mb-4">

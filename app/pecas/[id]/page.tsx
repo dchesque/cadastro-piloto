@@ -380,7 +380,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
       <div className="relative">
         
         {/* ABA FICHA TÉCNICA */}
-        <div className={`${activeTab === 'ficha' ? 'block' : 'hidden print:block'} overflow-x-auto sm:overflow-visible no-scrollbar pb-4 sm:pb-0`}>
+        <div className={`${activeTab === 'ficha' ? 'block' : 'hidden print:block'} overflow-x-auto sm:overflow-visible pb-4 sm:pb-0`}>
           <div className="bg-white overflow-hidden relative shadow-sm print:shadow-none min-w-[210mm] sm:min-w-0">
             
             {/* CONTAINER PÁGINA 1: CABEÇALHO ATÉ AVIAMENTOS */}
@@ -625,16 +625,16 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
               onChange={handleModelagemUpload}
               disabled={uploadingModelagem}
             />
-            <div className="bg-white border border-gray-100 rounded-[32px] p-10 shadow-sm">
-              <div className="flex items-center justify-between mb-8">
+            <div className="bg-white border border-gray-100 rounded-[32px] p-6 sm:p-10 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
                 <div>
-                  <h2 className="text-2xl font-black text-black uppercase tracking-tight">Arquivos de Modelagem</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-black uppercase tracking-tight">Arquivos de Modelagem</h2>
                   <p className="text-gray-400 text-sm">Centralize aqui os arquivos da modelagem desta peça.</p>
                 </div>
-                <button 
+                <button
                   onClick={() => document.getElementById('modeling-upload-internal')?.click()}
                   disabled={uploadingModelagem}
-                  className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-gray-800 transition-all shadow-lg shadow-black/10"
+                  className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-gray-800 transition-all shadow-lg shadow-black/10 w-full sm:w-auto justify-center"
                 >
                   {uploadingModelagem ? (
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -730,14 +730,14 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         {/* ABA CORTE */}
         {activeTab === 'corte' && (
           <div className="animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="bg-white border border-gray-100 rounded-[32px] p-10 shadow-sm">
-              <div className="flex items-center justify-between mb-8">
+            <div className="bg-white border border-gray-100 rounded-[32px] p-6 sm:p-10 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
                 <div>
-                  <h2 className="text-2xl font-black text-black uppercase tracking-tight">Histórico de Cortes</h2>
+                  <h2 className="text-xl sm:text-2xl font-black text-black uppercase tracking-tight">Histórico de Cortes</h2>
                   <p className="text-gray-400 text-sm">Gerencie as fichas de corte emitidas para esta peça.</p>
                 </div>
-                <Link href={`/pecas/${id}/corte/novo`}>
-                  <button className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-gray-800 transition-all shadow-lg shadow-black/10">
+                <Link href={`/pecas/${id}/corte/novo`} className="w-full sm:w-auto">
+                  <button className="flex items-center gap-2 px-6 py-3 bg-black text-white rounded-2xl font-bold text-sm hover:bg-gray-800 transition-all shadow-lg shadow-black/10 w-full sm:w-auto justify-center">
                     <Scissors size={18} />
                     Nova Ficha de Corte
                   </button>

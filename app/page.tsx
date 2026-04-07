@@ -85,7 +85,7 @@ export default async function DashboardPage() {
               <Shirt size={20} className="text-[--color-accent-peca]" />
               Peças Recentes
             </h2>
-            <Link href="/pecas" className="text-xs font-bold uppercase tracking-wider text-[--color-text-tertiary] hover:text-[--color-accent-peca] transition-colors bg-[--color-bg-subtle] px-3 py-1 rounded-full">
+            <Link href="/pecas" className="text-xs font-bold uppercase tracking-wider text-[--color-text-tertiary] hover:text-[--color-accent-peca] transition-colors bg-[--color-bg-subtle] px-3 py-2 rounded-full min-h-[44px] flex items-center">
               Ver tudo
             </Link>
           </div>
@@ -114,7 +114,7 @@ export default async function DashboardPage() {
                       <p className="text-[15px] font-semibold text-[--color-text-primary]">{peca.nome}</p>
                     </div>
                   </div>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-[--color-text-tertiary] group-hover:bg-[--color-accent] group-hover:text-white transition-all duration-300">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-[--color-text-tertiary] group-hover:bg-[--color-accent] group-hover:text-white transition-all duration-300">
                     <ArrowRight size={16} />
                   </div>
                 </Link>
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
               <Scissors size={20} className="text-[--color-accent-tecido]" />
               Cortes Recentes
             </h2>
-            <Link href="/tecidos" className="text-xs font-bold uppercase tracking-wider text-[--color-text-tertiary] hover:text-[--color-accent-tecido] transition-colors bg-[--color-bg-subtle] px-3 py-1 rounded-full">
+            <Link href="/tecidos" className="text-xs font-bold uppercase tracking-wider text-[--color-text-tertiary] hover:text-[--color-accent-tecido] transition-colors bg-[--color-bg-subtle] px-3 py-2 rounded-full min-h-[44px] flex items-center">
               Ver tudo
             </Link>
           </div>
@@ -145,7 +145,7 @@ export default async function DashboardPage() {
                 <Link 
                   key={tecido.id} 
                   href={`/tecidos/${tecido.id}`}
-                  className="p-4 sm:p-5 hover:bg-[--color-bg-page] transition-all duration-200 flex items-center justify-between group"
+                  className="p-5 hover:bg-[--color-bg-page] transition-all duration-200 flex items-center justify-between group"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-[12px] bg-[--color-bg-subtle] flex items-center justify-center text-[--color-text-secondary] group-hover:scale-105 transition-transform">
@@ -159,7 +159,7 @@ export default async function DashboardPage() {
                       <p className="text-[15px] font-semibold text-[--color-text-primary]">{tecido.nome}</p>
                     </div>
                   </div>
-                  <div className="w-8 h-8 rounded-full flex items-center justify-center text-[--color-text-tertiary] group-hover:bg-[--color-accent] group-hover:text-white transition-all duration-300">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-[--color-text-tertiary] group-hover:bg-[--color-accent] group-hover:text-white transition-all duration-300">
                     <ArrowRight size={16} />
                   </div>
                 </Link>
