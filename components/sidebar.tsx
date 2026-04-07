@@ -141,6 +141,19 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   <Settings size={18} />
                   Minha Conta
                 </Link>
+                {(session?.user as any)?.role === 'admin' && (
+                  <>
+                    <div className="h-[1px] bg-white/5" />
+                    <Link
+                      href="/admin/usuarios"
+                      onClick={() => { setIsUserMenuOpen(false); onClose?.(); }}
+                      className="flex items-center gap-3 px-4 py-3 text-[14px] font-medium text-sidebar-text-muted hover:bg-white/5 hover:text-sidebar-text transition-colors"
+                    >
+                      <Users size={18} />
+                      Administração
+                    </Link>
+                  </>
+                )}
                 <div className="h-[1px] bg-white/5" />
                 <button
                   onClick={() => signOut({ callbackUrl: '/login' })}
