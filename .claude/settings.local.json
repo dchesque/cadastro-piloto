@@ -4,7 +4,14 @@
       "Bash(npx create-next-app:*)",
       "Bash(npm install:*)",
       "Bash(npx prisma generate:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(xargs ls:*)",
+      "Bash(npx tsc:*)",
+      "Bash(find /c/Workspace/cadastro-piloto -maxdepth 3 -type d ! -path */node_modules* ! -path */.next* ! -path */.git* ! -path */.claude*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(find /c/Workspace/cadastro-piloto -maxdepth 2 -not -path */node_modules/* -not -path */.next/* -name Dockerfile* -o -name docker-compose* -o -name nginx* -o -name .env*)"
     ]
   }
 }
