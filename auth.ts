@@ -26,7 +26,9 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
 
           const passwordsMatch = await bcrypt.compare(password, user.password);
 
-          if (passwordsMatch) return { id: user.id, name: user.name, username: user.username };
+          if (passwordsMatch && user.ativo) {
+            return { id: user.id, name: user.name, username: user.username, role: user.role }
+          }
         }
 
         console.log('Credenciais inválidas');
@@ -38,12 +40,14 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.username = (user as any).username;
+        token.role = (user as any).role;
       }
       return token;
     },
     session({ session, token }) {
       if (session.user) {
         (session.user as any).username = token.username;
+        (session.user as any).role = token.role;
       }
       return session;
     },

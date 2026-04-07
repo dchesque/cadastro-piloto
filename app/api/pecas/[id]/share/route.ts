@@ -30,6 +30,19 @@ export async function POST(
     return NextResponse.json({ error: 'E-mail destinatário obrigatório' }, { status: 400 })
   }
 
+  // Restrição: se EMAIL_RESTRICT_TO_REGISTERED=true, só permite enviar para usuários cadastrados
+  if (process.env.EMAIL_RESTRICT_TO_REGISTERED === 'true') {
+    const registeredUser = await prisma.user.findFirst({
+      where: { email: recipient, ativo: true },
+    })
+    if (!registeredUser) {
+      return NextResponse.json(
+        { error: 'Este e-mail não está cadastrado no sistema. Solicite ao administrador que cadastre o usuário.' },
+        { status: 403 }
+      )
+    }
+  }
+
   if (!process.env.SMTP_HOST || !process.env.SMTP_USER || !process.env.SMTP_PASS) {
     return NextResponse.json({ error: 'SMTP não configurado no servidor' }, { status: 500 })
   }
