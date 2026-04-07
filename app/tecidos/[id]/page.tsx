@@ -3,18 +3,20 @@
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/components/ui/toast'
-import { 
-  ArrowLeft, 
-  Printer, 
-  Pencil, 
-  Trash2, 
-  Calendar, 
-  Building2, 
-  FileText, 
-  Palette, 
-  Ruler, 
+import {
+  ArrowLeft,
+  Printer,
+  Pencil,
+  Trash2,
+  Calendar,
+  Building2,
+  FileText,
+  Palette,
+  Ruler,
   CheckCircle2,
-  Tag
+  Tag,
+  History,
+  Mail
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -52,6 +54,9 @@ export default function TecidoViewPage({ params }: { params: Promise<{ id: strin
   const [tecido, setTecido] = useState<CorteTecido | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [historico, setHistorico] = useState<any[]>([])
+  const [loadingHistorico, setLoadingHistorico] = useState(false)
+  const [historicoCarregado, setHistoricoCarregado] = useState(false)
 
   const fetchTecido = async () => {
     setLoading(true)
@@ -65,6 +70,20 @@ export default function TecidoViewPage({ params }: { params: Promise<{ id: strin
       console.error('Erro ao buscar tecido:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchHistorico = async () => {
+    if (historicoCarregado) return
+    setLoadingHistorico(true)
+    try {
+      const res = await fetch(`/api/logs?entidade=CorteTecido&entidadeId=${id}`)
+      const result = await res.json()
+      if (res.ok) { setHistorico(result.data); setHistoricoCarregado(true) }
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', error)
+    } finally {
+      setLoadingHistorico(false)
     }
   }
 
@@ -156,6 +175,79 @@ export default function TecidoViewPage({ params }: { params: Promise<{ id: strin
         <div className="p-10 text-center text-gray-400 italic">
           Visualização de Tecido v1.11.0 🚀
         </div>
+      </div>
+
+      {/* Histórico de Alterações */}
+      <div className="mt-6 bg-white border border-gray-100 rounded-[24px] p-6 sm:p-8 shadow-sm">
+        <button
+          onClick={fetchHistorico}
+          className="w-full flex items-center justify-between group"
+        >
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-gray-100 rounded-xl">
+              <History size={16} className="text-gray-500" />
+            </div>
+            <div className="text-left">
+              <h3 className="text-sm font-black uppercase tracking-tight text-black">Histórico de Alterações</h3>
+              <p className="text-xs text-gray-400">Registro de ações realizadas neste tecido</p>
+            </div>
+          </div>
+          {!historicoCarregado && (
+            <span className="text-xs font-bold text-gray-400 group-hover:text-black transition-colors">Carregar</span>
+          )}
+        </button>
+
+        {loadingHistorico && (
+          <div className="mt-4 flex justify-center py-8">
+            <div className="w-6 h-6 border-2 border-black border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        {historicoCarregado && !loadingHistorico && (
+          <div className="mt-4">
+            {historico.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-gray-100">
+                      <th className="py-2 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Data / Hora</th>
+                      <th className="py-2 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Usuário</th>
+                      <th className="py-2 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Ação</th>
+                      <th className="py-2 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Detalhe</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {historico.map((log) => (
+                      <tr key={log.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-all">
+                        <td className="py-3 px-2 text-xs text-gray-500 whitespace-nowrap">
+                          {new Date(log.createdAt).toLocaleString('pt-BR')}
+                        </td>
+                        <td className="py-3 px-2 text-xs font-semibold text-black">{log.usuario}</td>
+                        <td className="py-3 px-2">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
+                            log.acao === 'criacao' ? 'bg-green-100 text-green-700' :
+                            log.acao === 'edicao' ? 'bg-blue-100 text-blue-700' :
+                            log.acao === 'exclusao' ? 'bg-red-100 text-red-600' :
+                            'bg-gray-100 text-gray-600'
+                          }`}>
+                            {log.acao === 'criacao' ? 'Criação' :
+                             log.acao === 'edicao' ? 'Edição' :
+                             log.acao === 'exclusao' ? 'Exclusão' : log.acao}
+                          </span>
+                        </td>
+                        <td className="py-3 px-2 text-xs text-gray-500">
+                          {log.descricao || '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-center text-sm text-gray-400 py-8">Nenhum registro encontrado.</p>
+            )}
+          </div>
+        )}
       </div>
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

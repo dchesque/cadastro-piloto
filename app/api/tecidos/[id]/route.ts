@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { auth } from '@/auth'
+import { registrarLog } from '@/lib/log'
 
 export async function GET(
   request: NextRequest,
@@ -32,21 +34,30 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await auth()
   try {
     const { id } = await params
     const body = await request.json()
-    
+
     // Extrair campos que não devem ser passados no "data" do update
-    const { 
-      id: bodyId, 
-      createdAt, 
-      updatedAt, 
-      ...tecidoData 
+    const {
+      id: bodyId,
+      createdAt,
+      updatedAt,
+      ...tecidoData
     } = body
 
     const result = await prisma.corteTecido.update({
       where: { id },
       data: tecidoData,
+    })
+
+    await registrarLog({
+      entidade: 'CorteTecido',
+      entidadeId: id,
+      entidadeRef: result.referencia,
+      acao: 'edicao',
+      usuario: session?.user?.name ?? (session?.user as any)?.username ?? 'Sistema',
     })
 
     return NextResponse.json({ data: result })
@@ -63,10 +74,18 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await auth()
   try {
     const { id } = await params
-    await prisma.corteTecido.delete({
-      where: { id },
+    const tecido = await prisma.corteTecido.findUnique({ where: { id }, select: { referencia: true } })
+    await prisma.corteTecido.delete({ where: { id } })
+
+    await registrarLog({
+      entidade: 'CorteTecido',
+      entidadeId: id,
+      entidadeRef: tecido?.referencia ?? undefined,
+      acao: 'exclusao',
+      usuario: session?.user?.name ?? (session?.user as any)?.username ?? 'Sistema',
     })
 
     return NextResponse.json({ message: 'Tecido excluído com sucesso' })

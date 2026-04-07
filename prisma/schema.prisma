@@ -157,3 +157,15 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model LogAlteracao {
+  id           String   @id @default(cuid())
+  entidade     String   // "PecaPiloto" | "CorteTecido"
+  entidadeId   String
+  entidadeRef  String?  // referencia da peça/tecido para exibição
+  acao         String   // "criacao" | "edicao" | "exclusao" | "email_enviado"
+  descricao    String?
+  usuario      String
+  destinatario String?  // e-mail destinatário (somente para email_enviado)
+  createdAt    DateTime @default(now())
+}

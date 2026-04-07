@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { auth } from '@/auth'
+import { registrarLog } from '@/lib/log'
 
 export async function GET(
   request: NextRequest,
@@ -46,6 +48,7 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await auth()
   try {
     const { id } = await params
     const body = await request.json()
@@ -143,6 +146,14 @@ export async function PUT(
       return updatedPeca
     })
 
+    await registrarLog({
+      entidade: 'PecaPiloto',
+      entidadeId: id,
+      entidadeRef: result.referencia ?? undefined,
+      acao: 'edicao',
+      usuario: session?.user?.name ?? (session?.user as any)?.username ?? 'Sistema',
+    })
+
     return NextResponse.json({ data: result })
   } catch (error) {
     console.error('Erro ao atualizar peça:', error)
@@ -157,10 +168,18 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await auth()
   try {
     const { id } = await params
-    await prisma.pecaPiloto.delete({
-      where: { id },
+    const peca = await prisma.pecaPiloto.findUnique({ where: { id }, select: { referencia: true } })
+    await prisma.pecaPiloto.delete({ where: { id } })
+
+    await registrarLog({
+      entidade: 'PecaPiloto',
+      entidadeId: id,
+      entidadeRef: peca?.referencia ?? undefined,
+      acao: 'exclusao',
+      usuario: session?.user?.name ?? (session?.user as any)?.username ?? 'Sistema',
     })
 
     return NextResponse.json({ message: 'Peça excluída com sucesso' })

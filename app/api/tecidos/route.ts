@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { gerarReferenciaTecido } from '@/lib/gerarReferencia'
+import { auth } from '@/auth'
+import { registrarLog } from '@/lib/log'
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,6 +33,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const session = await auth()
   try {
     const body = await request.json()
     const { referencia: manualReferencia, ...otherData } = body;
@@ -41,6 +44,14 @@ export async function POST(request: NextRequest) {
         ...otherData,
         referencia,
       },
+    })
+
+    await registrarLog({
+      entidade: 'CorteTecido',
+      entidadeId: tecido.id,
+      entidadeRef: tecido.referencia,
+      acao: 'criacao',
+      usuario: session?.user?.name ?? (session?.user as any)?.username ?? 'Sistema',
     })
 
     return NextResponse.json({ data: tecido }, { status: 201 })

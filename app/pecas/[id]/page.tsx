@@ -25,7 +25,11 @@ import {
   MoreVertical,
   Type,
   Eye,
-  Layers
+  Layers,
+  Upload,
+  Share2,
+  History,
+  Mail
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -39,6 +43,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { formatDate } from '@/lib/utils'
+import ShareDialog from '@/components/ShareDialog'
 
 interface PecaModelagem {
   id?: string
@@ -96,6 +101,10 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
   const [modelingToDelete, setModelingToDelete] = useState<PecaModelagem | null>(null)
   const [confirmStep, setConfirmStep] = useState(1)
   const [corteToDelete, setCorteToDelete] = useState<any | null>(null)
+  const [reuploadingUrl, setReuploadingUrl] = useState<string | null>(null)
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
+  const [historico, setHistorico] = useState<any[]>([])
+  const [loadingHistorico, setLoadingHistorico] = useState(false)
 
   const fetchPeca = async () => {
     setLoading(true)
@@ -131,6 +140,19 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
       console.error('Erro ao buscar cortes:', error)
     } finally {
       setLoadingCortes(false)
+    }
+  }
+
+  const fetchHistorico = async () => {
+    setLoadingHistorico(true)
+    try {
+      const res = await fetch(`/api/logs?entidade=PecaPiloto&entidadeId=${id}`)
+      const result = await res.json()
+      if (res.ok) setHistorico(result.data)
+    } catch (error) {
+      console.error('Erro ao buscar histórico:', error)
+    } finally {
+      setLoadingHistorico(false)
     }
   }
 
@@ -245,6 +267,42 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
     }
   }
 
+  const handleReuploadModeling = async (mod: PecaModelagem, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file || !peca) return
+
+    setReuploadingUrl(mod.url)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const uploadRes = await fetch('/api/upload', { method: 'POST', body: formData })
+      const uploadResult = await uploadRes.json()
+
+      if (!uploadRes.ok) throw new Error(uploadResult.error)
+
+      const updatedModelagens = peca.modelagens.map(m =>
+        m.url === mod.url ? { ...m, url: uploadResult.url } : m
+      )
+
+      const updateRes = await fetch(`/api/pecas/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ modelagens: updatedModelagens }),
+      })
+
+      if (updateRes.ok) {
+        fetchPeca()
+        showToast({ title: 'Sucesso', description: 'Arquivo substituído com sucesso!' })
+      }
+    } catch (error) {
+      showToast({ title: 'Erro', description: 'Falha ao substituir arquivo', variant: 'destructive' })
+    } finally {
+      setReuploadingUrl(null)
+      if (e.target) e.target.value = ''
+    }
+  }
+
   const handleDeleteCorte = async () => {
     if (!corteToDelete) return
     try {
@@ -344,7 +402,14 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
               Etiqueta
             </button>
           </Link>
-          <button 
+          <button
+            onClick={() => setShareDialogOpen(true)}
+            className="flex-1 sm:flex-none btn-premium h-10 px-4 flex items-center justify-center gap-2 bg-white border border-[--color-border-light] text-[11px] sm:text-[12px] font-bold text-[--color-text-secondary] hover:bg-gray-50 transition-all w-full sm:w-auto print:hidden"
+          >
+            <Mail size={15} />
+            Enviar
+          </button>
+          <button
             onClick={() => setDeleteDialogOpen(true)}
             className="w-10 h-10 flex flex-none items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all"
             title="Excluir peça"
@@ -368,11 +433,17 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         >
           <CheckCircle2 size={16} /> Ficha de Corte
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab('modelagem')}
           className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 h-10 text-[11px] sm:text-[12px] font-bold rounded-xl transition-all ${activeTab === 'modelagem' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
         >
           <Scissors size={16} /> Modelagem
+        </button>
+        <button
+          onClick={() => { setActiveTab('historico'); if (historico.length === 0) fetchHistorico() }}
+          className={`flex-1 min-w-[120px] flex items-center justify-center gap-2 h-10 text-[11px] sm:text-[12px] font-bold rounded-xl transition-all ${activeTab === 'historico' ? 'bg-white text-black shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          <History size={16} /> Histórico
         </button>
       </nav>
 
@@ -682,7 +753,23 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                               >
                                 <Download size={16} />
                               </a>
-                              <button 
+                              <label
+                                className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all cursor-pointer"
+                                title="Substituir arquivo"
+                              >
+                                {reuploadingUrl === mod.url ? (
+                                  <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                  <Upload size={16} />
+                                )}
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  disabled={reuploadingUrl === mod.url}
+                                  onChange={(e) => handleReuploadModeling(mod, e)}
+                                />
+                              </label>
+                              <button
                                 onClick={() => {
                                   setEditingModeling(mod)
                                   setNewName(mod.nome)
@@ -693,7 +780,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                               >
                                 <Type size={16} />
                               </button>
-                              <button 
+                              <button
                                 onClick={() => {
                                   setModelingToDelete(mod)
                                   setConfirmStep(1)
@@ -816,6 +903,77 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           </div>
         )}
 
+        {/* ABA HISTÓRICO */}
+        {activeTab === 'historico' && (
+          <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="bg-white border border-gray-100 rounded-[32px] p-6 sm:p-10 shadow-sm">
+              <div className="mb-6 sm:mb-8">
+                <h2 className="text-xl sm:text-2xl font-black text-black uppercase tracking-tight">Histórico de Alterações</h2>
+                <p className="text-gray-400 text-sm">Registro de todas as ações realizadas nesta peça.</p>
+              </div>
+
+              {loadingHistorico ? (
+                <div className="py-20 flex justify-center">
+                  <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : historico.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-gray-100">
+                        <th className="py-3 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Data / Hora</th>
+                        <th className="py-3 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Usuário</th>
+                        <th className="py-3 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Ação</th>
+                        <th className="py-3 px-2 text-[10px] font-black uppercase text-gray-400 tracking-widest">Detalhe</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {historico.map((log) => (
+                        <tr key={log.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-all">
+                          <td className="py-3 px-2 text-xs text-gray-500 whitespace-nowrap">
+                            {new Date(log.createdAt).toLocaleString('pt-BR')}
+                          </td>
+                          <td className="py-3 px-2 text-xs font-semibold text-black">{log.usuario}</td>
+                          <td className="py-3 px-2">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
+                              log.acao === 'criacao' ? 'bg-green-100 text-green-700' :
+                              log.acao === 'edicao' ? 'bg-blue-100 text-blue-700' :
+                              log.acao === 'exclusao' ? 'bg-red-100 text-red-600' :
+                              log.acao === 'email_enviado' ? 'bg-purple-100 text-purple-700' :
+                              'bg-gray-100 text-gray-600'
+                            }`}>
+                              {log.acao === 'criacao' ? 'Criação' :
+                               log.acao === 'edicao' ? 'Edição' :
+                               log.acao === 'exclusao' ? 'Exclusão' :
+                               log.acao === 'email_enviado' ? 'E-mail' : log.acao}
+                            </span>
+                          </td>
+                          <td className="py-3 px-2 text-xs text-gray-500">
+                            {log.descricao && <span>{log.descricao}</span>}
+                            {log.destinatario && (
+                              <span className="flex items-center gap-1 text-gray-500">
+                                <Mail size={11} />
+                                {log.destinatario}
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="py-20 text-center border-2 border-dashed border-gray-100 rounded-[32px]">
+                  <div className="w-16 h-16 bg-gray-50 text-gray-300 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <History size={32} />
+                  </div>
+                  <p className="text-gray-400 font-medium">Nenhum registro no histórico.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* MODAL EDITAR FICHA (EXISTENTE) */}
@@ -859,6 +1017,16 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* DIALOG ENVIAR POR E-MAIL */}
+      <ShareDialog
+        pecaId={id}
+        pecaNome={peca.nome || peca.referencia}
+        cortes={cortes.map(c => ({ id: c.id, numeroCorte: c.numeroCorte }))}
+        modelagens={peca.modelagens || []}
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+      />
 
       {/* MODAL EXCLUSÃO DUPLA (MODELAGEM E CORTE) */}
       <Dialog open={doubleConfirmOpen} onOpenChange={(open) => {
