@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { showToast } from '@/components/ui/toast'
 
 interface CorteTecido {
   id: string
@@ -38,18 +39,22 @@ export default function TecidosPage() {
   const [tecidoToDelete, setTecidoToDelete] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchTecidos()
+    const abortController = new AbortController()
+    fetchTecidos(abortController.signal)
+    return () => abortController.abort()
   }, [search])
 
-  const fetchTecidos = async () => {
+  const fetchTecidos = async (signal?: AbortSignal) => {
     setLoading(true)
     try {
       const url = search ? `/api/tecidos?search=${encodeURIComponent(search)}` : '/api/tecidos'
-      const response = await fetch(url)
+      const response = await fetch(url, { signal })
       const result = await response.json()
       setTecidos(result.data || [])
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') return
       console.error('Erro ao buscar tecidos:', error)
+      showToast({ title: 'Erro', description: 'Não foi possível carregar os tecidos. Tente novamente.', variant: 'destructive' })
     } finally {
       setLoading(false)
     }
@@ -162,7 +167,7 @@ export default function TecidosPage() {
                       <Printer size={16} />
                     </button>
                   </Link>
-                  <Link href={`/tecidos/${tecido.id}/editar`}>
+                  <Link href={`/tecidos/${tecido.id}`}>
                     <button title="Editar" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-green-100 hover:text-green-700 transition-all duration-200">
                       <Pencil size={16} />
                     </button>

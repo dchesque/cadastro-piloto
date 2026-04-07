@@ -2,17 +2,18 @@
 
 import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
-import { 
-  ArrowLeft, 
-  Save, 
-  Plus, 
-  Trash2, 
-  PlusCircle, 
+import {
+  ArrowLeft,
+  Save,
+  Plus,
+  Trash2,
+  PlusCircle,
   Scissors,
   Package,
   Calendar,
   Layers,
-  CheckCircle2
+  CheckCircle2,
+  AlertTriangle
 } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -242,6 +243,24 @@ export default function NovaFichaCortePage({ params }: { params: Promise<{ id: s
 
         {/* Lado Direito: Listagem Dinâmica de Tecidos e Cores */}
         <div className="lg:col-span-2 space-y-6">
+          {sizes.length === 0 && peca && (
+            <div className="flex items-start gap-3 p-5 bg-yellow-50 border border-yellow-200 rounded-[32px] text-yellow-800">
+              <AlertTriangle size={18} className="shrink-0 mt-0.5 text-yellow-500" />
+              <div>
+                <p className="text-xs font-black uppercase tracking-wide mb-0.5">Grade de tamanhos não cadastrada</p>
+                <p className="text-xs leading-relaxed">
+                  Esta peça não possui grade de tamanhos. Adicione a grade na ficha da peça antes de criar um corte — sem ela, as quantidades por tamanho não poderão ser preenchidas.
+                </p>
+                <a
+                  href={`/pecas/${id}`}
+                  className="inline-block mt-3 text-[10px] font-black uppercase tracking-widest text-yellow-700 underline underline-offset-2 hover:text-yellow-900 transition-colors"
+                >
+                  Ir para a ficha da peça →
+                </a>
+              </div>
+            </div>
+          )}
+
           {items.length === 0 ? (
             <div className="bg-gray-50/50 border-2 border-dashed border-gray-100 rounded-[32px] py-40 flex flex-col items-center justify-center text-center px-10">
               <div className="w-16 h-16 bg-white text-gray-200 rounded-2xl flex items-center justify-center mb-4 shadow-sm">
@@ -291,6 +310,14 @@ export default function NovaFichaCortePage({ params }: { params: Promise<{ id: s
                   </div>
 
                   {/* Grade de Quantidades */}
+                  {sizes.length === 0 ? (
+                    <div className="flex items-start gap-3 p-4 bg-yellow-50 border border-yellow-200 rounded-2xl text-yellow-800">
+                      <AlertTriangle size={16} className="shrink-0 mt-0.5 text-yellow-500" />
+                      <p className="text-xs leading-relaxed">
+                        Sem grade de tamanhos cadastrada — as colunas de quantidade não podem ser exibidas.
+                      </p>
+                    </div>
+                  ) : (
                   <div className="overflow-x-auto pb-4">
                     <table className="w-full border-separate border-spacing-x-1">
                       <thead>
@@ -326,6 +353,7 @@ export default function NovaFichaCortePage({ params }: { params: Promise<{ id: s
                       </tbody>
                     </table>
                   </div>
+                  )}
                 </div>
               ))}
               

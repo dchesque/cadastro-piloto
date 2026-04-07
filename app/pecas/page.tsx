@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Search, Plus, Pencil, Printer, Trash2, Package, Eye } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { TypeBadge } from '@/components/ui/type-badge'
+import { showToast } from '@/components/ui/toast'
 import {
   Dialog,
   DialogContent,
@@ -38,18 +39,22 @@ export default function PecasPage() {
   const [pecaToDelete, setPecaToDelete] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchPecas()
+    const abortController = new AbortController()
+    fetchPecas(abortController.signal)
+    return () => abortController.abort()
   }, [search])
 
-  const fetchPecas = async () => {
+  const fetchPecas = async (signal?: AbortSignal) => {
     setLoading(true)
     try {
       const url = search ? `/api/pecas?search=${encodeURIComponent(search)}` : '/api/pecas'
-      const response = await fetch(url)
+      const response = await fetch(url, { signal })
       const result = await response.json()
       setPecas(result.data || [])
     } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return
       console.error('Erro ao buscar peças:', error)
+      showToast({ title: 'Erro', description: 'Não foi possível carregar as peças. Tente novamente.', variant: 'destructive' })
     } finally {
       setLoading(false)
     }
@@ -162,7 +167,7 @@ export default function PecasPage() {
                       <Printer size={16} />
                     </button>
                   </Link>
-                  <Link href={`/pecas/${peca.id}/editar`}>
+                  <Link href={`/pecas/${peca.id}/ficha`}>
                     <button title="Editar" className="w-9 h-9 flex items-center justify-center rounded-[10px] text-[--color-text-secondary] bg-[--color-bg-subtle] hover:bg-blue-100 hover:text-blue-700 transition-all duration-200">
                       <Pencil size={16} />
                     </button>

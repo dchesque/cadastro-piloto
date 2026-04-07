@@ -13,7 +13,7 @@ export async function GET(
 
     if (!tecido) {
       return NextResponse.json(
-        { error: 'Tecido não encontrada', message: 'Tecido não encontrada' },
+        { error: 'Tecido não encontrado', message: 'Tecido não encontrado' },
         { status: 404 }
       )
     }

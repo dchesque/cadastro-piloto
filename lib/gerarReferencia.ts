@@ -16,9 +16,9 @@ export async function gerarReferenciaPeca(): Promise<string> {
 
   let sequencial = 1
   if (ultimoRegistro) {
-    const partes = ultimoRegistro.referencia.split('-')
-    const ultimoSequencial = parseInt(partes[partes.length - 1], 10)
-    sequencial = ultimoSequencial + 1
+    const match = ultimoRegistro.referencia.match(/-(\d+)$/)
+    const ultimoSequencial = match ? parseInt(match[1], 10) : 0
+    sequencial = isNaN(ultimoSequencial) ? 1 : ultimoSequencial + 1
   }
 
   return `PP-${year}-${sequencial.toString().padStart(4, '0')}`
@@ -40,9 +40,9 @@ export async function gerarReferenciaTecido(): Promise<string> {
 
   let sequencial = 1
   if (ultimoRegistro) {
-    const partes = ultimoRegistro.referencia.split('-')
-    const ultimoSequencial = parseInt(partes[partes.length - 1], 10)
-    sequencial = ultimoSequencial + 1
+    const match = ultimoRegistro.referencia.match(/-(\d+)$/)
+    const ultimoSequencial = match ? parseInt(match[1], 10) : 0
+    sequencial = isNaN(ultimoSequencial) ? 1 : ultimoSequencial + 1
   }
 
   return `TEC-${year}-${sequencial.toString().padStart(4, '0')}`

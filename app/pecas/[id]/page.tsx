@@ -95,6 +95,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
   const [doubleConfirmOpen, setDoubleConfirmOpen] = useState(false)
   const [modelingToDelete, setModelingToDelete] = useState<PecaModelagem | null>(null)
   const [confirmStep, setConfirmStep] = useState(1)
+  const [corteToDelete, setCorteToDelete] = useState<any | null>(null)
 
   const fetchPeca = async () => {
     setLoading(true)
@@ -240,6 +241,20 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         showToast({ title: 'Removido', description: 'Modelagem excluída do histórico' })
       }
     } catch (error) {
+      showToast({ title: 'Erro', description: 'Erro ao excluir', variant: 'destructive' })
+    }
+  }
+
+  const handleDeleteCorte = async () => {
+    if (!corteToDelete) return
+    try {
+      await fetch(`/api/pecas/${id}/corte/${corteToDelete.id}`, { method: 'DELETE' })
+      fetchCortes()
+      setDoubleConfirmOpen(false)
+      setConfirmStep(1)
+      setCorteToDelete(null)
+      showToast({ title: 'Sucesso', description: 'Ficha de corte excluída' })
+    } catch (err) {
       showToast({ title: 'Erro', description: 'Erro ao excluir', variant: 'destructive' })
     }
   }
@@ -658,9 +673,10 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                           </td>
                           <td className="py-4 px-2">
                             <div className="flex items-center justify-end gap-2">
-                              <a 
-                                href={mod.url} 
-                                target="_blank" 
+                              <a
+                                href={mod.url}
+                                target="_blank"
+                                download={mod.nome}
                                 className="p-2 text-gray-400 hover:text-black hover:bg-white hover:shadow-sm rounded-lg transition-all"
                                 title="Baixar / Visualizar"
                               >
@@ -768,17 +784,12 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
                                 <Eye size={16} />
                               </Link>
                               {/* Botão para Deletar */}
-                              <button 
-                                onClick={async () => {
-                                  if (confirm('Deseja realmente excluir esta ficha de corte?')) {
-                                    try {
-                                      await fetch(`/api/pecas/${id}/corte/${corte.id}`, { method: 'DELETE' })
-                                      fetchCortes()
-                                      showToast({ title: 'Sucesso', description: 'Ficha de corte excluída' })
-                                    } catch (err) {
-                                      showToast({ title: 'Erro', description: 'Erro ao excluir', variant: 'destructive' })
-                                    }
-                                  }
+                              <button
+                                onClick={() => {
+                                  setCorteToDelete(corte)
+                                  setModelingToDelete(null)
+                                  setConfirmStep(1)
+                                  setDoubleConfirmOpen(true)
                                 }}
                                 className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
                                 title="Remover"
@@ -849,39 +860,46 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
         </DialogContent>
       </Dialog>
 
-      {/* MODAL EXCLUSÃO DUPLA MODELAGEM */}
-      <Dialog open={doubleConfirmOpen} onOpenChange={setDoubleConfirmOpen}>
+      {/* MODAL EXCLUSÃO DUPLA (MODELAGEM E CORTE) */}
+      <Dialog open={doubleConfirmOpen} onOpenChange={(open) => {
+        setDoubleConfirmOpen(open)
+        if (!open) { setModelingToDelete(null); setCorteToDelete(null); setConfirmStep(1) }
+      }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-red-600 flex items-center gap-2">
               <AlertCircle size={20} /> Atenção!
             </DialogTitle>
             <DialogDescription className="font-bold text-gray-900">
-              {confirmStep === 1 
-                ? "Deseja realmente remover este arquivo de modelagem?" 
-                : "Esta ação é irreversível. O arquivo será removido do histórico da peça. Confirmar?"}
+              {corteToDelete
+                ? confirmStep === 1
+                  ? "Deseja realmente excluir esta ficha de corte?"
+                  : "Esta ação é irreversível. A ficha de corte será removida permanentemente. Confirmar?"
+                : confirmStep === 1
+                  ? "Deseja realmente remover este arquivo de modelagem?"
+                  : "Esta ação é irreversível. O arquivo será removido do histórico da peça. Confirmar?"}
             </DialogDescription>
           </DialogHeader>
           <div className="py-2">
             <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start gap-3">
               <Scissors size={14} className="text-gray-400 shrink-0 mt-0.5" />
               <span className="text-xs font-bold text-gray-900 break-all leading-relaxed">
-                {modelingToDelete?.nome}
+                {corteToDelete ? corteToDelete.numeroCorte : modelingToDelete?.nome}
               </span>
             </div>
           </div>
           <DialogFooter className="gap-2 sm:gap-0">
             <Button variant="outline" onClick={() => setDoubleConfirmOpen(false)} className="rounded-xl flex-1">Cancelar</Button>
             {confirmStep === 1 ? (
-              <Button 
-                onClick={() => setConfirmStep(2)} 
+              <Button
+                onClick={() => setConfirmStep(2)}
                 className="bg-orange-500 hover:bg-orange-600 text-white rounded-xl flex-1"
               >
                 Sim, Remover
               </Button>
             ) : (
-              <Button 
-                onClick={handleDeleteModeling} 
+              <Button
+                onClick={corteToDelete ? handleDeleteCorte : handleDeleteModeling}
                 className="bg-red-600 hover:bg-red-700 text-white rounded-xl flex-1 font-black uppercase tracking-widest text-[10px]"
               >
                 APAGAR AGORA
