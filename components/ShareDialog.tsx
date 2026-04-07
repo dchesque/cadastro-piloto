@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { showToast } from '@/components/ui/toast'
 import { Mail, Paperclip, Send } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
 
 interface Modelagem {
   id: string
@@ -45,7 +46,14 @@ export default function ShareDialog({
   const [selectedCorteId, setSelectedCorteId] = useState<string>(cortes[0]?.id || '')
   const [selectedModelagemIds, setSelectedModelagemIds] = useState<string[]>([])
   const [recipient, setRecipient] = useState('')
+  const [mensagem, setMensagem] = useState(`Olá,\n\nSegue em anexo a ficha técnica da peça ${pecaNome}.\n\nAtenciosamente,\nJC Studio`)
   const [sending, setSending] = useState(false)
+
+  function handleDocTypeChange(type: 'ficha' | 'corte') {
+    setDocType(type)
+    const doc = type === 'corte' ? 'ficha de corte' : 'ficha técnica'
+    setMensagem(`Olá,\n\nSegue em anexo a ${doc} da peça ${pecaNome}.\n\nAtenciosamente,\nJC Studio`)
+  }
 
   function toggleModelagem(id: string) {
     setSelectedModelagemIds(prev =>
@@ -81,6 +89,7 @@ export default function ShareDialog({
           corteId: docType === 'corte' ? selectedCorteId : undefined,
           recipient,
           modelagemIds: docType === 'ficha' ? selectedModelagemIds : [],
+          mensagem,
         }),
       })
       const result = await res.json()
@@ -120,7 +129,7 @@ export default function ShareDialog({
             <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Documento</p>
             <div className="flex gap-2">
               <button
-                onClick={() => setDocType('ficha')}
+                onClick={() => handleDocTypeChange('ficha')}
                 className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border ${
                   docType === 'ficha'
                     ? 'bg-black text-white border-black'
@@ -130,7 +139,7 @@ export default function ShareDialog({
                 Ficha Técnica
               </button>
               <button
-                onClick={() => setDocType('corte')}
+                onClick={() => handleDocTypeChange('corte')}
                 disabled={cortes.length === 0}
                 className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all border disabled:opacity-40 disabled:cursor-not-allowed ${
                   docType === 'corte'
@@ -204,8 +213,19 @@ export default function ShareDialog({
               placeholder="nome@exemplo.com"
               value={recipient}
               onChange={e => setRecipient(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSend()}
               className="rounded-xl"
+            />
+          </div>
+
+          {/* Mensagem */}
+          <div>
+            <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-2">Mensagem</p>
+            <Textarea
+              value={mensagem}
+              onChange={e => setMensagem(e.target.value)}
+              rows={5}
+              className="rounded-xl text-xs resize-none"
+              placeholder="Escreva uma mensagem para o destinatário..."
             />
           </div>
         </div>

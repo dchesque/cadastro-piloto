@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { registrarLog } from '@/lib/log'
-import { buildFichaTecnicaHtml, buildFichaCorteHtml } from '@/lib/email-templates'
+import { buildFichaTecnicaPdf, buildFichaCorteePdf } from '@/lib/pdf-templates'
+import { generatePdf } from '@/lib/pdf-generator'
 import nodemailer from 'nodemailer'
 import { readFileSync } from 'fs'
 import path from 'path'
@@ -17,11 +18,12 @@ export async function POST(
   const { id } = await params
 
   const body = await request.json()
-  const { type, corteId, recipient, modelagemIds } = body as {
+  const { type, corteId, recipient, modelagemIds, mensagem } = body as {
     type: 'ficha' | 'corte'
     corteId?: string
     recipient: string
     modelagemIds?: string[]
+    mensagem?: string
   }
 
   if (!recipient) {
@@ -56,16 +58,26 @@ export async function POST(
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-  const html = type === 'corte'
-    ? buildFichaCorteHtml(peca as any, corte as any, appUrl)
-    : buildFichaTecnicaHtml(peca as any, appUrl)
-
   const subject = type === 'corte'
     ? `Ficha de Corte – ${peca.nome || peca.referencia} (Nº ${corte!.numeroCorte})`
     : `Ficha Técnica – ${peca.nome || peca.referencia} (Ref: ${peca.referencia})`
 
-  // Montar anexos de modelagem selecionados
-  const attachments: { filename: string; content: Buffer }[] = []
+  const pdfNome = type === 'corte'
+    ? `ficha-corte-${peca.referencia}-n${corte!.numeroCorte}.pdf`
+    : `ficha-tecnica-${peca.referencia}.pdf`
+
+  // Gerar PDF da ficha
+  const fichaHtml = type === 'corte'
+    ? buildFichaCorteePdf(peca as any, corte as any, appUrl)
+    : buildFichaTecnicaPdf(peca as any, appUrl)
+
+  const pdfBuffer = await generatePdf(fichaHtml)
+
+  // Montar anexos: PDF da ficha + arquivos de modelagem selecionados
+  const attachments: { filename: string; content: Buffer; contentType?: string }[] = [
+    { filename: pdfNome, content: pdfBuffer, contentType: 'application/pdf' },
+  ]
+
   if (modelagemIds && modelagemIds.length > 0) {
     const modelagensSelecionadas = peca.modelagens.filter(m => modelagemIds.includes(m.id))
     for (const mod of modelagensSelecionadas) {
@@ -78,6 +90,13 @@ export async function POST(
       }
     }
   }
+
+  const bodyText = mensagem?.trim() || `Olá,\n\nSegue em anexo a ${type === 'corte' ? 'ficha de corte' : 'ficha técnica'} da peça ${peca.nome || peca.referencia}.\n\nAtenciosamente,\nJC Studio`
+
+  const bodyHtml = bodyText
+    .split('\n')
+    .map(line => `<p style="margin:0 0 8px">${line || '&nbsp;'}</p>`)
+    .join('')
 
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -94,7 +113,8 @@ export async function POST(
       from: process.env.SMTP_FROM || process.env.SMTP_USER,
       to: recipient,
       subject,
-      html,
+      text: bodyText,
+      html: `<div style="font-family:sans-serif;font-size:14px;color:#333">${bodyHtml}</div>`,
       attachments,
     })
   } catch (error) {
