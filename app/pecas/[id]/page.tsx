@@ -461,7 +461,7 @@ export default function PecaViewPage({ params }: { params: Promise<{ id: string 
             <div className="grid grid-cols-4 border-2 border-black">
                <div className="col-span-1 p-2 border-r-2 border-black flex flex-col justify-center items-center bg-black text-white">
                   <div className="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-black text-lg mb-0.5">JC</div>
-                  <p className="text-[8px] font-black uppercase tracking-widest leading-none">JC STUDIO</p>
+                  <p className="text-[8px] font-black uppercase tracking-widest leading-none">FlowModa</p>
                </div>
                <div className="col-span-2 p-2 px-3 flex flex-col justify-center">
                   <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5">Ficha Técnica de Vestuário</p>

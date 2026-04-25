@@ -92,7 +92,7 @@ export default function ImprimirPecaPage({ params }: { params: Promise<{ id: str
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-black px-4 py-4">
-          <span className="text-2xl font-black tracking-tighter text-black uppercase">JC STUDIO</span>
+          <span className="text-2xl font-black tracking-tighter text-black uppercase">FlowModa</span>
           <div className="flex flex-col items-end text-black">
             <span className="rounded-sm border-2 border-black px-2 py-1 text-xs font-black uppercase tracking-tight">
               PEÇA PILOTO

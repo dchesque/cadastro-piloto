@@ -3,8 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { showToast } from '@/components/ui/toast'
-import { ArrowLeft, Plus, CheckCircle, AlertCircle } from 'lucide-react'
-import { Field } from '@/components/ui/field'
+import { ArrowLeft, Check } from 'lucide-react'
+import { FMField } from '@/components/fm/field'
+import { FMInput } from '@/components/fm/input'
+import { FMTextarea } from '@/components/fm/textarea'
+import { FMBtn } from '@/components/fm/btn'
 
 export default function NovaPecaPage() {
   const router = useRouter()
@@ -21,33 +24,31 @@ export default function NovaPecaPage() {
     tamanhos: '',
     observacoes: '',
   })
-  const [errors, setErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    const fetchReferencia = async () => {
-      try {
-        const response = await fetch('/api/pecas/referencia')
-        const result = await response.json()
-        setFormData(prev => ({ ...prev, referencia: result.data.referencia }))
-      } catch (error) {
-        console.error('Erro ao gerar referência:', error)
-      }
+    let cancelled = false
+    fetch('/api/pecas/referencia')
+      .then((r) => r.json())
+      .then((result) => {
+        if (cancelled) return
+        setFormData((prev) => ({ ...prev, referencia: result?.data?.referencia ?? '' }))
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
     }
-    fetchReferencia()
   }, [])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-    setErrors((prev) => ({ ...prev, [name]: '' }))
-  }
+  const set =
+    <K extends keyof typeof formData>(key: K) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setFormData((prev) => ({ ...prev, [key]: e.target.value }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     setLoading(true)
     try {
-      const response = await fetch('/api/pecas', {
+      const r = await fetch('/api/pecas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -55,14 +56,9 @@ export default function NovaPecaPage() {
           precoTecido: formData.precoTecido ? parseFloat(formData.precoTecido) : null,
         }),
       })
-
-      const result = await response.json()
-
-      if (response.ok) {
-        showToast({
-          title: 'Sucesso',
-          description: 'Peça cadastrada com sucesso',
-        })
+      const result = await r.json()
+      if (r.ok) {
+        showToast({ title: 'Sucesso', description: 'Peça cadastrada com sucesso' })
         router.push(`/pecas/${result.data.id}/imprimir`)
       } else {
         showToast({
@@ -71,8 +67,7 @@ export default function NovaPecaPage() {
           variant: 'destructive',
         })
       }
-    } catch (error) {
-      console.error('Erro ao cadastrar peça:', error)
+    } catch {
       showToast({
         title: 'Erro',
         description: 'Erro ao cadastrar peça',
@@ -83,166 +78,140 @@ export default function NovaPecaPage() {
     }
   }
 
-  const inputClass = "w-full h-11 px-4 bg-white border border-[--color-border-light] rounded-[16px] text-[15px] font-medium text-[--color-text-primary] placeholder:text-[--color-text-tertiary] focus:outline-none focus:border-[--color-accent] focus:ring-4 focus:ring-[--color-accent]/5 transition-all duration-200"
-  const monoClass = "font-mono text-[13px] tracking-tight"
-
   return (
-    <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <header className="space-y-4">
-        <button 
+    <div className="mx-auto max-w-[800px] animate-in fade-in duration-500">
+      <div className="mb-8 flex items-center gap-3">
+        <button
+          type="button"
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[--color-text-tertiary] hover:text-[--color-accent] transition-all group px-3 py-1.5 rounded-full bg-[--color-bg-subtle]"
+          className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-[--color-bg-subtle] text-[--color-text-secondary] transition-colors hover:bg-[--color-bg-muted]"
+          aria-label="Voltar"
         >
-          <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-          Voltar
+          <ArrowLeft size={16} strokeWidth={2.2} />
         </button>
         <div>
-          <h1 className="text-2xl sm:text-3xl font-light text-[--color-text-primary] tracking-tight">Nova Peça Piloto</h1>
-          <p className="text-[14px] text-[--color-text-secondary] font-medium uppercase tracking-wider font-bold">JC PLUS SIZE</p>
+          <h1 className="m-0 text-[28px] font-light leading-tight tracking-[-0.5px] text-[--color-text-primary]">
+            Nova Peça Piloto
+          </h1>
+          <p className="mt-0.5 text-[13px] text-[--color-text-secondary]">
+            Preencha as informações técnicas da peça
+          </p>
         </div>
-      </header>
+      </div>
 
-      <form onSubmit={handleSubmit} className="bg-white border border-[--color-border-light] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-card hover:shadow-hover transition-all duration-500">
-        <div className="p-6 space-y-5">
-          <Field label="Referência" hint="Gerada automaticamente, mas você pode editar se necessário">
-            <div className="relative">
-              <input 
-                name="referencia"
-                value={formData.referencia} 
-                onChange={handleChange}
-                className={`${inputClass} ${monoClass}`} 
-                placeholder="Gerando..."
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[--color-accent-peca] opacity-50" />
-            </div>
-          </Field>
-
-          <Field label="Nome da peça" error={errors.nome}>
-            <input
-              name="nome"
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-6 rounded-[24px] border border-[--color-border-light] bg-white p-8"
+      >
+        <div className="grid gap-5 md:grid-cols-2">
+          <FMField label="Nome da Peça">
+            <FMInput
               value={formData.nome}
-              onChange={handleChange}
-              className={`${inputClass} ${errors.nome ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-              placeholder="Ex: Vestido Midi Linho"
+              onChange={set('nome')}
+              placeholder="Ex: Blusa Plus Size Verão"
+              required
             />
-          </Field>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Coleção" error={errors.colecao}>
-              <input
-                name="colecao"
-                value={formData.colecao}
-                onChange={handleChange}
-                className={`${inputClass} ${errors.colecao ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-                placeholder="Ex: Inverno 2025"
-              />
-            </Field>
-
-            <Field label="Modelista" error={errors.modelista}>
-              <input
-                name="modelista"
-                value={formData.modelista}
-                onChange={handleChange}
-                className={`${inputClass} ${errors.modelista ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-                placeholder="Nome da modelista"
-              />
-            </Field>
-          </div>
-
-          <Field label="Fornecedor" error={errors.fornecedor}>
-            <input
-              name="fornecedor"
-              value={formData.fornecedor}
-              onChange={handleChange}
-              className={`${inputClass} ${errors.fornecedor ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-              placeholder="Nome do fornecedor"
+          </FMField>
+          <FMField label="Referência" hint="Gerada automaticamente, edite se necessário">
+            <FMInput
+              value={formData.referencia}
+              onChange={set('referencia')}
+              placeholder="Gerando..."
+              className="font-mono"
             />
-          </Field>
-
-          <Field label="Tecido" error={errors.tecido}>
-            <input
-              name="tecido"
-              value={formData.tecido}
-              onChange={handleChange}
-              className={`${inputClass} ${errors.tecido ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-              placeholder="Tipo de tecido"
-            />
-          </Field>
-
-          <div className="grid gap-6 sm:grid-cols-2">
-            <Field label="Composição" error={errors.composicao}>
-              <input
-                name="composicao"
-                value={formData.composicao}
-                onChange={handleChange}
-                className={`${inputClass} ${errors.composicao ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-                placeholder="Ex: 100% Linho"
-              />
-            </Field>
-
-            <Field label="Preço tecido (R$/m)" error={errors.precoTecido}>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[--color-text-tertiary] font-mono text-xs">R$</span>
-                <input
-                  name="precoTecido"
-                  type="number"
-                  step="0.01"
-                  value={formData.precoTecido}
-                  onChange={handleChange}
-                  className={`${inputClass} pl-10 ${monoClass} ${errors.precoTecido ? 'border-destructive ring-2 ring-destructive/10' : ''}`}
-                  placeholder="0.00"
-                />
-              </div>
-            </Field>
-          </div>
-
-          <Field label="Tamanhos" error={errors.tamanhos}>
-            <input
-              name="tamanhos"
-              value={formData.tamanhos}
-              onChange={handleChange}
-              className={inputClass}
-              placeholder="Ex: 46, 48, 50, 52"
-            />
-          </Field>
-
-          <Field label="Observações">
-            <textarea
-              name="observacoes"
-              value={formData.observacoes}
-              onChange={handleChange}
-              rows={4}
-              className={`${inputClass} h-auto py-4 leading-relaxed resize-none`}
-              placeholder="Informações adicionais sobre o modelo..."
-            />
-          </Field>
+          </FMField>
         </div>
 
-        <div className="bg-[--color-bg-subtle]/50 border-t border-[--color-border-light] p-6 flex flex-col sm:flex-row justify-end gap-3">
-          <button 
-            type="button" 
-            onClick={() => router.back()}
-            className="btn-premium btn-outline h-12 px-8 bg-white"
-          >
+        <div className="grid gap-5 md:grid-cols-2">
+          <FMField label="Coleção">
+            <FMInput
+              value={formData.colecao}
+              onChange={set('colecao')}
+              placeholder="Ex: Verão 2024"
+            />
+          </FMField>
+          <FMField label="Modelista">
+            <FMInput
+              value={formData.modelista}
+              onChange={set('modelista')}
+              placeholder="Nome do modelista"
+            />
+          </FMField>
+        </div>
+
+        <div className="h-px bg-[--color-border-light]" />
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <FMField label="Fornecedor de Tecido">
+            <FMInput
+              value={formData.fornecedor}
+              onChange={set('fornecedor')}
+              placeholder="Ex: Têxtil Bonfim"
+            />
+          </FMField>
+          <FMField label="Tipo de Tecido">
+            <FMInput
+              value={formData.tecido}
+              onChange={set('tecido')}
+              placeholder="Ex: Malha fria estampada"
+            />
+          </FMField>
+        </div>
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <FMField label="Composição" hint="Ex: 65% Poliéster, 35% Viscose">
+            <FMInput
+              value={formData.composicao}
+              onChange={set('composicao')}
+              placeholder="Composição do tecido"
+            />
+          </FMField>
+          <FMField label="Preço / metro (R$)">
+            <FMInput
+              type="number"
+              step="0.01"
+              value={formData.precoTecido}
+              onChange={set('precoTecido')}
+              placeholder="Ex: 18.50"
+              className="font-mono"
+            />
+          </FMField>
+        </div>
+
+        <FMField label="Tamanhos">
+          <FMInput
+            value={formData.tamanhos}
+            onChange={set('tamanhos')}
+            placeholder="Ex: 46, 48, 50, 52, 54"
+          />
+        </FMField>
+
+        <FMField label="Observações">
+          <FMTextarea
+            value={formData.observacoes}
+            onChange={set('observacoes')}
+            placeholder="Notas técnicas, pontos de atenção, instruções especiais..."
+            rows={4}
+          />
+        </FMField>
+
+        <div className="flex justify-end gap-3 pt-2">
+          <FMBtn variant="outline" type="button" onClick={() => router.back()}>
             Cancelar
-          </button>
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="btn-premium btn-primary h-12 px-10 shadow-premium disabled:opacity-50"
-          >
+          </FMBtn>
+          <FMBtn variant="peca" type="submit" disabled={loading}>
             {loading ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                 Salvando...
-              </div>
+              </>
             ) : (
               <>
-                <Plus size={18} />
-                Cadastrar Peça
+                <Check size={15} strokeWidth={2.5} />
+                Salvar Peça
               </>
             )}
-          </button>
+          </FMBtn>
         </div>
       </form>
     </div>

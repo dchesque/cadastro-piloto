@@ -1,24 +1,24 @@
 import type { Metadata } from 'next'
-import { DM_Sans, DM_Mono } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
-import { AppShell } from '@/components/app-shell'
+import { AppShellServer } from '@/components/app-shell-server'
 import { Toaster } from '@/components/ui/toast'
 
-const dmSans = DM_Sans({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500'],
+  weight: ['200', '300', '400', '500', '600', '700'],
   variable: '--font-sans',
 })
 
-const dmMono = DM_Mono({
+const jetMono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-mono',
 })
 
 export const metadata: Metadata = {
-  title: 'JC PLUS SIZE',
-  description: 'Sistema de cadastro de peças piloto e cortes de tecido',
+  title: 'FlowModa · Gestão de Produção',
+  description: 'O desenvolvimento da sua coleção — do croqui à produção — em um fluxo único.',
 }
 
 import { AuthProvider } from '@/components/auth-provider'
@@ -29,12 +29,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className={`${dmSans.variable} ${dmMono.variable}`} suppressHydrationWarning>
+    <html lang="pt-BR" className={`${inter.variable} ${jetMono.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased text-[--color-text-primary] bg-[--color-bg-page]">
         <AuthProvider>
-          <AppShell>
+          <AppShellServer>
             {children}
-          </AppShell>
+          </AppShellServer>
           <Toaster />
         </AuthProvider>
       </body>

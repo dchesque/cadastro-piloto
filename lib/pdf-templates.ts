@@ -191,7 +191,7 @@ export function buildFichaTecnicaPdf(peca: Peca, _appUrl?: string): string {
     <div class="grid grid-cols-4 border-2 border-black">
       <div class="col-span-1 p-2 border-r-2 border-black flex flex-col justify-center items-center bg-black text-white">
         <div class="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-black text-lg mb-0.5">JC</div>
-        <p class="font-black uppercase tracking-widest leading-none" style="font-size:8px">JC STUDIO</p>
+        <p class="font-black uppercase tracking-widest leading-none" style="font-size:8px">FlowModa</p>
       </div>
       <div class="col-span-2 p-2 px-3 flex flex-col justify-center">
         <p class="font-black uppercase tracking-widest text-gray-400 mb-0.5" style="font-size:8px;letter-spacing:0.2em">Ficha Técnica de Vestuário</p>
@@ -449,7 +449,7 @@ export function buildFichaCorteePdf(peca: Peca, corte: Corte, _appUrl?: string):
     <div class="grid border-2 border-black mb-3" style="grid-template-columns:1fr 2fr 1fr">
       <div class="p-2 border-r-2 border-black flex flex-col justify-center items-center bg-black text-white">
         <div class="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-black text-lg mb-0.5">JC</div>
-        <p class="font-black uppercase tracking-widest leading-none" style="font-size:8px">JC STUDIO</p>
+        <p class="font-black uppercase tracking-widest leading-none" style="font-size:8px">FlowModa</p>
       </div>
       <div class="p-2 px-3 flex flex-col justify-center">
         <p class="font-black uppercase text-gray-400 mb-0.5" style="font-size:8px;letter-spacing:0.2em">Ficha de Corte Gerencial</p>
@@ -530,7 +530,7 @@ export function buildFichaCorteePdf(peca: Peca, corte: Corte, _appUrl?: string):
 
     <!-- RODAPÉ -->
     <div class="flex justify-between items-center text-gray-300 uppercase font-black mt-10" style="font-size:8px">
-      <span>JC STUDIO - Ficha de Corte Gerencial Estrita</span>
+      <span>FlowModa - Ficha de Corte Gerencial Estrita</span>
       <span>Emissão: ${emissao}</span>
     </div>
 

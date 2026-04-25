@@ -86,7 +86,7 @@ export default function ImprimirCortePage({ params }: { params: Promise<{ id: st
         <div className="grid grid-cols-4 border-2 border-black mb-3">
            <div className="col-span-1 p-2 border-r-2 border-black flex flex-col justify-center items-center bg-black text-white">
               <div className="w-8 h-8 bg-white text-black rounded-lg flex items-center justify-center font-black text-lg mb-0.5">JC</div>
-              <p className="text-[8px] font-black uppercase tracking-widest leading-none">JC STUDIO</p>
+              <p className="text-[8px] font-black uppercase tracking-widest leading-none">FlowModa</p>
            </div>
            <div className="col-span-2 p-2 px-3 flex flex-col justify-center">
               <p className="text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-0.5">Ficha de Corte Gerencial</p>
@@ -251,7 +251,7 @@ export default function ImprimirCortePage({ params }: { params: Promise<{ id: st
 
         {/* Rodapé Interno */}
         <div className="absolute bottom-6 left-10 right-10 flex justify-between items-center text-[8px] font-black text-gray-300 uppercase print:relative print:bottom-0 print:mt-10">
-           <span>JC STUDIO - Ficha de Corte Gerencial Estrita</span>
+           <span>FlowModa - Ficha de Corte Gerencial Estrita</span>
            <span>Emissão: {new Date().toLocaleString('pt-BR')}</span>
         </div>
         </div>
